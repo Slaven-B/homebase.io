@@ -1,0 +1,70 @@
+<mat-toolbar color="primary" class="toolbar">
+  <mat-icon aria-hidden="true">home</mat-icon>
+  <span class="toolbar__title">HomeBase</span>
+</mat-toolbar>
+
+<main class="page">
+  <mat-card appearance="outlined" class="status-card">
+    <mat-card-header>
+      <mat-card-title>System status</mat-card-title>
+      <mat-card-subtitle>Angular → API → PostgreSQL</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      @switch (state()) {
+        @case ('loading') {
+          <div class="status status--loading">
+            <mat-spinner diameter="24" aria-label="Checking API"></mat-spinner>
+            <span>Checking connection to the API…</span>
+          </div>
+        }
+        @case ('connected') {
+          <div class="status status--ok">
+            <mat-icon aria-hidden="true">check_circle</mat-icon>
+            <span>Everything is connected.</span>
+          </div>
+        }
+        @case ('degraded') {
+          <div class="status status--warn">
+            <mat-icon aria-hidden="true">warning</mat-icon>
+            <span>API is running, but the database is unreachable.</span>
+          </div>
+        }
+        @case ('unreachable') {
+          <div class="status status--error">
+            <mat-icon aria-hidden="true">error</mat-icon>
+            <span>Cannot reach the API. {{ errorMessage() }}</span>
+          </div>
+        }
+      }
+
+      @if (report(); as r) {
+        <dl class="details">
+          <dt>API</dt>
+          <dd>v{{ r.version }} · {{ r.environment }} · up {{ r.uptimeSeconds }}s</dd>
+          <dt>Database</dt>
+          <dd>
+            {{ r.checks.database.status }}
+            @if (r.checks.database.latencyMs !== undefined) {
+              · {{ r.checks.database.latencyMs }} ms
+            }
+            @if (r.checks.database.error) {
+              <span class="details__error">{{ r.checks.database.error }}</span>
+            }
+          </dd>
+          <dt>Checked</dt>
+          <dd>{{ r.timestamp }}</dd>
+        </dl>
+      }
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button type="button" (click)="refresh()" [disabled]="state() === 'loading'">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        Refresh
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</main>
+
+<router-outlet />

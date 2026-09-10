@@ -1,0 +1,61 @@
+# Local development infrastructure.
+#
+#   docker compose up -d postgres          -> database only (default dev workflow;
+#                                             run API and web on the host with `npm run dev`)
+#   docker compose --profile app up --build -> full stack in containers
+#
+# Values come from `.env` in the repository root (see .env.example).
+
+name: homebase
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: homebase-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-homebase}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-homebase}
+      POSTGRES_DB: ${POSTGRES_DB:-homebase}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-homebase} -d ${POSTGRES_DB:-homebase}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    profiles: ['app']
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: homebase-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-homebase}:${POSTGRES_PASSWORD:-homebase}@postgres:5432/${POSTGRES_DB:-homebase}?schema=public
+      CORS_ORIGIN: http://localhost:${WEB_PORT:-4200}
+    ports:
+      - '${PORT:-3000}:3000'
+
+  web:
+    profiles: ['app']
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: homebase-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - '${WEB_PORT:-4200}:80'
+
+volumes:
+  postgres_data:

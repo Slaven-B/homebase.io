@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API (lint, test, migrate)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: homebase
+          POSTGRES_PASSWORD: homebase
+          POSTGRES_DB: homebase_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U homebase -d homebase_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://homebase:homebase@localhost:5432/homebase_test?schema=public
+      CORS_ORIGIN: http://localhost:4200
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run prisma:generate -w apps/api
+      - run: npm run prisma:validate -w apps/api
+      - run: npm run lint -w apps/api
+      - run: npm run build -w apps/api
+      - run: npm run test -w apps/api -- --ci
+      - run: npm run test:e2e -w apps/api -- --ci
+      - name: Apply migrations to a real database
+        run: npm run prisma:deploy -w apps/api
+      - name: Smoke test /api/health against the real database
+        working-directory: apps/api
+        run: |
+          node dist/main & echo $! > api.pid
+          for i in $(seq 1 20); do curl -fsS http://localhost:3000/api/health && break || sleep 1; done
+          curl -fsS http://localhost:3000/api/health | grep -q '"status":"ok"'
+          kill "$(cat api.pid)"
+
+  web:
+    name: Web (lint, test, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint -w apps/web
+      - run: npm run test:ci -w apps/web
+      - run: npm run build -w apps/web
+
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run format:check

@@ -1,0 +1,101 @@
+// HomeBase database schema.
+//
+// Phase 1 establishes the core identity model: users, households and
+// membership. Feature entities (expenses, bills, chores, ...) are added in
+// later phases, always carrying a `householdId` for authorization.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Users
+//
+// `email` is stored lowercased by the application (normalized in the service
+// layer), so the plain unique index is case-insensitive in practice.
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  displayName  String   @map("display_name")
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  memberships     HouseholdMember[]
+  sentInvitations HouseholdInvitation[] @relation("InvitationInviter")
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Households & membership
+// ---------------------------------------------------------------------------
+
+enum HouseholdRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model Household {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  members     HouseholdMember[]
+  invitations HouseholdInvitation[]
+
+  @@map("households")
+}
+
+model HouseholdMember {
+  id          String        @id @default(uuid()) @db.Uuid
+  householdId String        @map("household_id") @db.Uuid
+  userId      String        @map("user_id") @db.Uuid
+  role        HouseholdRole @default(MEMBER)
+  joinedAt    DateTime      @default(now()) @map("joined_at") @db.Timestamptz(6)
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, userId])
+  @@index([userId])
+  @@map("household_members")
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  REVOKED
+  EXPIRED
+}
+
+model HouseholdInvitation {
+  id          String           @id @default(uuid()) @db.Uuid
+  householdId String           @map("household_id") @db.Uuid
+  invitedById String           @map("invited_by_id") @db.Uuid
+  email       String
+  role        HouseholdRole    @default(MEMBER)
+  token       String           @unique
+  status      InvitationStatus @default(PENDING)
+  expiresAt   DateTime         @map("expires_at") @db.Timestamptz(6)
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  invitedBy User      @relation("InvitationInviter", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
+  @@index([email])
+  @@map("household_invitations")
+}

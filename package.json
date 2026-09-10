@@ -1,0 +1,37 @@
+{
+  "name": "homebase",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HomeBase - shared household manager (Angular + NestJS + PostgreSQL)",
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.11.0 <23",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,magenta \"npm run dev -w apps/api\" \"npm run start -w apps/web\"",
+    "dev:api": "npm run dev -w apps/api",
+    "dev:web": "npm run start -w apps/web",
+    "build": "npm run build -w apps/api && npm run build -w apps/web",
+    "lint": "npm run lint -w apps/api && npm run lint -w apps/web",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test -w apps/api && npm run test:ci -w apps/web",
+    "test:api": "npm run test -w apps/api",
+    "test:api:e2e": "npm run test:e2e -w apps/api",
+    "test:web": "npm run test:ci -w apps/web",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d postgres",
+    "prisma:generate": "npm run prisma:generate -w apps/api",
+    "prisma:migrate": "npm run prisma:migrate -w apps/api",
+    "prisma:deploy": "npm run prisma:deploy -w apps/api",
+    "prisma:studio": "npm run prisma:studio -w apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.3"
+  }
+}

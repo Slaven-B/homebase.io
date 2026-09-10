@@ -1,0 +1,8 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "eslint.workingDirectories": ["apps/api", "apps/web"],
+  "[prisma]": { "editor.defaultFormatter": "Prisma.prisma" },
+  "files.eol": "\n"
+}
