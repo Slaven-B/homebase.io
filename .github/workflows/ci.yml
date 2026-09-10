@@ -35,6 +35,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Provide a .env for Prisma CLI scripts (CI env vars take precedence)
+        run: cp .env.example .env
       - run: npm run prisma:generate -w apps/api
       - run: npm run prisma:validate -w apps/api
       - run: npm run lint -w apps/api

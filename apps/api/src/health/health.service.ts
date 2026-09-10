@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { Injectable } from '@nestjs/common';
 import { AppConfigService } from '../config/app-config.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -7,7 +9,7 @@ const DB_TIMEOUT_MS = 2000;
 
 @Injectable()
 export class HealthService {
-  private readonly version = process.env.npm_package_version ?? '0.0.0';
+  private readonly version = process.env.npm_package_version ?? readPackageVersion();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -62,4 +64,16 @@ function summarize(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
   // Prisma error messages can be multi-line; keep the first meaningful line.
   return message.split('\n').find((line) => line.trim().length > 0) ?? 'unknown error';
+}
+
+/** Version from apps/api/package.json when not started through npm (e.g. `node dist/main`). */
+function readPackageVersion(): string {
+  try {
+    const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')) as {
+      version?: string;
+    };
+    return pkg.version ?? '0.0.0';
+  } catch {
+    return '0.0.0';
+  }
 }

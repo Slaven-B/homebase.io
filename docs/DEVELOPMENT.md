@@ -31,6 +31,9 @@ Karma needs a Chrome/Chromium binary. If it is not on the default path, set `CHR
 ## Database & Prisma
 
 - Schema: `apps/api/prisma/schema.prisma`
+- The `prisma:*` npm scripts load the repository-root `.env` through `dotenv-cli`, so one `.env`
+  serves Docker Compose, the API runtime and the Prisma CLI. Real environment variables win over
+  the file (CI relies on this).
 - Create a migration after changing the schema:
   ```bash
   npm run prisma:migrate -- --name add_expenses
@@ -85,3 +88,5 @@ add new variables there first so misconfiguration fails fast.
 - **Type errors mentioning two copies of `rxjs`** — run `npm dedupe`; both apps must resolve the
   same `rxjs` version (pinned to `^7.8.2`).
 - **Prisma client out of date** — `npm run prisma:generate`.
+- **`Environment variable not found: DATABASE_URL` from Prisma** — no root `.env`; run
+  `cp .env.example .env`.
