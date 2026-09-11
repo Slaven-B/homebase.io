@@ -1,15 +1,9 @@
 import { ActivityEntry } from '../activity/activity.models';
+import { Bill } from '../bills/bill.models';
 import { Chore } from '../chores/chore.models';
 import { Task } from '../tasks/task.models';
 import { HouseholdRole } from '../households/household.models';
 
-export interface DashboardBill {
-  id: string;
-  name: string;
-  amount: number;
-  currency: string;
-  dueDate: string;
-}
 export interface DashboardShoppingList {
   id: string;
   name: string;
@@ -28,7 +22,7 @@ export interface DashboardView {
     date: string;
     choresDue: Chore[];
     tasksDue: Task[];
-    upcomingBills: DashboardBill[];
+    upcomingBills: Bill[];
     shopping: { openItems: number; lists: DashboardShoppingList[] };
   };
   finances: {

@@ -1,0 +1,144 @@
+<div class="page-header">
+  <h1>Bills</h1>
+  @if (current()) {
+    <button mat-flat-button color="primary" type="button" (click)="create()">
+      <mat-icon>add</mat-icon>
+      New bill
+    </button>
+  }
+</div>
+
+@if (!current()) {
+  <mat-card appearance="outlined" class="card card--empty">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">holiday_village</mat-icon>
+      <h2>No household yet</h2>
+      <p>Bills belong to a household. Create or join one first.</p>
+      <a mat-flat-button color="primary" routerLink="/households">Households</a>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <div class="toolbar">
+    <mat-checkbox [checked]="showInactive()" (change)="showInactive.set($event.checked)">
+      Show paid one-time and inactive bills
+    </mat-checkbox>
+    <span class="toolbar__spacer"></span>
+    @if (upcomingTotalCents() > 0) {
+      <span class="toolbar__total">
+        Next 30 days: {{ upcomingTotalCents() / 100 | currency: currency() }}
+      </span>
+    }
+  </div>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @if (bills() === null) {
+    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  } @else if (bills()!.length === 0) {
+    <mat-card appearance="outlined" class="card card--empty">
+      <mat-card-content>
+        <mat-icon aria-hidden="true">receipt</mat-icon>
+        <h2>No bills yet</h2>
+        <p>Add rent, internet or electricity so nothing gets forgotten.</p>
+        <button mat-flat-button color="primary" type="button" (click)="create()">
+          <mat-icon>add</mat-icon>
+          New bill
+        </button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    @for (section of sections(); track section.urgency) {
+      <h2 class="group-title group-title--{{ section.urgency.toLowerCase() }}">
+        {{ urgencyLabels[section.urgency] }} · {{ section.bills.length }}
+      </h2>
+      <mat-card appearance="outlined" class="card">
+        @for (bill of section.bills; track bill.id) {
+          <div class="bill" [class.bill--inactive]="!bill.isActive">
+            <div class="bill__date">
+              <span class="bill__day">{{ dueLabel(bill.dueDate) }}</span>
+              <span class="bill__due bill__due--{{ bill.urgency.toLowerCase() }}">
+                {{ describeDue(bill) }}
+              </span>
+            </div>
+            <div class="bill__body">
+              <div class="bill__title">
+                <strong>{{ bill.name }}</strong>
+                <span class="chip">{{ frequencyLabels[bill.frequency] }}</span>
+                @if (bill.category) {
+                  <span class="chip">{{ bill.category }}</span>
+                }
+              </div>
+              <div class="bill__meta">
+                @if (bill.responsible) {
+                  {{ bill.responsible.displayName }} takes care of it
+                } @else {
+                  Nobody assigned
+                }
+                @if (bill.notes) {
+                  · {{ bill.notes }}
+                }
+              </div>
+            </div>
+            <div class="bill__amount">{{ bill.amountCents / 100 | currency: bill.currency }}</div>
+            @if (bill.isActive) {
+              <button
+                mat-flat-button
+                color="primary"
+                type="button"
+                class="bill__pay"
+                (click)="pay(bill)"
+                [disabled]="busy() === bill.id"
+              >
+                <mat-icon>check</mat-icon>
+                Paid
+              </button>
+            }
+            <button
+              mat-icon-button
+              type="button"
+              [matMenuTriggerFor]="billMenu"
+              [matMenuTriggerData]="{ bill: bill }"
+              aria-label="Bill actions"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+        }
+      </mat-card>
+    }
+  }
+
+  <mat-menu #billMenu="matMenu">
+    <ng-template matMenuContent let-bill="bill">
+      @if (bill.isActive) {
+        <button mat-menu-item type="button" (click)="pay(bill)">
+          <mat-icon>check</mat-icon>
+          <span>Mark paid</span>
+        </button>
+      }
+      <button mat-menu-item type="button" (click)="edit(bill)">
+        <mat-icon>edit</mat-icon>
+        <span>Edit</span>
+      </button>
+      @if (bill.isActive) {
+        <button mat-menu-item type="button" (click)="setActive(bill, false)">
+          <mat-icon>pause_circle</mat-icon>
+          <span>Deactivate</span>
+        </button>
+      } @else {
+        <button mat-menu-item type="button" (click)="setActive(bill, true)">
+          <mat-icon>play_circle</mat-icon>
+          <span>Reactivate</span>
+        </button>
+      }
+      @if (canDelete(bill)) {
+        <button mat-menu-item type="button" (click)="remove(bill)">
+          <mat-icon color="warn">delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      }
+    </ng-template>
+  </mat-menu>
+}

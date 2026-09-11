@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ActivityModule } from './activity/activity.module';
 import { AuthModule } from './auth/auth.module';
+import { BillsModule } from './bills/bills.module';
 import { ChoresModule } from './chores/chores.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ExpensesModule } from './expenses/expenses.module';
@@ -40,6 +41,7 @@ import { UsersModule } from './users/users.module';
     TasksModule,
     ChoresModule,
     ExpensesModule,
+    BillsModule,
     DashboardModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

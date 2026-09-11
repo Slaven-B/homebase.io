@@ -108,6 +108,14 @@ export const routes: Routes = [
         title: 'Balances · HomeBase',
       },
       {
+        path: 'bills',
+        loadComponent: () =>
+          import('./features/bills/bills-page/bills-page.component').then(
+            (m) => m.BillsPageComponent,
+          ),
+        title: 'Bills · HomeBase',
+      },
+      {
         path: 'activity',
         loadComponent: () =>
           import('./features/activity/activity-page.component').then(

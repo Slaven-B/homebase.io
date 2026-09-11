@@ -1,5 +1,6 @@
 import { HouseholdRole } from '@prisma/client';
 import { ActivityEntry } from '../activity/activity.types';
+import { BillView } from '../bills/bill.types';
 import { ChoreView } from '../chores/chore.types';
 import { TaskView } from '../tasks/task.types';
 
@@ -20,7 +21,7 @@ export interface DashboardView {
     date: string; // YYYY-MM-DD in server time
     choresDue: ChoreView[];
     tasksDue: TaskView[];
-    upcomingBills: DashboardBill[];
+    upcomingBills: BillView[];
     shopping: { openItems: number; lists: DashboardShoppingList[] };
   };
   finances: {
@@ -37,13 +38,6 @@ export interface DashboardView {
 }
 
 // Placeholders typed now, filled by later phases.
-export interface DashboardBill {
-  id: string;
-  name: string;
-  amount: number;
-  currency: string;
-  dueDate: string;
-}
 export interface DashboardShoppingList {
   id: string;
   name: string;

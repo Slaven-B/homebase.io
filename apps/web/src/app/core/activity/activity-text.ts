@@ -83,6 +83,13 @@ export function describeActivity(entry: ActivityEntry): ActivityText {
         icon: 'handshake',
         text: `recorded ${str(m['fromName'], 'someone')} paying ${str(m['toName'], 'someone')} ${money(m)}`,
       };
+    case 'bill.created':
+      return {
+        icon: 'receipt',
+        text: `added the bill "${str(m['name'], 'Untitled')}" (${money(m)})`,
+      };
+    case 'bill.paid':
+      return { icon: 'price_check', text: `paid the ${str(m['name'], 'bill')} bill (${money(m)})` };
     default:
       return { icon: 'info', text: entry.action.replace(/[._]/g, ' ') };
   }

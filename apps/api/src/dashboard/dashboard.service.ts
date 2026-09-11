@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InvitationStatus } from '@prisma/client';
 import { ActivityService } from '../activity/activity.service';
+import { BillsService } from '../bills/bills.service';
 import { ChoresService } from '../chores/chores.service';
 import { todayUtc } from '../chores/recurrence';
 import { ExpensesService } from '../expenses/expenses.service';
@@ -22,6 +23,7 @@ export class DashboardService {
     private readonly tasks: TasksService,
     private readonly chores: ChoresService,
     private readonly expenses: ExpensesService,
+    private readonly bills: BillsService,
   ) {}
 
   async get(userId: string, householdId: string): Promise<DashboardView> {
@@ -41,6 +43,8 @@ export class DashboardService {
       tasksDue,
       sharedExpensesCents,
       balances,
+      upcomingBills,
+      billsCents,
     ] = await Promise.all([
       this.prisma.household.findUnique({
         where: { id: householdId },
@@ -57,6 +61,8 @@ export class DashboardService {
       this.tasks.dueUnchecked(householdId, today),
       this.expenses.monthTotalUnchecked(householdId, month, currency),
       this.expenses.balancesUnchecked(householdId, userId),
+      this.bills.upcomingUnchecked(householdId, today),
+      this.bills.monthTotalUnchecked(householdId, month, currency),
     ]);
     const balance = balances.find((b) => b.currency === currency);
 
@@ -76,14 +82,14 @@ export class DashboardService {
         date: now.toISOString().slice(0, 10),
         choresDue,
         tasksDue,
-        upcomingBills: [],
+        upcomingBills,
         shopping,
       },
       finances: {
         month,
         currency,
         sharedExpensesCents,
-        billsCents: 0,
+        billsCents,
         outstandingCents: balance?.outstandingCents ?? 0,
         myNetCents: balance?.myNetCents ?? 0,
       },

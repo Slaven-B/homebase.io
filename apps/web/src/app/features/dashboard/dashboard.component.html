@@ -46,15 +46,39 @@
             <mat-card-title class="card__title">
               <mat-icon aria-hidden="true">shopping_cart</mat-icon>
               Shopping
-              <span class="soon">Phase 5</span>
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <div class="placeholder">
-              <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
-              <p>Shared shopping lists are coming next. Open items will show up here.</p>
-            </div>
+            @if (v.today.shopping.lists.length === 0) {
+              <div class="placeholder">
+                <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
+                <p>No shopping lists yet.</p>
+              </div>
+            } @else {
+              <ul class="mini-list">
+                @for (list of v.today.shopping.lists; track list.id) {
+                  <li>
+                    <a [routerLink]="['/shopping', list.id]">{{ list.name }}</a>
+                    <span
+                      class="mini-list__count"
+                      [class.mini-list__count--zero]="list.openItems === 0"
+                    >
+                      {{ list.openItems === 0 ? 'done' : list.openItems }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
           </mat-card-content>
+          <mat-card-actions align="end">
+            <a mat-button routerLink="/shopping">
+              {{
+                v.today.shopping.openItems > 0
+                  ? v.today.shopping.openItems + ' to buy'
+                  : 'Open shopping'
+              }}
+            </a>
+          </mat-card-actions>
         </mat-card>
 
         <mat-card appearance="outlined" class="card">
@@ -129,6 +153,46 @@
         <mat-card appearance="outlined" class="card">
           <mat-card-header>
             <mat-card-title class="card__title">
+              <mat-icon aria-hidden="true">receipt</mat-icon>
+              Upcoming bills
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (v.today.upcomingBills.length === 0) {
+              <div class="placeholder">
+                <mat-icon aria-hidden="true">event_available</mat-icon>
+                <p>Nothing due in the next two weeks.</p>
+              </div>
+            } @else {
+              <ul class="mini-list">
+                @for (b of v.today.upcomingBills; track b.id) {
+                  <li>
+                    <a routerLink="/bills">{{ b.name }}</a>
+                    <span class="mini-list__amount">{{
+                      b.amountCents / 100 | currency: b.currency
+                    }}</span>
+                    <span class="mini-list__count" [class.mini-list__count--warn]="b.dueInDays < 0">
+                      {{
+                        b.dueInDays < 0
+                          ? 'overdue'
+                          : b.dueInDays === 0
+                            ? 'today'
+                            : 'in ' + b.dueInDays + 'd'
+                      }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <a mat-button routerLink="/bills">All bills</a>
+          </mat-card-actions>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="card">
+          <mat-card-header>
+            <mat-card-title class="card__title">
               <mat-icon aria-hidden="true">payments</mat-icon>
               {{ monthLabel(v.finances.month) }}
             </mat-card-title>
@@ -137,7 +201,7 @@
             <dl class="finances">
               <dt>Shared expenses</dt>
               <dd>{{ v.finances.sharedExpensesCents / 100 | currency: v.finances.currency }}</dd>
-              <dt>Bills <span class="soon">Phase 8</span></dt>
+              <dt>Bills</dt>
               <dd>{{ v.finances.billsCents / 100 | currency: v.finances.currency }}</dd>
               <dt>Outstanding</dt>
               <dd>{{ v.finances.outstandingCents / 100 | currency: v.finances.currency }}</dd>
@@ -219,6 +283,10 @@
     <a mat-menu-item routerLink="/expenses">
       <mat-icon>receipt_long</mat-icon>
       <span>Expense</span>
+    </a>
+    <a mat-menu-item routerLink="/bills">
+      <mat-icon>receipt</mat-icon>
+      <span>Bill</span>
     </a>
   </mat-menu>
 }

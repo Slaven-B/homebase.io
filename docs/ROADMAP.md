@@ -12,8 +12,8 @@ migrations must apply cleanly, authorization must be verified, and the work is c
 | 5     | Shopping lists                                               | ✅ done |
 | 6     | Tasks + chores (recurrence, comments, dashboard cards)       | ✅ done |
 | 7     | Expenses, splits, balances, settlements                      | ✅ done |
-| 8     | Bills                                                        | ⏳ next |
-| 9     | Notes + in-app notifications                                 |         |
+| 8     | Bills (recurring, mark paid, optional expense)               | ✅ done |
+| 9     | Notes + in-app notifications                                 | ⏳ next |
 | 10    | Polish: responsive, a11y, empty/loading/error states, deploy |         |
 
 ## MVP definition of done

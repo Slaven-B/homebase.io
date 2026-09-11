@@ -57,8 +57,9 @@ Current modules:
 | `tasks`       | One-off tasks with status, priority, date-only due date, assignee, comments                  |
 | `chores`      | Recurring chores; `recurrence.ts` computes the next due date; completion history             |
 | `expenses`    | Expenses with EQUAL/PERCENTAGE/CUSTOM splits, balances, settlements; `money.ts` is pure      |
+| `bills`       | Recurring/one-time bills, mark paid (advances one period), optional shared expense           |
 
-Planned modules follow the spec: `bills`, `notes`,
+Planned modules follow the spec: `notes`,
 `notifications`.
 
 ### Cross-cutting defaults (set in `main.ts`)
@@ -197,6 +198,20 @@ Payer and participants must be household members. Editing is a full replacement 
 are recomputed as a whole inside a transaction. Creator, payer or admins may edit/delete.
 A `Settlement` records a payment between two members; only admins can record one on behalf of
 someone else. Households carry a default `currency` (EUR); balances are reported per currency.
+
+## Bills
+
+A `Bill` is a template plus its next due date; `BillPayment` rows record each payment and the
+occurrence it covered. Marking a bill paid (`POST .../bills/:id/pay`) writes the payment and
+advances `dueDate` by **exactly one period** (`bills/bill-schedule.ts`, unit-tested) — missed
+periods are not skipped, so paying April rent in June leaves May outstanding. ONE_TIME bills become
+inactive when paid. Monthly/yearly recurrence clamps to month end and restores the anchor day.
+
+Paying with `recordAsExpense: true` also creates a shared expense (paid by the current user, split
+EQUAL between current members) inside the same transaction and links it from the payment, so bills
+flow into balances when the household wants them to. Urgency is derived: OVERDUE, DUE_SOON (≤ 7
+days), UPCOMING, INACTIVE. The dashboard lists active bills overdue or due within 14 days, and the
+finance snapshot bills line is this month payments plus unpaid bills due this month.
 
 ## Dashboard
 

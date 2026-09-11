@@ -48,6 +48,9 @@ model User {
   settlementsFrom        Settlement[]          @relation("SettlementFrom")
   settlementsTo          Settlement[]          @relation("SettlementTo")
   createdSettlements     Settlement[]          @relation("SettlementCreator")
+  createdBills           Bill[]                @relation("BillCreator")
+  responsibleBills       Bill[]                @relation("BillResponsible")
+  billPayments           BillPayment[]
 
   @@map("users")
 }
@@ -77,6 +80,7 @@ model Household {
   chores        Chore[]
   expenses      Expense[]
   settlements   Settlement[]
+  bills         Bill[]
   invitations   HouseholdInvitation[]
 
   @@map("households")
@@ -356,10 +360,11 @@ model Expense {
   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  household Household      @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  createdBy User?          @relation("ExpenseCreator", fields: [createdById], references: [id], onDelete: SetNull)
-  paidBy    User?          @relation("ExpensePayer", fields: [paidById], references: [id], onDelete: SetNull)
-  splits    ExpenseSplit[]
+  household    Household      @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  createdBy    User?          @relation("ExpenseCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  paidBy       User?          @relation("ExpensePayer", fields: [paidById], references: [id], onDelete: SetNull)
+  splits       ExpenseSplit[]
+  billPayments BillPayment[]
 
   @@index([householdId, date(sort: Desc)])
   @@index([householdId, category])
@@ -402,4 +407,65 @@ model Settlement {
 
   @@index([householdId, date(sort: Desc)])
   @@map("settlements")
+}
+
+// ---------------------------------------------------------------------------
+// Bills
+// ---------------------------------------------------------------------------
+
+enum BillFrequency {
+  ONE_TIME
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
+/// A bill template plus its next occurrence. Paying advances `dueDate` by one
+/// period (or deactivates a ONE_TIME bill) and writes a BillPayment row.
+model Bill {
+  id            String        @id @default(uuid()) @db.Uuid
+  householdId   String        @map("household_id") @db.Uuid
+  createdById   String?       @map("created_by_id") @db.Uuid
+  responsibleId String?       @map("responsible_id") @db.Uuid
+  name          String
+  amountCents   Int           @map("amount_cents")
+  currency      String
+  /// Date-only: the next (or only) due date.
+  dueDate       DateTime      @map("due_date") @db.Date
+  frequency     BillFrequency
+  category      String?
+  notes         String?
+  isActive      Boolean       @default(true) @map("is_active")
+  lastPaidAt    DateTime?     @map("last_paid_at") @db.Timestamptz(6)
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  household   Household     @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  createdBy   User?         @relation("BillCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  responsible User?         @relation("BillResponsible", fields: [responsibleId], references: [id], onDelete: SetNull)
+  payments    BillPayment[]
+
+  @@index([householdId, isActive, dueDate])
+  @@map("bills")
+}
+
+model BillPayment {
+  id          String   @id @default(uuid()) @db.Uuid
+  billId      String   @map("bill_id") @db.Uuid
+  paidById    String?  @map("paid_by_id") @db.Uuid
+  /// Optional shared expense created for this payment.
+  expenseId   String?  @map("expense_id") @db.Uuid
+  /// The occurrence this payment covered.
+  dueDate     DateTime @map("due_date") @db.Date
+  amountCents Int      @map("amount_cents")
+  paidAt      DateTime @map("paid_at") @db.Date
+  note        String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  bill    Bill     @relation(fields: [billId], references: [id], onDelete: Cascade)
+  paidBy  User?    @relation(fields: [paidById], references: [id], onDelete: SetNull)
+  expense Expense? @relation(fields: [expenseId], references: [id], onDelete: SetNull)
+
+  @@index([billId, paidAt(sort: Desc)])
+  @@map("bill_payments")
 }

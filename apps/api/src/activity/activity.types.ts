@@ -21,6 +21,8 @@ export const ActivityAction = {
   ExpenseCreated: 'expense.created',
   ExpenseDeleted: 'expense.deleted',
   SettlementRecorded: 'settlement.recorded',
+  BillCreated: 'bill.created',
+  BillPaid: 'bill.paid',
 } as const;
 
 export type ActivityActionType = (typeof ActivityAction)[keyof typeof ActivityAction];
@@ -35,6 +37,7 @@ export const ActivityEntity = {
   Chore: 'chore',
   Expense: 'expense',
   Settlement: 'settlement',
+  Bill: 'bill',
 } as const;
 
 export type ActivityEntityType = (typeof ActivityEntity)[keyof typeof ActivityEntity];
