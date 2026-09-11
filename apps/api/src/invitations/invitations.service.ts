@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { HouseholdRole, InvitationStatus } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
+import { ActivityService } from '../activity/activity.service';
+import { ActivityAction, ActivityEntity } from '../activity/activity.types';
 import { HouseholdAccessService } from '../households/household-access.service';
 import { HouseholdDetail } from '../households/household.types';
 import { HouseholdsService } from '../households/households.service';
@@ -82,6 +84,7 @@ export class InvitationsService {
     private readonly access: HouseholdAccessService,
     private readonly households: HouseholdsService,
     private readonly users: UsersService,
+    private readonly activity: ActivityService,
   ) {}
 
   async listForHousehold(userId: string, householdId: string): Promise<InvitationView[]> {
@@ -133,6 +136,15 @@ export class InvitationsService {
       include: viewInclude,
     });
 
+    await this.activity.log({
+      householdId,
+      userId,
+      action: ActivityAction.InvitationSent,
+      entityType: ActivityEntity.Invitation,
+      entityId: created.id,
+      metadata: { email: created.email, role: created.role },
+    });
+
     return { ...toView(created), token: created.token };
   }
 
@@ -171,6 +183,7 @@ export class InvitationsService {
    */
   async accept(userId: string, token: string): Promise<HouseholdDetail> {
     const invitation = await this.requireUsableInvitation(userId, token);
+    const user = await this.requireUser(userId);
 
     await this.prisma.$transaction(async (tx) => {
       const existing = await tx.householdMember.findUnique({
@@ -185,6 +198,17 @@ export class InvitationsService {
         where: { id: invitation.id },
         data: { status: InvitationStatus.ACCEPTED },
       });
+      await this.activity.log(
+        {
+          householdId: invitation.household.id,
+          userId,
+          action: ActivityAction.MemberJoined,
+          entityType: ActivityEntity.Member,
+          entityId: null,
+          metadata: { memberName: user.displayName, role: invitation.role },
+        },
+        tx,
+      );
     });
 
     return this.households.getDetail(userId, invitation.household.id);

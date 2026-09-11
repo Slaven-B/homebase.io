@@ -32,6 +32,7 @@ model User {
   memberships     HouseholdMember[]
   sentInvitations HouseholdInvitation[] @relation("InvitationInviter")
   refreshTokens   RefreshToken[]
+  activities      Activity[]
 
   @@map("users")
 }
@@ -53,6 +54,7 @@ model Household {
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   members     HouseholdMember[]
+  activities  Activity[]
   invitations HouseholdInvitation[]
 
   @@map("households")
@@ -123,4 +125,29 @@ model RefreshToken {
   @@index([userId])
   @@index([familyId])
   @@map("refresh_tokens")
+}
+
+// ---------------------------------------------------------------------------
+// Activity feed
+// ---------------------------------------------------------------------------
+
+/// Append-only log of what happened in a household, written by services
+/// (never by clients). `action` is a stable string like "household.created";
+/// `metadata` carries the details needed to render a sentence.
+model Activity {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @map("household_id") @db.Uuid
+  /// Actor. Null when the actor account was deleted.
+  userId      String?  @map("user_id") @db.Uuid
+  action      String
+  entityType  String   @map("entity_type")
+  entityId    String?  @map("entity_id") @db.Uuid
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([householdId, createdAt(sort: Desc)])
+  @@map("activities")
 }

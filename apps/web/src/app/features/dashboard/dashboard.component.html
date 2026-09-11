@@ -1,46 +1,168 @@
-<h1 class="dashboard__title">Hi {{ user()?.displayName }} 👋</h1>
-
 @if (households() === null) {
-  <div class="dashboard__loading"><mat-spinner diameter="32"></mat-spinner></div>
+  <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (!current()) {
+  <h1 class="header">{{ greeting() }}, {{ user()?.displayName }} 👋</h1>
+  <mat-card appearance="outlined" class="empty">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">holiday_village</mat-icon>
+      <h2>No household yet</h2>
+      <p>
+        Create a household for the people you live with, or accept an invitation someone sent you.
+      </p>
+      <a mat-flat-button color="primary" routerLink="/households">
+        <mat-icon>add</mat-icon>
+        Create or join a household
+      </a>
+    </mat-card-content>
+  </mat-card>
 } @else {
-  @if (current(); as h) {
-    <mat-card appearance="outlined" class="dashboard__card">
-      <mat-card-content class="dashboard__household">
-        <mat-icon class="dashboard__icon" aria-hidden="true">home</mat-icon>
-        <div class="dashboard__text">
-          <h2>{{ h.name }}</h2>
-          <p>
-            You are {{ roleLabels[h.role] }} · {{ h.memberCount }}
-            {{ h.memberCount === 1 ? 'member' : 'members' }}
-          </p>
-        </div>
-        <a mat-stroked-button [routerLink]="['/households', h.id]">Members & invites</a>
-      </mat-card-content>
-    </mat-card>
+  <header class="header">
+    <div>
+      <h1>{{ greeting() }}, {{ user()?.displayName }} 👋</h1>
+      @if (view(); as v) {
+        <p class="header__sub">
+          <a [routerLink]="['/households', v.household.id]">{{ v.household.name }}</a>
+          · {{ v.household.memberCount }}
+          {{ v.household.memberCount === 1 ? 'member' : 'members' }}
+          · you are {{ roleLabels[v.household.myRole] }}
+        </p>
+      }
+    </div>
+    @if (view()?.household?.pendingInvitations; as pending) {
+      <a class="badge" [routerLink]="['/households', view()!.household.id]">
+        <mat-icon aria-hidden="true">schedule</mat-icon>
+        {{ pending }} pending {{ pending === 1 ? 'invitation' : 'invitations' }}
+      </a>
+    }
+  </header>
 
-    <mat-card appearance="outlined" class="dashboard__card dashboard__empty">
-      <mat-card-content>
-        <mat-icon class="dashboard__icon" aria-hidden="true">checklist</mat-icon>
-        <h2>Nothing to show yet</h2>
-        <p>
-          Shopping lists, chores, tasks and expenses arrive in the next phases and will show up here
-          as "what's going on in your household right now".
-        </p>
-      </mat-card-content>
-    </mat-card>
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
   } @else {
-    <mat-card appearance="outlined" class="dashboard__card dashboard__empty">
-      <mat-card-content>
-        <mat-icon class="dashboard__icon" aria-hidden="true">holiday_village</mat-icon>
-        <h2>No household yet</h2>
-        <p>
-          Create a household for the people you live with, or accept an invitation someone sent you.
-        </p>
-        <a mat-flat-button color="primary" routerLink="/households">
-          <mat-icon>add</mat-icon>
-          Create or join a household
-        </a>
-      </mat-card-content>
-    </mat-card>
+    @if (view(); as v) {
+      <div class="grid">
+        <mat-card appearance="outlined" class="card">
+          <mat-card-header>
+            <mat-card-title class="card__title">
+              <mat-icon aria-hidden="true">shopping_cart</mat-icon>
+              Shopping
+              <span class="soon">Phase 5</span>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="placeholder">
+              <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
+              <p>Shared shopping lists are coming next. Open items will show up here.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="card">
+          <mat-card-header>
+            <mat-card-title class="card__title">
+              <mat-icon aria-hidden="true">cleaning_services</mat-icon>
+              Chores due today
+              <span class="soon">Phase 6</span>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="placeholder">
+              <mat-icon aria-hidden="true">event_available</mat-icon>
+              <p>Recurring chores and who is on duty will appear here.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="card">
+          <mat-card-header>
+            <mat-card-title class="card__title">
+              <mat-icon aria-hidden="true">task_alt</mat-icon>
+              Tasks due
+              <span class="soon">Phase 6</span>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="placeholder">
+              <mat-icon aria-hidden="true">checklist</mat-icon>
+              <p>One-off tasks with due dates will be listed here.</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="card">
+          <mat-card-header>
+            <mat-card-title class="card__title">
+              <mat-icon aria-hidden="true">payments</mat-icon>
+              {{ monthLabel(v.finances.month) }}
+              <span class="soon">Phase 7–8</span>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <dl class="finances">
+              <dt>Shared expenses</dt>
+              <dd>{{ v.finances.sharedExpenses | currency: v.finances.currency }}</dd>
+              <dt>Bills</dt>
+              <dd>{{ v.finances.bills | currency: v.finances.currency }}</dd>
+              <dt>Outstanding</dt>
+              <dd>{{ v.finances.outstanding | currency: v.finances.currency }}</dd>
+            </dl>
+            <p class="finances__hint">Expenses and bills fill this in once they are tracked.</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="card card--wide">
+          <mat-card-header>
+            <mat-card-title class="card__title">
+              <mat-icon aria-hidden="true">history</mat-icon>
+              Recent activity
+            </mat-card-title>
+          </mat-card-header>
+          <app-activity-feed
+            [entries]="v.recentActivity"
+            emptyMessage="Nothing has happened yet. Invite someone to get started."
+          />
+          @if (v.recentActivity.length > 0) {
+            <mat-card-actions align="end">
+              <a mat-button routerLink="/activity">All activity</a>
+            </mat-card-actions>
+          }
+        </mat-card>
+      </div>
+    } @else {
+      <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+    }
   }
+
+  <button
+    mat-fab
+    color="primary"
+    class="fab"
+    type="button"
+    [matMenuTriggerFor]="quickMenu"
+    aria-label="Quick actions"
+  >
+    <mat-icon>add</mat-icon>
+  </button>
+  <mat-menu #quickMenu="matMenu" xPosition="before" yPosition="above">
+    @if (current(); as h) {
+      @if (canAdminister(h.role)) {
+        <a mat-menu-item [routerLink]="['/households', h.id]">
+          <mat-icon>person_add</mat-icon>
+          <span>Invite member</span>
+        </a>
+      }
+    }
+    <button mat-menu-item type="button" disabled>
+      <mat-icon>add_shopping_cart</mat-icon>
+      <span>Shopping item (soon)</span>
+    </button>
+    <button mat-menu-item type="button" disabled>
+      <mat-icon>task_alt</mat-icon>
+      <span>Task (soon)</span>
+    </button>
+    <button mat-menu-item type="button" disabled>
+      <mat-icon>receipt_long</mat-icon>
+      <span>Expense (soon)</span>
+    </button>
+  </mat-menu>
 }

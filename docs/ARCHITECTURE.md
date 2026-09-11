@@ -41,19 +41,21 @@ dto/        → request/response shapes with class-validator decorators
 
 Current modules:
 
-| Module        | Purpose                                                                        |
-| ------------- | ------------------------------------------------------------------------------ |
-| `config`      | Validated, typed environment access (`AppConfigService`)                       |
-| `prisma`      | Global `PrismaService` (connection lifecycle, health `ping()`)                 |
-| `health`      | `GET /api/health` — 200 when DB reachable, 503 otherwise                       |
-| `auth`        | Register, login, refresh, logout; global `JwtAuthGuard`                        |
-| `users`       | `GET`/`PATCH /api/users/me` profile endpoints                                  |
-| `common`      | `@Public()`, `@CurrentUser()` decorators, shared request types                 |
-| `households`  | Households, members, roles; exports `HouseholdAccessService`                   |
-| `invitations` | Email-bound invitations: create/revoke (admins), list/accept/decline (invitee) |
+| Module        | Purpose                                                                                      |
+| ------------- | -------------------------------------------------------------------------------------------- |
+| `config`      | Validated, typed environment access (`AppConfigService`)                                     |
+| `prisma`      | Global `PrismaService` (connection lifecycle, health `ping()`)                               |
+| `health`      | `GET /api/health` — 200 when DB reachable, 503 otherwise                                     |
+| `auth`        | Register, login, refresh, logout; global `JwtAuthGuard`                                      |
+| `users`       | `GET`/`PATCH /api/users/me` profile endpoints                                                |
+| `common`      | `@Public()`, `@CurrentUser()` decorators, shared request types                               |
+| `households`  | Households, members, roles; exports `HouseholdAccessService`                                 |
+| `invitations` | Email-bound invitations: create/revoke (admins), list/accept/decline (invitee)               |
+| `activity`    | Append-only household activity log (`ActivityService.log`, cursor-paged list); global module |
+| `dashboard`   | `GET /api/households/:id/dashboard` — one round trip for the home screen                     |
 
-Planned modules follow the spec: `expenses`,
-`bills`, `chores`, `tasks`, `shopping`, `notes`, `notifications`, `activity`.
+Planned modules follow the spec: `shopping`, `tasks`, `chores`, `expenses`, `bills`, `notes`,
+`notifications`.
 
 ### Cross-cutting defaults (set in `main.ts`)
 
@@ -135,6 +137,22 @@ invite/revoke and remove regular members. MEMBER can view and leave.
 Invitations are bound to an email address: only the account with that email can preview,
 accept or decline (403 otherwise). Tokens are single-use and expire after 7 days. Accepting
 creates the membership and marks the invitation accepted in one transaction.
+
+## Activity feed
+
+Services (never controllers or clients) call `ActivityService.log()` with a stable `action`
+string such as `household.renamed`, an entity reference and a small `metadata` object. The API
+stores facts, not sentences; the frontend maps actions to text in `activity-text.ts`, so wording
+can change without touching data. Logging accepts a transaction client so the entry commits with
+the change it describes, and it never throws — a failed log line must not fail the user's action.
+`GET /households/:id/activity?limit&cursor` pages newest-first by `(createdAt, id)`.
+
+## Dashboard
+
+`GET /households/:id/dashboard` returns a stable, fully typed shape: household header (with the
+pending-invitation count for admins only), `today` (chores, tasks, bills, shopping), `finances`
+for the current month and `recentActivity`. Sections owned by later phases are present but empty,
+so the frontend and the contract do not change as modules land.
 
 ## Authentication
 

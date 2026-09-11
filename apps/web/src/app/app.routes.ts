@@ -52,6 +52,14 @@ export const routes: Routes = [
         title: 'Invitation · HomeBase',
       },
       {
+        path: 'activity',
+        loadComponent: () =>
+          import('./features/activity/activity-page.component').then(
+            (m) => m.ActivityPageComponent,
+          ),
+        title: 'Activity · HomeBase',
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./features/profile/profile.component').then((m) => m.ProfileComponent),

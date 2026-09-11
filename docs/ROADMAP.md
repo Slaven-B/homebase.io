@@ -8,8 +8,8 @@ migrations must apply cleanly, authorization must be verified, and the work is c
 | 1     | Foundation: monorepo, Docker, Prisma, NestJS, Angular, CI    | ✅ done |
 | 2     | Authentication: register, login, refresh, logout, guards     | ✅ done |
 | 3     | Households: creation, members, invitations, roles            | ✅ done |
-| 4     | Dashboard                                                    | ⏳ next |
-| 5     | Shopping lists                                               |         |
+| 4     | Dashboard (+ activity feed infrastructure)                   | ✅ done |
+| 5     | Shopping lists                                               | ⏳ next |
 | 6     | Tasks + chores, activity logging                             |         |
 | 7     | Expenses, splits, balances                                   |         |
 | 8     | Bills                                                        |         |

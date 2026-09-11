@@ -5,6 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { HouseholdRole } from '@prisma/client';
+import { ActivityService } from '../activity/activity.service';
+import { ActivityAction, ActivityEntity } from '../activity/activity.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateHouseholdDto } from './dto/create-household.dto';
 import { UpdateHouseholdDto } from './dto/update-household.dto';
@@ -41,6 +43,7 @@ export class HouseholdsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly access: HouseholdAccessService,
+    private readonly activity: ActivityService,
   ) {}
 
   async listForUser(userId: string): Promise<HouseholdSummary[]> {
@@ -68,6 +71,17 @@ export class HouseholdsService {
       await tx.householdMember.create({
         data: { householdId: created.id, userId, role: HouseholdRole.OWNER },
       });
+      await this.activity.log(
+        {
+          householdId: created.id,
+          userId,
+          action: ActivityAction.HouseholdCreated,
+          entityType: ActivityEntity.Household,
+          entityId: created.id,
+          metadata: { name: created.name },
+        },
+        tx,
+      );
       return created;
     });
     return this.getDetail(userId, household.id);
@@ -99,7 +113,21 @@ export class HouseholdsService {
     dto: UpdateHouseholdDto,
   ): Promise<HouseholdDetail> {
     await this.access.requireAdmin(userId, householdId);
+    const before = await this.prisma.household.findUnique({
+      where: { id: householdId },
+      select: { name: true },
+    });
     await this.prisma.household.update({ where: { id: householdId }, data: { name: dto.name } });
+    if (before && before.name !== dto.name) {
+      await this.activity.log({
+        householdId,
+        userId,
+        action: ActivityAction.HouseholdRenamed,
+        entityType: ActivityEntity.Household,
+        entityId: householdId,
+        metadata: { from: before.name, to: dto.name },
+      });
+    }
     return this.getDetail(userId, householdId);
   }
 
@@ -138,6 +166,14 @@ export class HouseholdsService {
       data: { role },
       include: memberInclude,
     });
+    await this.activity.log({
+      householdId,
+      userId,
+      action: ActivityAction.MemberRoleChanged,
+      entityType: ActivityEntity.Member,
+      entityId: updated.id,
+      metadata: { memberName: updated.user.displayName, from: target.role, to: role },
+    });
     return toMemberView(updated);
   }
 
@@ -159,7 +195,18 @@ export class HouseholdsService {
       throw new ForbiddenException('Admins can only remove regular members');
     }
 
-    await this.prisma.householdMember.delete({ where: { id: target.id } });
+    const removed = await this.prisma.householdMember.delete({
+      where: { id: target.id },
+      include: memberInclude,
+    });
+    await this.activity.log({
+      householdId,
+      userId,
+      action: ActivityAction.MemberRemoved,
+      entityType: ActivityEntity.Member,
+      entityId: removed.id,
+      metadata: { memberName: removed.user.displayName },
+    });
   }
 
   /** Any member except the owner. Owners must delete the household instead. */
@@ -168,7 +215,18 @@ export class HouseholdsService {
     if (membership.role === HouseholdRole.OWNER) {
       throw new BadRequestException('Owners cannot leave their household. Delete it instead.');
     }
-    await this.prisma.householdMember.delete({ where: { id: membership.id } });
+    const left = await this.prisma.householdMember.delete({
+      where: { id: membership.id },
+      include: memberInclude,
+    });
+    await this.activity.log({
+      householdId,
+      userId,
+      action: ActivityAction.MemberLeft,
+      entityType: ActivityEntity.Member,
+      entityId: left.id,
+      metadata: { memberName: left.user.displayName },
+    });
   }
 
   private async findMemberInHousehold(householdId: string, memberId: string) {
