@@ -52,6 +52,22 @@ export const routes: Routes = [
         title: 'Invitation · HomeBase',
       },
       {
+        path: 'shopping',
+        loadComponent: () =>
+          import('./features/shopping/shopping-lists/shopping-lists.component').then(
+            (m) => m.ShoppingListsComponent,
+          ),
+        title: 'Shopping · HomeBase',
+      },
+      {
+        path: 'shopping/:listId',
+        loadComponent: () =>
+          import('./features/shopping/shopping-list-detail/shopping-list-detail.component').then(
+            (m) => m.ShoppingListDetailComponent,
+          ),
+        title: 'Shopping list · HomeBase',
+      },
+      {
         path: 'activity',
         loadComponent: () =>
           import('./features/activity/activity-page.component').then(

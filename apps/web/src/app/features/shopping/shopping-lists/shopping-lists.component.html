@@ -1,0 +1,82 @@
+<div class="page-header">
+  <h1>Shopping</h1>
+</div>
+
+@if (!current()) {
+  <mat-card appearance="outlined" class="card card--empty">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">holiday_village</mat-icon>
+      <h2>No household yet</h2>
+      <p>Shopping lists belong to a household. Create or join one first.</p>
+      <a mat-flat-button color="primary" routerLink="/households">Households</a>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <form class="create" (ngSubmit)="create()" novalidate>
+    <mat-form-field appearance="outline" class="create__field" subscriptSizing="dynamic">
+      <mat-label>New list</mat-label>
+      <input
+        matInput
+        [formControl]="nameControl"
+        placeholder="e.g. Groceries, IKEA, Weekend BBQ"
+        autocomplete="off"
+        maxlength="80"
+      />
+    </mat-form-field>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="creating() || nameControl.invalid"
+    >
+      <mat-icon>add</mat-icon>
+      Create
+    </button>
+  </form>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @if (lists(); as list) {
+    @if (list.length === 0) {
+      <mat-card appearance="outlined" class="card card--empty">
+        <mat-card-content>
+          <mat-icon aria-hidden="true">shopping_basket</mat-icon>
+          <h2>Nothing here yet</h2>
+          <p>Create your first list above. "Groceries" is a good start.</p>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <div class="grid">
+        @for (l of list; track l.id) {
+          <a class="list-card" [routerLink]="['/shopping', l.id]">
+            <mat-card appearance="outlined" class="card">
+              <mat-card-content class="list-card__body">
+                <mat-icon class="list-card__icon" aria-hidden="true">
+                  {{ l.openItems === 0 ? 'check_circle' : 'shopping_cart' }}
+                </mat-icon>
+                <div class="list-card__text">
+                  <strong>{{ l.name }}</strong>
+                  <span>
+                    @if (l.openItems === 0) {
+                      All done
+                    } @else {
+                      {{ l.openItems }} {{ l.openItems === 1 ? 'item' : 'items' }} to buy
+                    }
+                    @if (l.totalItems > l.openItems) {
+                      · {{ l.totalItems - l.openItems }} done
+                    }
+                  </span>
+                </div>
+                <mat-icon aria-hidden="true">chevron_right</mat-icon>
+              </mat-card-content>
+            </mat-card>
+          </a>
+        }
+      </div>
+    }
+  } @else if (!error()) {
+    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  }
+}

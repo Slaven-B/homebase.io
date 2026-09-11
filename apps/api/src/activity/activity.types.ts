@@ -10,6 +10,9 @@ export const ActivityAction = {
   MemberRemoved: 'member.removed',
   MemberRoleChanged: 'member.role_changed',
   InvitationSent: 'invitation.sent',
+  ShoppingListCreated: 'shopping.list_created',
+  ShoppingItemAdded: 'shopping.item_added',
+  ShoppingItemCompleted: 'shopping.item_completed',
 } as const;
 
 export type ActivityActionType = (typeof ActivityAction)[keyof typeof ActivityAction];
@@ -18,6 +21,8 @@ export const ActivityEntity = {
   Household: 'household',
   Member: 'member',
   Invitation: 'invitation',
+  ShoppingList: 'shopping_list',
+  ShoppingItem: 'shopping_item',
 } as const;
 
 export type ActivityEntityType = (typeof ActivityEntity)[keyof typeof ActivityEntity];

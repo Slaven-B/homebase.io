@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { HouseholdService } from '../../../core/households/household.service';
 import { PendingInvitation, ROLE_LABELS } from '../../../core/households/household.models';
 
@@ -16,7 +16,6 @@ import { PendingInvitation, ROLE_LABELS } from '../../../core/households/househo
   selector: 'app-household-list',
   imports: [
     ReactiveFormsModule,
-    RouterLink,
     MatCardModule,
     MatListModule,
     MatButtonModule,

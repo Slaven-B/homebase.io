@@ -38,6 +38,7 @@
     >
       Dashboard
     </a>
+    <a mat-button routerLink="/shopping" routerLinkActive="shell__nav-active">Shopping</a>
     <a mat-button routerLink="/households" routerLinkActive="shell__nav-active">Households</a>
     <a mat-button routerLink="/activity" routerLinkActive="shell__nav-active">Activity</a>
   </nav>
@@ -55,10 +56,6 @@
         <mat-icon>person</mat-icon>
         <span>Profile</span>
       </a>
-      <a mat-menu-item routerLink="/households" class="shell__mobile-only">
-        <mat-icon>home_work</mat-icon>
-        <span>Households</span>
-      </a>
       <button mat-menu-item type="button" (click)="logout()">
         <mat-icon>logout</mat-icon>
         <span>Sign out</span>
@@ -70,3 +67,26 @@
 <main class="shell__content">
   <router-outlet />
 </main>
+
+<nav class="shell__bottom-nav" aria-label="Main (mobile)">
+  <a
+    routerLink="/"
+    routerLinkActive="shell__bottom-active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <mat-icon aria-hidden="true">dashboard</mat-icon>
+    <span>Home</span>
+  </a>
+  <a routerLink="/shopping" routerLinkActive="shell__bottom-active">
+    <mat-icon aria-hidden="true">shopping_cart</mat-icon>
+    <span>Shopping</span>
+  </a>
+  <a routerLink="/activity" routerLinkActive="shell__bottom-active">
+    <mat-icon aria-hidden="true">history</mat-icon>
+    <span>Activity</span>
+  </a>
+  <a routerLink="/households" routerLinkActive="shell__bottom-active">
+    <mat-icon aria-hidden="true">home_work</mat-icon>
+    <span>Household</span>
+  </a>
+</nav>

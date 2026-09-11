@@ -33,8 +33,23 @@ describe('describeActivity', () => {
     );
   });
 
+  it('renders shopping actions', () => {
+    expect(describeActivity(entry('shopping.list_created', { name: 'Groceries' })).text).toBe(
+      'created the list "Groceries"',
+    );
+    expect(
+      describeActivity(entry('shopping.item_added', { itemName: 'Milk', listName: 'Groceries' }))
+        .text,
+    ).toBe('added Milk to Groceries');
+    expect(
+      describeActivity(
+        entry('shopping.item_completed', { itemName: 'Milk', listName: 'Groceries' }),
+      ).text,
+    ).toBe('bought Milk (Groceries)');
+  });
+
   it('falls back gracefully for unknown actions and missing metadata', () => {
-    expect(describeActivity(entry('shopping.item_added')).text).toBe('shopping item added');
+    expect(describeActivity(entry('chores.completed')).text).toBe('chores completed');
     expect(describeActivity(entry('member.removed')).text).toBe('removed a member');
   });
 });

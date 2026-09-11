@@ -5,8 +5,8 @@ members, shared expenses, bills, chores, shopping lists, tasks, notes and househ
 
 **Stack:** Angular 19 · NestJS 11 · PostgreSQL 16 · Prisma 6 · Docker Compose
 
-> Status: **Phase 4 — Dashboard done.** Accounts, households, invitations, a household activity
-> feed and the dashboard shell work end to end. Shopping lists are next.
+> Status: **Phase 5 — Shopping lists done.** Accounts, households, invitations, activity feed,
+> dashboard and shared shopping lists work end to end. Tasks and chores are next.
 > See [docs/ROADMAP.md](docs/ROADMAP.md) for the phased plan.
 
 ## Repository layout

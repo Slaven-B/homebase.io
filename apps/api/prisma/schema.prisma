@@ -29,10 +29,13 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  memberships     HouseholdMember[]
-  sentInvitations HouseholdInvitation[] @relation("InvitationInviter")
-  refreshTokens   RefreshToken[]
-  activities      Activity[]
+  memberships            HouseholdMember[]
+  sentInvitations        HouseholdInvitation[] @relation("InvitationInviter")
+  refreshTokens          RefreshToken[]
+  activities             Activity[]
+  createdShoppingLists   ShoppingList[]        @relation("ShoppingListCreator")
+  addedShoppingItems     ShoppingListItem[]    @relation("ShoppingItemAdder")
+  completedShoppingItems ShoppingListItem[]    @relation("ShoppingItemCompleter")
 
   @@map("users")
 }
@@ -53,9 +56,10 @@ model Household {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  members     HouseholdMember[]
-  activities  Activity[]
-  invitations HouseholdInvitation[]
+  members       HouseholdMember[]
+  activities    Activity[]
+  shoppingLists ShoppingList[]
+  invitations   HouseholdInvitation[]
 
   @@map("households")
 }
@@ -150,4 +154,48 @@ model Activity {
 
   @@index([householdId, createdAt(sort: Desc)])
   @@map("activities")
+}
+
+// ---------------------------------------------------------------------------
+// Shopping lists
+// ---------------------------------------------------------------------------
+
+model ShoppingList {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @map("household_id") @db.Uuid
+  createdById String?  @map("created_by_id") @db.Uuid
+  name        String
+  isArchived  Boolean  @default(false) @map("is_archived")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  household Household          @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  createdBy User?              @relation("ShoppingListCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  items     ShoppingListItem[]
+
+  @@index([householdId, isArchived])
+  @@map("shopping_lists")
+}
+
+model ShoppingListItem {
+  id            String    @id @default(uuid()) @db.Uuid
+  listId        String    @map("list_id") @db.Uuid
+  addedById     String?   @map("added_by_id") @db.Uuid
+  completedById String?   @map("completed_by_id") @db.Uuid
+  name          String
+  /// Free text so "2", "500 g" and "1 pack" all work.
+  quantity      String?
+  category      String?
+  notes         String?
+  completed     Boolean   @default(false)
+  completedAt   DateTime? @map("completed_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  list        ShoppingList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  addedBy     User?        @relation("ShoppingItemAdder", fields: [addedById], references: [id], onDelete: SetNull)
+  completedBy User?        @relation("ShoppingItemCompleter", fields: [completedById], references: [id], onDelete: SetNull)
+
+  @@index([listId, completed])
+  @@map("shopping_list_items")
 }

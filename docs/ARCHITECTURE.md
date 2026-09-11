@@ -53,8 +53,9 @@ Current modules:
 | `invitations` | Email-bound invitations: create/revoke (admins), list/accept/decline (invitee)               |
 | `activity`    | Append-only household activity log (`ActivityService.log`, cursor-paged list); global module |
 | `dashboard`   | `GET /api/households/:id/dashboard` — one round trip for the home screen                     |
+| `shopping`    | Shopping lists and items under `/households/:id/shopping-lists`; feeds the dashboard         |
 
-Planned modules follow the spec: `shopping`, `tasks`, `chores`, `expenses`, `bills`, `notes`,
+Planned modules follow the spec: `tasks`, `chores`, `expenses`, `bills`, `notes`,
 `notifications`.
 
 ### Cross-cutting defaults (set in `main.ts`)
@@ -146,6 +147,16 @@ stores facts, not sentences; the frontend maps actions to text in `activity-text
 can change without touching data. Logging accepts a transaction client so the entry commits with
 the change it describes, and it never throws — a failed log line must not fail the user's action.
 `GET /households/:id/activity?limit&cursor` pages newest-first by `(createdAt, id)`.
+
+## Shopping lists
+
+Lists and items are always addressed through the household (`/households/:id/shopping-lists/:listId`).
+The service first checks membership, then loads the list **with the household id in the
+where clause**, so a list id from another household is simply "not found". Any member can
+create lists and add, edit, complete or remove items; deleting a whole list is limited to admins
+and the list creator. Completing an item records who and when; reopening clears both.
+`clear-completed` bulk-deletes bought items. Item quantity is free text ("2", "500 g"). Writes go
+through one service, which is where a WebSocket broadcast will hook in later.
 
 ## Dashboard
 

@@ -11,6 +11,7 @@ import { HealthModule } from './health/health.module';
 import { HouseholdsModule } from './households/households.module';
 import { InvitationsModule } from './invitations/invitations.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ShoppingModule } from './shopping/shopping.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module';
     HouseholdsModule,
     InvitationsModule,
     ActivityModule,
+    ShoppingModule,
     DashboardModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

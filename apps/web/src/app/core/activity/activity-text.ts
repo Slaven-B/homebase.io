@@ -40,6 +40,18 @@ export function describeActivity(entry: ActivityEntry): ActivityText {
       };
     case 'invitation.sent':
       return { icon: 'mail', text: `invited ${str(m['email'], 'someone')}` };
+    case 'shopping.list_created':
+      return { icon: 'playlist_add', text: `created the list "${str(m['name'], 'Untitled')}"` };
+    case 'shopping.item_added':
+      return {
+        icon: 'add_shopping_cart',
+        text: `added ${str(m['itemName'], 'an item')} to ${str(m['listName'], 'a list')}`,
+      };
+    case 'shopping.item_completed':
+      return {
+        icon: 'shopping_cart_checkout',
+        text: `bought ${str(m['itemName'], 'an item')} (${str(m['listName'], 'list')})`,
+      };
     default:
       return { icon: 'info', text: entry.action.replace(/[._]/g, ' ') };
   }

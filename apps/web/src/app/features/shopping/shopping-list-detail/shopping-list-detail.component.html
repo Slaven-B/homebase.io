@@ -1,0 +1,205 @@
+@if (notFound()) {
+  <mat-card appearance="outlined" class="card">
+    <mat-card-content class="empty">
+      <mat-icon aria-hidden="true">search_off</mat-icon>
+      <h2>List not found</h2>
+      <p>It may have been deleted or belongs to another household.</p>
+      <a mat-flat-button color="primary" routerLink="/shopping">Back to shopping</a>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  @if (list(); as l) {
+    <div class="page-header">
+      <a mat-icon-button routerLink="/shopping" aria-label="Back to shopping lists">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      @if (editingName()) {
+        <form class="name-form" (ngSubmit)="saveName()" novalidate>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input matInput [formControl]="nameControl" aria-label="List name" maxlength="80" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" type="submit" [disabled]="nameControl.invalid">
+            Save
+          </button>
+          <button mat-button type="button" (click)="editingName.set(false)">Cancel</button>
+        </form>
+      } @else {
+        <h1>{{ l.name }}</h1>
+        <button
+          mat-icon-button
+          type="button"
+          [matMenuTriggerFor]="listMenu"
+          aria-label="List actions"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #listMenu="matMenu" xPosition="before">
+          <button mat-menu-item type="button" (click)="editingName.set(true)">
+            <mat-icon>edit</mat-icon>
+            <span>Rename</span>
+          </button>
+          <button
+            mat-menu-item
+            type="button"
+            (click)="clearCompleted()"
+            [disabled]="doneItems().length === 0"
+          >
+            <mat-icon>cleaning_services</mat-icon>
+            <span>Clear completed</span>
+          </button>
+          <button mat-menu-item type="button" (click)="archive()">
+            <mat-icon>archive</mat-icon>
+            <span>Archive list</span>
+          </button>
+          @if (canDelete()) {
+            <button mat-menu-item type="button" (click)="deleteList()">
+              <mat-icon color="warn">delete</mat-icon>
+              <span>Delete list</span>
+            </button>
+          }
+        </mat-menu>
+      }
+    </div>
+
+    <form class="quick-add" (ngSubmit)="add()" novalidate>
+      <mat-form-field appearance="outline" class="quick-add__field" subscriptSizing="dynamic">
+        <mat-icon matPrefix aria-hidden="true">add</mat-icon>
+        <input
+          #quickAddInput
+          matInput
+          [formControl]="quickAdd"
+          placeholder="Add an item… e.g. Milk, 2x Eggs"
+          autocomplete="off"
+          enterkeyhint="done"
+          maxlength="120"
+        />
+      </mat-form-field>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="adding() || quickAdd.invalid"
+        aria-label="Add item"
+      >
+        Add
+      </button>
+    </form>
+
+    <mat-card appearance="outlined" class="card">
+      @if (l.items.length === 0) {
+        <div class="empty">
+          <mat-icon aria-hidden="true">shopping_basket</mat-icon>
+          <p>Nothing on this list yet. Add the first item above.</p>
+        </div>
+      } @else {
+        <h2 class="section-title">
+          <span>To buy · {{ openItems().length }}</span>
+        </h2>
+        @if (openItems().length === 0) {
+          <div class="empty">
+            <mat-icon aria-hidden="true">check_circle</mat-icon>
+            <p>All done! 🎉</p>
+          </div>
+        }
+        @for (item of openItems(); track item.id) {
+          <div class="item">
+            <mat-checkbox
+              [checked]="false"
+              (change)="toggle(item, true)"
+              [aria-label]="'Mark ' + item.name + ' as bought'"
+            />
+            <div
+              class="item__label"
+              (click)="toggle(item, true)"
+              (keydown.enter)="toggle(item, true)"
+              tabindex="0"
+              role="button"
+            >
+              <span class="item__name">{{ item.name }}</span>
+              <span class="item__meta">
+                @if (item.quantity) {
+                  <span>{{ item.quantity }}</span>
+                }
+                @if (item.category) {
+                  <span>· {{ item.category }}</span>
+                }
+                @if (item.notes) {
+                  <span>· {{ item.notes }}</span>
+                }
+                @if (item.addedBy) {
+                  <span>· added by {{ item.addedBy.displayName }}</span>
+                }
+              </span>
+            </div>
+            <button
+              mat-icon-button
+              type="button"
+              [matMenuTriggerFor]="itemMenu"
+              [matMenuTriggerData]="{ item: item }"
+              aria-label="Item actions"
+            >
+              <mat-icon>more_horiz</mat-icon>
+            </button>
+          </div>
+        }
+
+        @if (doneItems().length > 0) {
+          <h2 class="section-title">
+            <span>Done · {{ doneItems().length }}</span>
+            <button mat-button type="button" (click)="clearCompleted()">Clear</button>
+          </h2>
+          @for (item of doneItems(); track item.id) {
+            <div class="item item--done">
+              <mat-checkbox
+                [checked]="true"
+                (change)="toggle(item, false)"
+                [aria-label]="'Mark ' + item.name + ' as not bought'"
+              />
+              <div
+                class="item__label"
+                (click)="toggle(item, false)"
+                (keydown.enter)="toggle(item, false)"
+                tabindex="0"
+                role="button"
+              >
+                <span class="item__name">{{ item.name }}</span>
+                <span class="item__meta">
+                  @if (item.quantity) {
+                    <span>{{ item.quantity }}</span>
+                  }
+                  @if (item.completedBy) {
+                    <span>· by {{ item.completedBy.displayName }}</span>
+                  }
+                </span>
+              </div>
+              <button
+                mat-icon-button
+                type="button"
+                [matMenuTriggerFor]="itemMenu"
+                [matMenuTriggerData]="{ item: item }"
+                aria-label="Item actions"
+              >
+                <mat-icon>more_horiz</mat-icon>
+              </button>
+            </div>
+          }
+        }
+      }
+    </mat-card>
+
+    <mat-menu #itemMenu="matMenu">
+      <ng-template matMenuContent let-item="item">
+        <button mat-menu-item type="button" (click)="edit(item)">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        <button mat-menu-item type="button" (click)="remove(item)">
+          <mat-icon color="warn">delete</mat-icon>
+          <span>Remove</span>
+        </button>
+      </ng-template>
+    </mat-menu>
+  } @else {
+    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  }
+}

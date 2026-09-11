@@ -3,6 +3,7 @@ import { InvitationStatus } from '@prisma/client';
 import { ActivityService } from '../activity/activity.service';
 import { ADMIN_ROLES, HouseholdAccessService } from '../households/household-access.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { ShoppingService } from '../shopping/shopping.service';
 import { DashboardView } from './dashboard.types';
 
 const RECENT_ACTIVITY_LIMIT = 10;
@@ -14,6 +15,7 @@ export class DashboardService {
     private readonly prisma: PrismaService,
     private readonly access: HouseholdAccessService,
     private readonly activity: ActivityService,
+    private readonly shopping: ShoppingService,
   ) {}
 
   async get(userId: string, householdId: string): Promise<DashboardView> {
@@ -21,7 +23,7 @@ export class DashboardService {
     const isAdmin = ADMIN_ROLES.includes(membership.role);
     const now = new Date();
 
-    const [household, pendingInvitations, recentActivity] = await Promise.all([
+    const [household, pendingInvitations, recentActivity, shopping] = await Promise.all([
       this.prisma.household.findUnique({
         where: { id: householdId },
         select: { id: true, name: true, _count: { select: { members: true } } },
@@ -32,6 +34,7 @@ export class DashboardService {
           })
         : Promise.resolve(null),
       this.activity.listUnchecked(householdId, { limit: RECENT_ACTIVITY_LIMIT }),
+      this.shopping.openSummaryUnchecked(householdId),
     ]);
 
     if (!household) {
@@ -51,7 +54,7 @@ export class DashboardService {
         choresDue: [],
         tasksDue: [],
         upcomingBills: [],
-        shopping: { openItems: 0, lists: [] },
+        shopping,
       },
       finances: {
         month: now.toISOString().slice(0, 7),
