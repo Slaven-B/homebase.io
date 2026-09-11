@@ -28,6 +28,30 @@ export const routes: Routes = [
         title: 'Dashboard · HomeBase',
       },
       {
+        path: 'households',
+        loadComponent: () =>
+          import('./features/household/household-list/household-list.component').then(
+            (m) => m.HouseholdListComponent,
+          ),
+        title: 'Households · HomeBase',
+      },
+      {
+        path: 'households/:id',
+        loadComponent: () =>
+          import('./features/household/household-detail/household-detail.component').then(
+            (m) => m.HouseholdDetailComponent,
+          ),
+        title: 'Household · HomeBase',
+      },
+      {
+        path: 'invite/:token',
+        loadComponent: () =>
+          import('./features/household/invitation-accept/invitation-accept.component').then(
+            (m) => m.InvitationAcceptComponent,
+          ),
+        title: 'Invitation · HomeBase',
+      },
+      {
         path: 'profile',
         loadComponent: () =>
           import('./features/profile/profile.component').then((m) => m.ProfileComponent),

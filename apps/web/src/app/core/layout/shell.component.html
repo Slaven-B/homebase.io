@@ -4,14 +4,41 @@
     <span>HomeBase</span>
   </a>
 
+  @if (currentHousehold(); as h) {
+    <button
+      mat-button
+      type="button"
+      class="shell__household"
+      [matMenuTriggerFor]="householdMenu"
+      aria-label="Switch household"
+    >
+      <span class="shell__household-name">{{ h.name }}</span>
+      <mat-icon aria-hidden="true">expand_more</mat-icon>
+    </button>
+    <mat-menu #householdMenu="matMenu">
+      @for (item of households(); track item.id) {
+        <button mat-menu-item type="button" (click)="switchHousehold(item.id)">
+          <mat-icon>{{ item.id === h.id ? 'check' : 'home' }}</mat-icon>
+          <span>{{ item.name }}</span>
+        </button>
+      }
+      <a mat-menu-item routerLink="/households">
+        <mat-icon>settings</mat-icon>
+        <span>Manage households</span>
+      </a>
+    </mat-menu>
+  }
+
   <nav class="shell__nav" aria-label="Main">
     <a
       mat-button
       routerLink="/"
       routerLinkActive="shell__nav-active"
       [routerLinkActiveOptions]="{ exact: true }"
-      >Dashboard</a
     >
+      Dashboard
+    </a>
+    <a mat-button routerLink="/households" routerLinkActive="shell__nav-active">Households</a>
   </nav>
 
   <span class="shell__spacer"></span>
@@ -26,6 +53,10 @@
       <a mat-menu-item routerLink="/profile">
         <mat-icon>person</mat-icon>
         <span>Profile</span>
+      </a>
+      <a mat-menu-item routerLink="/households" class="shell__mobile-only">
+        <mat-icon>home_work</mat-icon>
+        <span>Households</span>
       </a>
       <button mat-menu-item type="button" (click)="logout()">
         <mat-icon>logout</mat-icon>

@@ -41,16 +41,18 @@ dto/        → request/response shapes with class-validator decorators
 
 Current modules:
 
-| Module   | Purpose                                                        |
-| -------- | -------------------------------------------------------------- |
-| `config` | Validated, typed environment access (`AppConfigService`)       |
-| `prisma` | Global `PrismaService` (connection lifecycle, health `ping()`) |
-| `health` | `GET /api/health` — 200 when DB reachable, 503 otherwise       |
-| `auth`   | Register, login, refresh, logout; global `JwtAuthGuard`        |
-| `users`  | `GET`/`PATCH /api/users/me` profile endpoints                  |
-| `common` | `@Public()`, `@CurrentUser()` decorators, shared request types |
+| Module        | Purpose                                                                        |
+| ------------- | ------------------------------------------------------------------------------ |
+| `config`      | Validated, typed environment access (`AppConfigService`)                       |
+| `prisma`      | Global `PrismaService` (connection lifecycle, health `ping()`)                 |
+| `health`      | `GET /api/health` — 200 when DB reachable, 503 otherwise                       |
+| `auth`        | Register, login, refresh, logout; global `JwtAuthGuard`                        |
+| `users`       | `GET`/`PATCH /api/users/me` profile endpoints                                  |
+| `common`      | `@Public()`, `@CurrentUser()` decorators, shared request types                 |
+| `households`  | Households, members, roles; exports `HouseholdAccessService`                   |
+| `invitations` | Email-bound invitations: create/revoke (admins), list/accept/decline (invitee) |
 
-Planned modules follow the spec: `households`, `invitations`, `expenses`,
+Planned modules follow the spec: `expenses`,
 `bills`, `chores`, `tasks`, `shopping`, `notes`, `notifications`, `activity`.
 
 ### Cross-cutting defaults (set in `main.ts`)
@@ -115,6 +117,24 @@ error and reports `degraded` so the failure is visible in the UI and to orchestr
 - Notifications: a `Notification` model + `NotificationsService` will be the single choke point;
   channels (in-app, email, push) become adapters.
 - Deployment: both apps have Dockerfiles; the compose `app` profile mirrors a single-host deploy.
+
+## Household authorization
+
+Every household-scoped operation starts with `HouseholdAccessService`:
+
+| Method          | Meaning                       | Failure              |
+| --------------- | ----------------------------- | -------------------- |
+| `requireMember` | user belongs to the household | 404 (no enumeration) |
+| `requireAdmin`  | role is OWNER or ADMIN        | 403                  |
+| `requireOwner`  | role is OWNER                 | 403                  |
+
+Role rules: OWNER manages roles (ADMIN/MEMBER only; ownership is not transferable yet), can
+remove anyone but themselves and must delete the household instead of leaving. ADMIN can rename,
+invite/revoke and remove regular members. MEMBER can view and leave.
+
+Invitations are bound to an email address: only the account with that email can preview,
+accept or decline (403 otherwise). Tokens are single-use and expire after 7 days. Accepting
+creates the membership and marks the invitation accepted in one transaction.
 
 ## Authentication
 

@@ -1,0 +1,46 @@
+<h1 class="dashboard__title">Hi {{ user()?.displayName }} 👋</h1>
+
+@if (households() === null) {
+  <div class="dashboard__loading"><mat-spinner diameter="32"></mat-spinner></div>
+} @else {
+  @if (current(); as h) {
+    <mat-card appearance="outlined" class="dashboard__card">
+      <mat-card-content class="dashboard__household">
+        <mat-icon class="dashboard__icon" aria-hidden="true">home</mat-icon>
+        <div class="dashboard__text">
+          <h2>{{ h.name }}</h2>
+          <p>
+            You are {{ roleLabels[h.role] }} · {{ h.memberCount }}
+            {{ h.memberCount === 1 ? 'member' : 'members' }}
+          </p>
+        </div>
+        <a mat-stroked-button [routerLink]="['/households', h.id]">Members & invites</a>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="dashboard__card dashboard__empty">
+      <mat-card-content>
+        <mat-icon class="dashboard__icon" aria-hidden="true">checklist</mat-icon>
+        <h2>Nothing to show yet</h2>
+        <p>
+          Shopping lists, chores, tasks and expenses arrive in the next phases and will show up here
+          as "what's going on in your household right now".
+        </p>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <mat-card appearance="outlined" class="dashboard__card dashboard__empty">
+      <mat-card-content>
+        <mat-icon class="dashboard__icon" aria-hidden="true">holiday_village</mat-icon>
+        <h2>No household yet</h2>
+        <p>
+          Create a household for the people you live with, or accept an invitation someone sent you.
+        </p>
+        <a mat-flat-button color="primary" routerLink="/households">
+          <mat-icon>add</mat-icon>
+          Create or join a household
+        </a>
+      </mat-card-content>
+    </mat-card>
+  }
+}

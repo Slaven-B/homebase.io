@@ -45,3 +45,20 @@
   margin: 0 auto;
   padding: 1.5rem 1rem;
 }
+
+.shell__household {
+  margin-left: 0.25rem;
+  max-width: 220px;
+}
+
+.shell__household-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shell__mobile-only {
+  @media (min-width: 720px) {
+    display: none;
+  }
+}

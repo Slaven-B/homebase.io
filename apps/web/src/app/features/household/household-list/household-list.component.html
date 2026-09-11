@@ -1,0 +1,109 @@
+<div class="page-header">
+  <h1>Your households</h1>
+  @if (list()?.length) {
+    <button mat-flat-button color="primary" type="button" (click)="showCreate.set(!showCreate())">
+      <mat-icon>add</mat-icon>
+      New household
+    </button>
+  }
+</div>
+
+@if (error(); as message) {
+  <p class="error" role="alert">{{ message }}</p>
+}
+
+@if (invitations()?.length) {
+  <section class="section">
+    <h2 class="section__title">Invitations for you</h2>
+    <div class="invitation-list">
+      @for (inv of invitations() ?? []; track inv.id) {
+        <mat-card appearance="outlined" class="invitation">
+          <mat-card-content class="invitation__body">
+            <mat-icon class="invitation__icon" aria-hidden="true">mail</mat-icon>
+            <div class="invitation__text">
+              <strong>{{ inv.household.name }}</strong>
+              <span>
+                {{ inv.invitedBy.displayName }} invited you as {{ roleLabels[inv.role] }} ·
+                {{ inv.household.memberCount }}
+                {{ inv.household.memberCount === 1 ? 'member' : 'members' }}
+              </span>
+            </div>
+            <div class="invitation__actions">
+              <button mat-button type="button" (click)="decline(inv)">Decline</button>
+              <button mat-flat-button color="primary" type="button" (click)="accept(inv)">
+                Accept
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </section>
+}
+
+@if (showCreate()) {
+  <mat-card appearance="outlined" class="create-card">
+    <form [formGroup]="form" (ngSubmit)="create()" novalidate>
+      <mat-card-content class="create-card__body">
+        <div>
+          <h2 class="create-card__title">
+            {{ list()?.length ? 'Create another household' : 'Create your first household' }}
+          </h2>
+          <p class="create-card__hint">
+            A household groups the people you live with. You can invite them next.
+          </p>
+        </div>
+        <mat-form-field appearance="outline" class="create-card__field">
+          <mat-label>Household name</mat-label>
+          <input matInput formControlName="name" placeholder="e.g. Sunny Street 12" required />
+          @if (form.controls.name.hasError('required')) {
+            <mat-error>Give your household a name.</mat-error>
+          } @else if (form.controls.name.hasError('maxlength')) {
+            <mat-error>Keep it under 80 characters.</mat-error>
+          }
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        @if (list()?.length) {
+          <button mat-button type="button" (click)="showCreate.set(false)">Cancel</button>
+        }
+        <button mat-flat-button color="primary" type="submit" [disabled]="creating()">
+          {{ creating() ? 'Creating…' : 'Create household' }}
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+}
+
+@if (list() === null) {
+  <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+} @else if (list()!.length > 0) {
+  <div class="household-grid">
+    @for (h of list() ?? []; track h.id) {
+      <mat-card
+        appearance="outlined"
+        class="household"
+        [class.household--current]="h.id === currentId()"
+        (click)="select(h.id)"
+        (keydown.enter)="select(h.id)"
+        tabindex="0"
+        role="button"
+      >
+        <mat-card-content class="household__body">
+          <mat-icon class="household__icon" aria-hidden="true">home</mat-icon>
+          <div class="household__text">
+            <strong>{{ h.name }}</strong>
+            <span>
+              {{ roleLabels[h.role] }} · {{ h.memberCount }}
+              {{ h.memberCount === 1 ? 'member' : 'members' }}
+            </span>
+          </div>
+          @if (h.id === currentId()) {
+            <span class="household__badge">Current</span>
+          }
+          <mat-icon aria-hidden="true">chevron_right</mat-icon>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+}

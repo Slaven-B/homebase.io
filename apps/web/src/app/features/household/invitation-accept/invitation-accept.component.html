@@ -1,0 +1,58 @@
+<div class="center">
+  <mat-card appearance="outlined" class="card">
+    <mat-card-content class="card__body">
+      @switch (state()) {
+        @case ('loading') {
+          <mat-spinner diameter="32"></mat-spinner>
+          <p>Checking your invitation…</p>
+        }
+        @case ('accepting') {
+          <mat-spinner diameter="32"></mat-spinner>
+          <p>Joining…</p>
+        }
+        @case ('ready') {
+          @if (invitation(); as inv) {
+            <mat-icon class="card__icon" aria-hidden="true">mail</mat-icon>
+            <h1>Join {{ inv.household.name }}?</h1>
+            <p>
+              {{ inv.invitedBy.displayName }} invited you to join as
+              <strong>{{ roleLabels[inv.role] }}</strong
+              >. The household currently has
+              {{ inv.household.memberCount }}
+              {{ inv.household.memberCount === 1 ? 'member' : 'members' }}.
+            </p>
+            <div class="card__actions">
+              <button mat-button type="button" (click)="decline()">Decline</button>
+              <button mat-flat-button color="primary" type="button" (click)="accept()">
+                Join household
+              </button>
+            </div>
+          }
+        }
+        @case ('declined') {
+          <mat-icon class="card__icon card__icon--muted" aria-hidden="true"
+            >do_not_disturb_on</mat-icon
+          >
+          <h1>Invitation declined</h1>
+          <p>No problem. You can always be invited again.</p>
+          <a mat-flat-button color="primary" routerLink="/">Go to dashboard</a>
+        }
+        @case ('wrong-account') {
+          <mat-icon class="card__icon card__icon--warn" aria-hidden="true">person_off</mat-icon>
+          <h1>This invitation is for a different account</h1>
+          <p>
+            {{ error() ?? 'It was sent to another email address.' }} Sign out and sign in with the
+            email address the invitation was sent to.
+          </p>
+          <a mat-stroked-button routerLink="/">Go to dashboard</a>
+        }
+        @case ('invalid') {
+          <mat-icon class="card__icon card__icon--muted" aria-hidden="true">link_off</mat-icon>
+          <h1>This invitation is no longer valid</h1>
+          <p>{{ error() ?? 'It may have expired, been revoked, or already been used.' }}</p>
+          <a mat-flat-button color="primary" routerLink="/households">Your households</a>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -6,6 +6,8 @@ import { AppConfigService } from './config/app-config.service';
 import { AppConfigModule } from './config/config.module';
 import { Environment } from './config/env.validation';
 import { HealthModule } from './health/health.module';
+import { HouseholdsModule } from './households/households.module';
+import { InvitationsModule } from './invitations/invitations.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 
@@ -25,6 +27,8 @@ import { UsersModule } from './users/users.module';
     HealthModule,
     UsersModule,
     AuthModule,
+    HouseholdsModule,
+    InvitationsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
