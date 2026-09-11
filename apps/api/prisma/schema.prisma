@@ -42,6 +42,12 @@ model User {
   createdChores          Chore[]               @relation("ChoreCreator")
   assignedChores         Chore[]               @relation("ChoreAssignee")
   choreCompletions       ChoreCompletion[]
+  createdExpenses        Expense[]             @relation("ExpenseCreator")
+  paidExpenses           Expense[]             @relation("ExpensePayer")
+  expenseSplits          ExpenseSplit[]
+  settlementsFrom        Settlement[]          @relation("SettlementFrom")
+  settlementsTo          Settlement[]          @relation("SettlementTo")
+  createdSettlements     Settlement[]          @relation("SettlementCreator")
 
   @@map("users")
 }
@@ -59,6 +65,8 @@ enum HouseholdRole {
 model Household {
   id        String   @id @default(uuid()) @db.Uuid
   name      String
+  /// ISO 4217 code used as the default for new expenses and for balances.
+  currency  String   @default("EUR")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -67,6 +75,8 @@ model Household {
   shoppingLists ShoppingList[]
   tasks         Task[]
   chores        Chore[]
+  expenses      Expense[]
+  settlements   Settlement[]
   invitations   HouseholdInvitation[]
 
   @@map("households")
@@ -316,4 +326,80 @@ model ChoreCompletion {
 
   @@index([choreId, completedAt(sort: Desc)])
   @@map("chore_completions")
+}
+
+// ---------------------------------------------------------------------------
+// Shared expenses & settlements
+// ---------------------------------------------------------------------------
+
+enum SplitMethod {
+  EQUAL
+  CUSTOM
+  PERCENTAGE
+}
+
+/// Amounts are integer cents (minor units) to keep arithmetic exact.
+model Expense {
+  id          String      @id @default(uuid()) @db.Uuid
+  householdId String      @map("household_id") @db.Uuid
+  createdById String?     @map("created_by_id") @db.Uuid
+  paidById    String?     @map("paid_by_id") @db.Uuid
+  description String
+  amountCents Int         @map("amount_cents")
+  currency    String
+  /// Date-only.
+  date        DateTime    @db.Date
+  category    String?
+  notes       String?
+  splitMethod SplitMethod @map("split_method")
+  receiptUrl  String?     @map("receipt_url")
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  household Household      @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  createdBy User?          @relation("ExpenseCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  paidBy    User?          @relation("ExpensePayer", fields: [paidById], references: [id], onDelete: SetNull)
+  splits    ExpenseSplit[]
+
+  @@index([householdId, date(sort: Desc)])
+  @@index([householdId, category])
+  @@map("expenses")
+}
+
+model ExpenseSplit {
+  id          String @id @default(uuid()) @db.Uuid
+  expenseId   String @map("expense_id") @db.Uuid
+  userId      String @map("user_id") @db.Uuid
+  amountCents Int    @map("amount_cents")
+  /// Informational, only set for PERCENTAGE splits.
+  percent     Float?
+
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([expenseId, userId])
+  @@index([userId])
+  @@map("expense_splits")
+}
+
+/// A payment between two members that reduces what one owes the other.
+model Settlement {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @map("household_id") @db.Uuid
+  createdById String?  @map("created_by_id") @db.Uuid
+  fromUserId  String   @map("from_user_id") @db.Uuid
+  toUserId    String   @map("to_user_id") @db.Uuid
+  amountCents Int      @map("amount_cents")
+  currency    String
+  date        DateTime @db.Date
+  note        String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  createdBy User?     @relation("SettlementCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  fromUser  User      @relation("SettlementFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser    User      @relation("SettlementTo", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, date(sort: Desc)])
+  @@map("settlements")
 }

@@ -26,9 +26,12 @@ export interface DashboardView {
   finances: {
     month: string; // YYYY-MM
     currency: string;
-    sharedExpenses: number;
-    bills: number;
-    outstanding: number;
+    /** Integer cents. */
+    sharedExpensesCents: number;
+    billsCents: number;
+    outstandingCents: number;
+    /** The requesting user net position in the household currency. */
+    myNetCents: number;
   };
   recentActivity: ActivityEntry[];
 }

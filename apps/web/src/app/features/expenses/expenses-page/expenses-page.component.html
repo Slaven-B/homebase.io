@@ -1,0 +1,147 @@
+<div class="page-header">
+  <h1>Expenses</h1>
+  @if (current()) {
+    <div class="page-header__actions">
+      <a mat-stroked-button routerLink="/expenses/balances">
+        <mat-icon>balance</mat-icon>
+        Balances
+      </a>
+      <button mat-flat-button color="primary" type="button" (click)="add()">
+        <mat-icon>add</mat-icon>
+        Add expense
+      </button>
+    </div>
+  }
+</div>
+
+@if (!current()) {
+  <mat-card appearance="outlined" class="card card--empty">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">holiday_village</mat-icon>
+      <h2>No household yet</h2>
+      <p>Expenses belong to a household. Create or join one first.</p>
+      <a mat-flat-button color="primary" routerLink="/households">Households</a>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  @if (balance(); as b) {
+    <mat-card appearance="outlined" class="card summary">
+      <mat-card-content class="summary__body">
+        <div class="summary__item">
+          <span class="summary__label">Your position</span>
+          <span
+            class="summary__value"
+            [class.summary__value--positive]="b.myNetCents > 0"
+            [class.summary__value--negative]="b.myNetCents < 0"
+          >
+            @if (b.myNetCents === 0) {
+              All settled
+            } @else if (b.myNetCents > 0) {
+              You are owed {{ b.myNetCents / 100 | currency: b.currency }}
+            } @else {
+              You owe {{ -b.myNetCents / 100 | currency: b.currency }}
+            }
+          </span>
+        </div>
+        <div class="summary__item">
+          <span class="summary__label">Outstanding in household</span>
+          <span class="summary__value">{{ b.outstandingCents / 100 | currency: b.currency }}</span>
+        </div>
+        <a mat-button routerLink="/expenses/balances">Who owes whom</a>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <div class="month-nav">
+    <button mat-icon-button type="button" (click)="prevMonth()" aria-label="Previous month">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <h2 class="month-nav__title">{{ monthTitle() }}</h2>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="nextMonth()"
+      [disabled]="isCurrentMonth()"
+      aria-label="Next month"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+    <span class="month-nav__spacer"></span>
+    @for (t of totals(); track t.currency) {
+      <span class="month-nav__total">{{ t.amountCents / 100 | currency: t.currency }}</span>
+    }
+  </div>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @if (expenses() === null) {
+    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  } @else if (expenses()!.length === 0) {
+    <mat-card appearance="outlined" class="card card--empty">
+      <mat-card-content>
+        <mat-icon aria-hidden="true">receipt_long</mat-icon>
+        <h2>No expenses in {{ monthTitle() }}</h2>
+        <p>Add your first household expense to start tracking shared spending.</p>
+        <button mat-flat-button color="primary" type="button" (click)="add()">
+          <mat-icon>add</mat-icon>
+          Add expense
+        </button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <mat-card appearance="outlined" class="card">
+      @for (e of expenses(); track e.id) {
+        <div class="expense">
+          <div class="expense__date">{{ dateLabel(e.date) }}</div>
+          <div class="expense__body">
+            <div class="expense__title">
+              <strong>{{ e.description }}</strong>
+              @if (e.category) {
+                <span class="chip">{{ e.category }}</span>
+              }
+            </div>
+            <div class="expense__meta">
+              {{ e.paidBy?.displayName ?? 'Someone' }} paid ·
+              {{ splitLabels[e.splitMethod].toLowerCase() }} between {{ e.splits.length }}
+              @if (e.myShareCents > 0) {
+                · your share {{ e.myShareCents / 100 | currency: e.currency }}
+              }
+            </div>
+          </div>
+          <div class="expense__amount">{{ e.amountCents / 100 | currency: e.currency }}</div>
+          @if (canModify(e)) {
+            <button
+              mat-icon-button
+              type="button"
+              [matMenuTriggerFor]="expenseMenu"
+              [matMenuTriggerData]="{ expense: e }"
+              aria-label="Expense actions"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          }
+        </div>
+      }
+      @if (nextCursor()) {
+        <mat-card-actions align="end">
+          <button mat-button type="button" (click)="loadMore()">Load more</button>
+        </mat-card-actions>
+      }
+    </mat-card>
+  }
+
+  <mat-menu #expenseMenu="matMenu">
+    <ng-template matMenuContent let-expense="expense">
+      <button mat-menu-item type="button" (click)="edit(expense)">
+        <mat-icon>edit</mat-icon>
+        <span>Edit</span>
+      </button>
+      <button mat-menu-item type="button" (click)="remove(expense)">
+        <mat-icon color="warn">delete</mat-icon>
+        <span>Delete</span>
+      </button>
+    </ng-template>
+  </mat-menu>
+}

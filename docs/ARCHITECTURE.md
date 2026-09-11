@@ -56,8 +56,9 @@ Current modules:
 | `shopping`    | Shopping lists and items under `/households/:id/shopping-lists`; feeds the dashboard         |
 | `tasks`       | One-off tasks with status, priority, date-only due date, assignee, comments                  |
 | `chores`      | Recurring chores; `recurrence.ts` computes the next due date; completion history             |
+| `expenses`    | Expenses with EQUAL/PERCENTAGE/CUSTOM splits, balances, settlements; `money.ts` is pure      |
 
-Planned modules follow the spec: `expenses`, `bills`, `notes`,
+Planned modules follow the spec: `bills`, `notes`,
 `notifications`.
 
 ### Cross-cutting defaults (set in `main.ts`)
@@ -179,11 +180,29 @@ Chore recurrence (`chores/recurrence.ts`, unit-tested):
 
 The dashboard shows active chores and open tasks that are due today or overdue.
 
+## Expenses and balances
+
+All money is stored as **integer cents**; the API accepts decimal amounts (max 2 decimals) and
+converts once. `expenses/money.ts` holds the pure arithmetic and is unit-tested:
+
+- `computeSplits(total, method, participants)` always sums exactly to the total. EQUAL hands
+  leftover cents to the first participants; PERCENTAGE uses largest-remainder rounding and requires
+  100% (±0.01); CUSTOM shares must add up exactly.
+- `computeNetBalances(expenses, settlements)` credits the payer, debits each participant, and
+  applies settlements (from +, to −), grouped per currency.
+- `simplifyDebts(net)` greedily matches largest debtor with largest creditor, yielding at most
+  n − 1 transfers ("Sarah owes John €42.50").
+
+Payer and participants must be household members. Editing is a full replacement (PUT) so splits
+are recomputed as a whole inside a transaction. Creator, payer or admins may edit/delete.
+A `Settlement` records a payment between two members; only admins can record one on behalf of
+someone else. Households carry a default `currency` (EUR); balances are reported per currency.
+
 ## Dashboard
 
 `GET /households/:id/dashboard` returns a stable, fully typed shape: household header (with the
 pending-invitation count for admins only), `today` (chores, tasks, bills, shopping), `finances`
-for the current month and `recentActivity`. Sections owned by later phases are present but empty,
+for the current month (shared expenses, outstanding, the viewer net position) and `recentActivity`. Sections owned by later phases are present but empty,
 so the frontend and the contract do not change as modules land.
 
 ## Authentication

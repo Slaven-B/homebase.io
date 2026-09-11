@@ -1,0 +1,168 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.page-header__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #fff;
+  max-width: 880px;
+
+  &--empty {
+    text-align: center;
+    padding: 1.5rem 1rem;
+
+    h2 {
+      font-size: 1.125rem;
+      margin: 0.5rem 0 0.25rem;
+    }
+    p {
+      margin: 0 auto 1rem;
+      max-width: 420px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+    mat-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      color: #005cbb;
+    }
+  }
+}
+
+.summary {
+  margin-bottom: 1rem;
+}
+
+.summary__body {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.summary__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.summary__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.summary__value {
+  font-size: 1.125rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+
+  &--positive {
+    color: #1b7f3b;
+  }
+  &--negative {
+    color: #b3261e;
+  }
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+  max-width: 880px;
+}
+
+.month-nav__title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 0;
+  min-width: 160px;
+  text-align: center;
+}
+
+.month-nav__spacer {
+  flex: 1;
+}
+
+.month-nav__total {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.expense {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+
+  &:first-child {
+    border-top: 0;
+  }
+}
+
+.expense__date {
+  width: 56px;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.expense__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.expense__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+
+.expense__meta {
+  font-size: 0.8125rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.expense__amount {
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.chip {
+  font-size: 0.75rem;
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  background: #eceff3;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.error {
+  color: #b3261e;
+}

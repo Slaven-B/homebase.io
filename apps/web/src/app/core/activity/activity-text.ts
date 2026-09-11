@@ -6,6 +6,12 @@ function str(value: unknown, fallback = ''): string {
   return typeof value === 'string' && value.length > 0 ? value : fallback;
 }
 
+function money(m: Record<string, unknown>): string {
+  const cents = typeof m['amountCents'] === 'number' ? m['amountCents'] : 0;
+  const currency = str(m['currency'], 'EUR');
+  return `${(cents / 100).toFixed(2)} ${currency}`;
+}
+
 export interface ActivityText {
   /** Material icon name. */
   icon: string;
@@ -65,6 +71,18 @@ export function describeActivity(entry: ActivityEntry): ActivityText {
       return { icon: 'check_circle', text: `did "${str(m['title'], 'a chore')}"` };
     case 'chore.skipped':
       return { icon: 'skip_next', text: `skipped "${str(m['title'], 'a chore')}"` };
+    case 'expense.created':
+      return {
+        icon: 'receipt_long',
+        text: `added the expense "${str(m['description'], 'Untitled')}" (${money(m)})`,
+      };
+    case 'expense.deleted':
+      return { icon: 'delete', text: `removed the expense "${str(m['description'], 'Untitled')}"` };
+    case 'settlement.recorded':
+      return {
+        icon: 'handshake',
+        text: `recorded ${str(m['fromName'], 'someone')} paying ${str(m['toName'], 'someone')} ${money(m)}`,
+      };
     default:
       return { icon: 'info', text: entry.action.replace(/[._]/g, ' ') };
   }

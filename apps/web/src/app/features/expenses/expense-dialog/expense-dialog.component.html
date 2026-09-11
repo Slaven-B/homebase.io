@@ -1,0 +1,140 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit expense' : 'New expense' }}</h2>
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <mat-dialog-content class="content">
+    <div class="row">
+      <mat-form-field appearance="outline" class="grow">
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="description" required maxlength="140" cdkFocusInitial />
+        @if (form.controls.description.hasError('required')) {
+          <mat-error>What was this for?</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="amount">
+        <mat-label>Amount</mat-label>
+        <input matInput type="number" step="0.01" min="0.01" formControlName="amount" required />
+        <span matTextSuffix>{{ data.currency }}</span>
+        @if (form.controls.amount.hasError('required') || form.controls.amount.hasError('min')) {
+          <mat-error>Enter an amount.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Paid by</mat-label>
+        <mat-select formControlName="paidById" required>
+          @for (m of members(); track m.userId) {
+            <mat-option [value]="m.userId">{{ m.displayName }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="date" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          <mat-option value="">None</mat-option>
+          @for (c of categories; track c) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="split-header">
+      <span class="split-header__label">Split</span>
+      <mat-button-toggle-group
+        formControlName="splitMethod"
+        hideSingleSelectionIndicator
+        aria-label="Split method"
+      >
+        @for (m of methods; track m) {
+          <mat-button-toggle [value]="m">{{ splitLabels[m] }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+      @if (method() === 'PERCENTAGE') {
+        <button mat-button type="button" (click)="splitEvenly()">Even %</button>
+      }
+    </div>
+
+    <div class="participants">
+      @for (row of rows(); track row.userId) {
+        <div class="participant" [class.participant--off]="!row.included.value">
+          <mat-checkbox [formControl]="row.included">{{ row.displayName }}</mat-checkbox>
+          <span class="participant__spacer"></span>
+          @if (row.included.value) {
+            @switch (method()) {
+              @case ('CUSTOM') {
+                <mat-form-field
+                  appearance="outline"
+                  subscriptSizing="dynamic"
+                  class="participant__field"
+                >
+                  <input
+                    matInput
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    [formControl]="row.amount"
+                    placeholder="0.00"
+                  />
+                  <span matTextSuffix>{{ data.currency }}</span>
+                </mat-form-field>
+              }
+              @case ('PERCENTAGE') {
+                <mat-form-field
+                  appearance="outline"
+                  subscriptSizing="dynamic"
+                  class="participant__field"
+                >
+                  <input
+                    matInput
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    [formControl]="row.percent"
+                    placeholder="0"
+                  />
+                  <span matTextSuffix>%</span>
+                </mat-form-field>
+                <span class="participant__share">
+                  {{ (preview().shares.get(row.userId) ?? 0) / 100 | currency: data.currency }}
+                </span>
+              }
+              @default {
+                <span class="participant__share">
+                  {{ (preview().shares.get(row.userId) ?? 0) / 100 | currency: data.currency }}
+                </span>
+              }
+            }
+          }
+        </div>
+      }
+    </div>
+
+    @if (preview().error; as message) {
+      <p class="split-error" role="alert">{{ message }}</p>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Notes</mat-label>
+      <textarea matInput formControlName="notes" rows="2" maxlength="1000"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="ref.close()">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid || !!preview().error"
+    >
+      {{ isEdit ? 'Save' : 'Add expense' }}
+    </button>
+  </mat-dialog-actions>
+</form>

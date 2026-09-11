@@ -131,20 +131,35 @@
             <mat-card-title class="card__title">
               <mat-icon aria-hidden="true">payments</mat-icon>
               {{ monthLabel(v.finances.month) }}
-              <span class="soon">Phase 7–8</span>
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
             <dl class="finances">
               <dt>Shared expenses</dt>
-              <dd>{{ v.finances.sharedExpenses | currency: v.finances.currency }}</dd>
-              <dt>Bills</dt>
-              <dd>{{ v.finances.bills | currency: v.finances.currency }}</dd>
+              <dd>{{ v.finances.sharedExpensesCents / 100 | currency: v.finances.currency }}</dd>
+              <dt>Bills <span class="soon">Phase 8</span></dt>
+              <dd>{{ v.finances.billsCents / 100 | currency: v.finances.currency }}</dd>
               <dt>Outstanding</dt>
-              <dd>{{ v.finances.outstanding | currency: v.finances.currency }}</dd>
+              <dd>{{ v.finances.outstandingCents / 100 | currency: v.finances.currency }}</dd>
             </dl>
-            <p class="finances__hint">Expenses and bills fill this in once they are tracked.</p>
+            <p
+              class="finances__hint"
+              [class.finances__hint--positive]="v.finances.myNetCents > 0"
+              [class.finances__hint--negative]="v.finances.myNetCents < 0"
+            >
+              @if (v.finances.myNetCents === 0) {
+                You are all settled up.
+              } @else if (v.finances.myNetCents > 0) {
+                You are owed {{ v.finances.myNetCents / 100 | currency: v.finances.currency }}.
+              } @else {
+                You owe {{ -v.finances.myNetCents / 100 | currency: v.finances.currency }}.
+              }
+            </p>
           </mat-card-content>
+          <mat-card-actions align="end">
+            <a mat-button routerLink="/expenses/balances">Balances</a>
+            <a mat-button routerLink="/expenses">Expenses</a>
+          </mat-card-actions>
         </mat-card>
 
         <mat-card appearance="outlined" class="card card--wide">
@@ -201,9 +216,9 @@
       <mat-icon>cleaning_services</mat-icon>
       <span>Chore</span>
     </a>
-    <button mat-menu-item type="button" disabled>
+    <a mat-menu-item routerLink="/expenses">
       <mat-icon>receipt_long</mat-icon>
-      <span>Expense (soon)</span>
-    </button>
+      <span>Expense</span>
+    </a>
   </mat-menu>
 }

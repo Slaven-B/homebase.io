@@ -92,6 +92,22 @@ export const routes: Routes = [
         title: 'Chores · HomeBase',
       },
       {
+        path: 'expenses',
+        loadComponent: () =>
+          import('./features/expenses/expenses-page/expenses-page.component').then(
+            (m) => m.ExpensesPageComponent,
+          ),
+        title: 'Expenses · HomeBase',
+      },
+      {
+        path: 'expenses/balances',
+        loadComponent: () =>
+          import('./features/expenses/balances-page/balances-page.component').then(
+            (m) => m.BalancesPageComponent,
+          ),
+        title: 'Balances · HomeBase',
+      },
+      {
         path: 'activity',
         loadComponent: () =>
           import('./features/activity/activity-page.component').then(

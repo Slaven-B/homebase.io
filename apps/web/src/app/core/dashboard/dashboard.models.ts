@@ -34,9 +34,10 @@ export interface DashboardView {
   finances: {
     month: string;
     currency: string;
-    sharedExpenses: number;
-    bills: number;
-    outstanding: number;
+    sharedExpensesCents: number;
+    billsCents: number;
+    outstandingCents: number;
+    myNetCents: number;
   };
   recentActivity: ActivityEntry[];
 }

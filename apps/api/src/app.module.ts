@@ -5,6 +5,7 @@ import { ActivityModule } from './activity/activity.module';
 import { AuthModule } from './auth/auth.module';
 import { ChoresModule } from './chores/chores.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ExpensesModule } from './expenses/expenses.module';
 import { AppConfigService } from './config/app-config.service';
 import { AppConfigModule } from './config/config.module';
 import { Environment } from './config/env.validation';
@@ -38,6 +39,7 @@ import { UsersModule } from './users/users.module';
     ShoppingModule,
     TasksModule,
     ChoresModule,
+    ExpensesModule,
     DashboardModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

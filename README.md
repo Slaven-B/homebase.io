@@ -5,8 +5,8 @@ members, shared expenses, bills, chores, shopping lists, tasks, notes and househ
 
 **Stack:** Angular 19 · NestJS 11 · PostgreSQL 16 · Prisma 6 · Docker Compose
 
-> Status: **Phase 6 — Tasks and chores done.** Accounts, households, invitations, activity,
-> dashboard, shopping lists, tasks and recurring chores work end to end. Expenses are next.
+> Status: **Phase 7 — Expenses done.** Accounts, households, invitations, activity, dashboard,
+> shopping lists, tasks, chores, shared expenses with balances and settlements. Bills are next.
 > See [docs/ROADMAP.md](docs/ROADMAP.md) for the phased plan.
 
 ## Repository layout

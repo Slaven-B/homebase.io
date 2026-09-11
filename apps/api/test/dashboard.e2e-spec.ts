@@ -110,9 +110,10 @@ describe('Dashboard & activity (e2e)', () => {
       expect(res.body.today.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(res.body.finances).toMatchObject({
         currency: 'EUR',
-        sharedExpenses: 0,
-        bills: 0,
-        outstanding: 0,
+        sharedExpensesCents: 0,
+        billsCents: 0,
+        outstandingCents: 0,
+        myNetCents: 0,
       });
 
       const actions = res.body.recentActivity.map((a: { action: string }) => a.action);
