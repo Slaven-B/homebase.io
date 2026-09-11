@@ -10,8 +10,8 @@ migrations must apply cleanly, authorization must be verified, and the work is c
 | 3     | Households: creation, members, invitations, roles            | ✅ done |
 | 4     | Dashboard (+ activity feed infrastructure)                   | ✅ done |
 | 5     | Shopping lists                                               | ✅ done |
-| 6     | Tasks + chores                                               | ⏳ next |
-| 7     | Expenses, splits, balances                                   |         |
+| 6     | Tasks + chores (recurrence, comments, dashboard cards)       | ✅ done |
+| 7     | Expenses, splits, balances                                   | ⏳ next |
 | 8     | Bills                                                        |         |
 | 9     | Notes + in-app notifications                                 |         |
 | 10    | Polish: responsive, a11y, empty/loading/error states, deploy |         |

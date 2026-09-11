@@ -39,6 +39,8 @@
       Dashboard
     </a>
     <a mat-button routerLink="/shopping" routerLinkActive="shell__nav-active">Shopping</a>
+    <a mat-button routerLink="/tasks" routerLinkActive="shell__nav-active">Tasks</a>
+    <a mat-button routerLink="/chores" routerLinkActive="shell__nav-active">Chores</a>
     <a mat-button routerLink="/households" routerLinkActive="shell__nav-active">Households</a>
     <a mat-button routerLink="/activity" routerLinkActive="shell__nav-active">Activity</a>
   </nav>
@@ -81,12 +83,23 @@
     <mat-icon aria-hidden="true">shopping_cart</mat-icon>
     <span>Shopping</span>
   </a>
-  <a routerLink="/activity" routerLinkActive="shell__bottom-active">
-    <mat-icon aria-hidden="true">history</mat-icon>
-    <span>Activity</span>
+  <a routerLink="/tasks" routerLinkActive="shell__bottom-active">
+    <mat-icon aria-hidden="true">task_alt</mat-icon>
+    <span>Tasks</span>
   </a>
-  <a routerLink="/households" routerLinkActive="shell__bottom-active">
-    <mat-icon aria-hidden="true">home_work</mat-icon>
-    <span>Household</span>
+  <a routerLink="/chores" routerLinkActive="shell__bottom-active">
+    <mat-icon aria-hidden="true">cleaning_services</mat-icon>
+    <span>Chores</span>
   </a>
+  <button type="button" [matMenuTriggerFor]="moreMenu" aria-label="More">
+    <mat-icon aria-hidden="true">more_horiz</mat-icon>
+    <span>More</span>
+  </button>
+  <mat-menu #moreMenu="matMenu" yPosition="above">
+    <a mat-menu-item routerLink="/activity"><mat-icon>history</mat-icon><span>Activity</span></a>
+    <a mat-menu-item routerLink="/households"
+      ><mat-icon>home_work</mat-icon><span>Households</span></a
+    >
+    <a mat-menu-item routerLink="/profile"><mat-icon>person</mat-icon><span>Profile</span></a>
+  </mat-menu>
 </nav>

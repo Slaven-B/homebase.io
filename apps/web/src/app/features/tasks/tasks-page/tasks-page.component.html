@@ -1,0 +1,111 @@
+<div class="page-header">
+  <h1>Tasks</h1>
+  @if (current()) {
+    <button mat-flat-button color="primary" type="button" (click)="create()">
+      <mat-icon>add</mat-icon>
+      New task
+    </button>
+  }
+</div>
+
+@if (!current()) {
+  <mat-card appearance="outlined" class="card card--empty">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">holiday_village</mat-icon>
+      <h2>No household yet</h2>
+      <p>Tasks belong to a household. Create or join one first.</p>
+      <a mat-flat-button color="primary" routerLink="/households">Households</a>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <div class="toolbar">
+    <mat-button-toggle-group
+      [value]="filter()"
+      (change)="filter.set($event.value)"
+      aria-label="Filter tasks"
+      hideSingleSelectionIndicator
+    >
+      <mat-button-toggle value="all">All</mat-button-toggle>
+      <mat-button-toggle value="mine">Mine</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-checkbox [checked]="showDone()" (change)="showDone.set($event.checked)">
+      Show done
+    </mat-checkbox>
+  </div>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @if (tasks() === null) {
+    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  } @else if (visible().length === 0) {
+    <mat-card appearance="outlined" class="card card--empty">
+      <mat-card-content>
+        <mat-icon aria-hidden="true">task_alt</mat-icon>
+        <h2>{{ filter() === 'mine' ? 'Nothing assigned to you' : 'No open tasks' }}</h2>
+        <p>Add a one-off to-do like "Call the landlord" and assign it to someone.</p>
+        <button mat-flat-button color="primary" type="button" (click)="create()">
+          <mat-icon>add</mat-icon>
+          New task
+        </button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    @for (group of groups(); track group.status) {
+      @if (group.tasks.length > 0) {
+        <h2 class="group-title">{{ statusLabels[group.status] }} · {{ group.tasks.length }}</h2>
+        <mat-card appearance="outlined" class="card">
+          @for (task of group.tasks; track task.id) {
+            <div class="task" [class.task--done]="task.status === 'DONE'">
+              <mat-checkbox
+                [checked]="task.status === 'DONE'"
+                (change)="setStatus(task, $event.checked ? 'DONE' : 'TODO')"
+                [aria-label]="
+                  'Mark ' + task.title + (task.status === 'DONE' ? ' as open' : ' as done')
+                "
+              />
+              <a class="task__body" [routerLink]="['/tasks', task.id]">
+                <span class="task__title">{{ task.title }}</span>
+                <span class="task__meta">
+                  @if (task.dueAt) {
+                    <span class="chip" [class.chip--overdue]="isOverdue(task)">
+                      <mat-icon aria-hidden="true">event</mat-icon>{{ dueLabel(task) }}
+                    </span>
+                  }
+                  <span class="chip chip--{{ task.priority.toLowerCase() }}">
+                    {{ priorityLabels[task.priority] }}
+                  </span>
+                  @if (task.assignee) {
+                    <span class="chip">
+                      <mat-icon aria-hidden="true">person</mat-icon>{{ task.assignee.displayName }}
+                    </span>
+                  }
+                  @if (task.commentCount > 0) {
+                    <span class="chip">
+                      <mat-icon aria-hidden="true">chat_bubble_outline</mat-icon
+                      >{{ task.commentCount }}
+                    </span>
+                  }
+                </span>
+              </a>
+              @if (task.status === 'TODO') {
+                <button
+                  mat-icon-button
+                  type="button"
+                  (click)="setStatus(task, 'IN_PROGRESS')"
+                  aria-label="Start task"
+                >
+                  <mat-icon>play_arrow</mat-icon>
+                </button>
+              }
+              <button mat-icon-button type="button" (click)="edit(task)" aria-label="Edit task">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+          }
+        </mat-card>
+      }
+    }
+  }
+}

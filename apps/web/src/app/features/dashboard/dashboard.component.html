@@ -61,16 +61,35 @@
           <mat-card-header>
             <mat-card-title class="card__title">
               <mat-icon aria-hidden="true">cleaning_services</mat-icon>
-              Chores due today
-              <span class="soon">Phase 6</span>
+              Chores due
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <div class="placeholder">
-              <mat-icon aria-hidden="true">event_available</mat-icon>
-              <p>Recurring chores and who is on duty will appear here.</p>
-            </div>
+            @if (v.today.choresDue.length === 0) {
+              <div class="placeholder">
+                <mat-icon aria-hidden="true">event_available</mat-icon>
+                <p>Nothing due today. Nice.</p>
+              </div>
+            } @else {
+              <ul class="mini-list">
+                @for (c of v.today.choresDue; track c.id) {
+                  <li>
+                    <a routerLink="/chores">{{ c.title }}</a>
+                    <span class="mini-list__count" [class.mini-list__count--warn]="c.dueInDays < 0">
+                      {{
+                        c.dueInDays < 0
+                          ? -c.dueInDays + 'd late'
+                          : (c.assignee?.displayName ?? 'today')
+                      }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
           </mat-card-content>
+          <mat-card-actions align="end">
+            <a mat-button routerLink="/chores">All chores</a>
+          </mat-card-actions>
         </mat-card>
 
         <mat-card appearance="outlined" class="card">
@@ -78,15 +97,33 @@
             <mat-card-title class="card__title">
               <mat-icon aria-hidden="true">task_alt</mat-icon>
               Tasks due
-              <span class="soon">Phase 6</span>
             </mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <div class="placeholder">
-              <mat-icon aria-hidden="true">checklist</mat-icon>
-              <p>One-off tasks with due dates will be listed here.</p>
-            </div>
+            @if (v.today.tasksDue.length === 0) {
+              <div class="placeholder">
+                <mat-icon aria-hidden="true">checklist</mat-icon>
+                <p>No tasks due today or overdue.</p>
+              </div>
+            } @else {
+              <ul class="mini-list">
+                @for (t of v.today.tasksDue; track t.id) {
+                  <li>
+                    <a [routerLink]="['/tasks', t.id]">{{ t.title }}</a>
+                    <span
+                      class="mini-list__count"
+                      [class.mini-list__count--warn]="t.dueAt !== v.today.date"
+                    >
+                      {{ t.dueAt === v.today.date ? 'today' : 'overdue' }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
           </mat-card-content>
+          <mat-card-actions align="end">
+            <a mat-button routerLink="/tasks">All tasks</a>
+          </mat-card-actions>
         </mat-card>
 
         <mat-card appearance="outlined" class="card">
@@ -156,10 +193,14 @@
       <mat-icon>add_shopping_cart</mat-icon>
       <span>Shopping item</span>
     </a>
-    <button mat-menu-item type="button" disabled>
+    <a mat-menu-item routerLink="/tasks">
       <mat-icon>task_alt</mat-icon>
-      <span>Task (soon)</span>
-    </button>
+      <span>Task</span>
+    </a>
+    <a mat-menu-item routerLink="/chores">
+      <mat-icon>cleaning_services</mat-icon>
+      <span>Chore</span>
+    </a>
     <button mat-menu-item type="button" disabled>
       <mat-icon>receipt_long</mat-icon>
       <span>Expense (soon)</span>

@@ -1,19 +1,8 @@
 import { ActivityEntry } from '../activity/activity.models';
+import { Chore } from '../chores/chore.models';
+import { Task } from '../tasks/task.models';
 import { HouseholdRole } from '../households/household.models';
 
-export interface DashboardChore {
-  id: string;
-  title: string;
-  assignee: string | null;
-  dueAt: string;
-}
-export interface DashboardTask {
-  id: string;
-  title: string;
-  assignee: string | null;
-  dueAt: string | null;
-  priority: string;
-}
 export interface DashboardBill {
   id: string;
   name: string;
@@ -37,8 +26,8 @@ export interface DashboardView {
   };
   today: {
     date: string;
-    choresDue: DashboardChore[];
-    tasksDue: DashboardTask[];
+    choresDue: Chore[];
+    tasksDue: Task[];
     upcomingBills: DashboardBill[];
     shopping: { openItems: number; lists: DashboardShoppingList[] };
   };

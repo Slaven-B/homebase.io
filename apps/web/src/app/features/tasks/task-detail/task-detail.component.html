@@ -1,0 +1,128 @@
+@if (notFound()) {
+  <mat-card appearance="outlined" class="card card--empty">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">search_off</mat-icon>
+      <h2>Task not found</h2>
+      <p>It may have been deleted or belongs to another household.</p>
+      <a mat-flat-button color="primary" routerLink="/tasks">Back to tasks</a>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  @if (task(); as t) {
+    <div class="page-header">
+      <a mat-icon-button routerLink="/tasks" aria-label="Back to tasks">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <h1 [class.done]="t.status === 'DONE'">{{ t.title }}</h1>
+      <button mat-icon-button type="button" [matMenuTriggerFor]="menu" aria-label="Task actions">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu" xPosition="before">
+        <button mat-menu-item type="button" (click)="edit()">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        @if (canDelete()) {
+          <button mat-menu-item type="button" (click)="remove()">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Delete task</span>
+          </button>
+        }
+      </mat-menu>
+    </div>
+
+    <div class="columns">
+      <section class="column">
+        <mat-card appearance="outlined" class="card">
+          <mat-card-content class="details">
+            <mat-button-toggle-group
+              [value]="t.status"
+              (change)="setStatus($event.value)"
+              aria-label="Status"
+              hideSingleSelectionIndicator
+              class="status"
+            >
+              @for (s of statuses; track s) {
+                <mat-button-toggle [value]="s">{{ statusLabels[s] }}</mat-button-toggle>
+              }
+            </mat-button-toggle-group>
+
+            <dl class="facts">
+              <dt>Assignee</dt>
+              <dd>{{ t.assignee?.displayName ?? 'Unassigned' }}</dd>
+              <dt>Due</dt>
+              <dd>{{ t.dueAt ? dueLabel(t.dueAt) : 'No due date' }}</dd>
+              <dt>Priority</dt>
+              <dd>{{ priorityLabels[t.priority] }}</dd>
+              <dt>Created</dt>
+              <dd>
+                {{ t.createdBy?.displayName ?? 'Someone' }} · {{ t.createdAt | date: 'mediumDate' }}
+              </dd>
+              @if (t.completedAt) {
+                <dt>Completed</dt>
+                <dd>{{ t.completedAt | date: 'medium' }}</dd>
+              }
+            </dl>
+
+            @if (t.description) {
+              <p class="description">{{ t.description }}</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      </section>
+
+      <section class="column">
+        <mat-card appearance="outlined" class="card">
+          <mat-card-header>
+            <mat-card-title>Comments ({{ t.comments.length }})</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            @if (t.comments.length === 0) {
+              <p class="muted">No comments yet.</p>
+            }
+            @for (c of t.comments; track c.id) {
+              <div class="comment">
+                <div class="comment__head">
+                  <strong>{{ c.author?.displayName ?? 'Someone' }}</strong>
+                  <span class="muted">{{ c.createdAt | date: 'short' }}</span>
+                  @if (canDeleteComment(c)) {
+                    <button
+                      mat-icon-button
+                      type="button"
+                      (click)="deleteComment(c)"
+                      aria-label="Delete comment"
+                      class="comment__delete"
+                    >
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                </div>
+                <p class="comment__body">{{ c.content }}</p>
+              </div>
+            }
+            <form class="comment-form" (ngSubmit)="postComment()" novalidate>
+              <mat-form-field
+                appearance="outline"
+                subscriptSizing="dynamic"
+                class="comment-form__field"
+              >
+                <mat-label>Add a comment</mat-label>
+                <textarea matInput [formControl]="comment" rows="2" maxlength="2000"></textarea>
+              </mat-form-field>
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="comment.invalid || posting()"
+              >
+                Post
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </section>
+    </div>
+  } @else {
+    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  }
+}

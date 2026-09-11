@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ActivityModule } from './activity/activity.module';
 import { AuthModule } from './auth/auth.module';
+import { ChoresModule } from './chores/chores.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AppConfigService } from './config/app-config.service';
 import { AppConfigModule } from './config/config.module';
@@ -12,6 +13,7 @@ import { HouseholdsModule } from './households/households.module';
 import { InvitationsModule } from './invitations/invitations.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ShoppingModule } from './shopping/shopping.module';
+import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -34,6 +36,8 @@ import { UsersModule } from './users/users.module';
     InvitationsModule,
     ActivityModule,
     ShoppingModule,
+    TasksModule,
+    ChoresModule,
     DashboardModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],

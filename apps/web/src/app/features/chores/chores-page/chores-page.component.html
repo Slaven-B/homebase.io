@@ -1,0 +1,160 @@
+<div class="page-header">
+  <h1>Chores</h1>
+  @if (current()) {
+    <button mat-flat-button color="primary" type="button" (click)="create()">
+      <mat-icon>add</mat-icon>
+      New chore
+    </button>
+  }
+</div>
+
+@if (!current()) {
+  <mat-card appearance="outlined" class="card card--empty">
+    <mat-card-content>
+      <mat-icon aria-hidden="true">holiday_village</mat-icon>
+      <h2>No household yet</h2>
+      <p>Chores belong to a household. Create or join one first.</p>
+      <a mat-flat-button color="primary" routerLink="/households">Households</a>
+    </mat-card-content>
+  </mat-card>
+} @else {
+  <div class="toolbar">
+    <mat-button-toggle-group
+      [value]="filter()"
+      (change)="filter.set($event.value)"
+      aria-label="Filter chores"
+      hideSingleSelectionIndicator
+    >
+      <mat-button-toggle value="all">All</mat-button-toggle>
+      <mat-button-toggle value="mine">Mine</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-checkbox [checked]="showArchived()" (change)="showArchived.set($event.checked)">
+      Show archived
+    </mat-checkbox>
+  </div>
+
+  @if (error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+
+  @if (chores() === null) {
+    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  } @else if (visible().length === 0) {
+    <mat-card appearance="outlined" class="card card--empty">
+      <mat-card-content>
+        <mat-icon aria-hidden="true">cleaning_services</mat-icon>
+        <h2>{{ filter() === 'mine' ? 'Nothing assigned to you' : 'No chores yet' }}</h2>
+        <p>Add recurring jobs like "Take out trash, every 2 days" and share the load.</p>
+        <button mat-flat-button color="primary" type="button" (click)="create()">
+          <mat-icon>add</mat-icon>
+          New chore
+        </button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    @for (section of sections(); track section.key) {
+      <h2 class="group-title">{{ section.title }} · {{ section.chores.length }}</h2>
+      <div class="grid">
+        @for (chore of section.chores; track chore.id) {
+          <mat-card
+            appearance="outlined"
+            class="chore"
+            [class.chore--overdue]="chore.isActive && chore.dueInDays < 0"
+            [class.chore--archived]="!chore.isActive"
+          >
+            <mat-card-content class="chore__body">
+              <div class="chore__head">
+                <div class="chore__text">
+                  <strong class="chore__title">{{ chore.title }}</strong>
+                  <span class="chore__due">
+                    {{ chore.isActive ? describeDue(chore.dueInDays) : 'Archived' }}
+                  </span>
+                </div>
+                <button
+                  mat-icon-button
+                  type="button"
+                  [matMenuTriggerFor]="choreMenu"
+                  [matMenuTriggerData]="{ chore: chore }"
+                  aria-label="Chore actions"
+                >
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+              </div>
+              <div class="chore__meta">
+                <span class="chip">
+                  <mat-icon aria-hidden="true">repeat</mat-icon>{{ describeFrequency(chore) }}
+                </span>
+                @if (chore.assignee) {
+                  <span class="chip">
+                    <mat-icon aria-hidden="true">person</mat-icon>{{ chore.assignee.displayName }}
+                  </span>
+                } @else {
+                  <span class="chip chip--muted">Unassigned</span>
+                }
+                @if (chore.estimatedMinutes) {
+                  <span class="chip">
+                    <mat-icon aria-hidden="true">schedule</mat-icon>{{ chore.estimatedMinutes }} min
+                  </span>
+                }
+                <span class="chip chip--{{ chore.priority.toLowerCase() }}">
+                  {{ priorityLabels[chore.priority] }}
+                </span>
+              </div>
+              @if (chore.description) {
+                <p class="chore__description">{{ chore.description }}</p>
+              }
+            </mat-card-content>
+            @if (chore.isActive) {
+              <mat-card-actions align="end">
+                <button
+                  mat-button
+                  type="button"
+                  (click)="skip(chore)"
+                  [disabled]="busy() === chore.id"
+                >
+                  Skip
+                </button>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="button"
+                  (click)="complete(chore)"
+                  [disabled]="busy() === chore.id"
+                >
+                  <mat-icon>check</mat-icon>
+                  Done
+                </button>
+              </mat-card-actions>
+            }
+          </mat-card>
+        }
+      </div>
+    }
+  }
+
+  <mat-menu #choreMenu="matMenu">
+    <ng-template matMenuContent let-chore="chore">
+      <button mat-menu-item type="button" (click)="edit(chore)">
+        <mat-icon>edit</mat-icon>
+        <span>Edit</span>
+      </button>
+      @if (chore.isActive) {
+        <button mat-menu-item type="button" (click)="setActive(chore, false)">
+          <mat-icon>archive</mat-icon>
+          <span>Archive</span>
+        </button>
+      } @else {
+        <button mat-menu-item type="button" (click)="setActive(chore, true)">
+          <mat-icon>unarchive</mat-icon>
+          <span>Restore</span>
+        </button>
+      }
+      @if (canDelete(chore)) {
+        <button mat-menu-item type="button" (click)="remove(chore)">
+          <mat-icon color="warn">delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      }
+    </ng-template>
+  </mat-menu>
+}

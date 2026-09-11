@@ -52,6 +52,19 @@ export function describeActivity(entry: ActivityEntry): ActivityText {
         icon: 'shopping_cart_checkout',
         text: `bought ${str(m['itemName'], 'an item')} (${str(m['listName'], 'list')})`,
       };
+    case 'task.created':
+      return { icon: 'add_task', text: `added the task "${str(m['title'], 'Untitled')}"` };
+    case 'task.completed':
+      return { icon: 'task_alt', text: `completed "${str(m['title'], 'a task')}"` };
+    case 'chore.created':
+      return {
+        icon: 'cleaning_services',
+        text: `added the chore "${str(m['title'], 'Untitled')}"`,
+      };
+    case 'chore.completed':
+      return { icon: 'check_circle', text: `did "${str(m['title'], 'a chore')}"` };
+    case 'chore.skipped':
+      return { icon: 'skip_next', text: `skipped "${str(m['title'], 'a chore')}"` };
     default:
       return { icon: 'info', text: entry.action.replace(/[._]/g, ' ') };
   }

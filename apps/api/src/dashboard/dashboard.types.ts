@@ -1,5 +1,7 @@
 import { HouseholdRole } from '@prisma/client';
 import { ActivityEntry } from '../activity/activity.types';
+import { ChoreView } from '../chores/chore.types';
+import { TaskView } from '../tasks/task.types';
 
 /**
  * Everything the home screen needs in one round trip. Sections for modules that
@@ -16,8 +18,8 @@ export interface DashboardView {
   };
   today: {
     date: string; // YYYY-MM-DD in server time
-    choresDue: DashboardChore[];
-    tasksDue: DashboardTask[];
+    choresDue: ChoreView[];
+    tasksDue: TaskView[];
     upcomingBills: DashboardBill[];
     shopping: { openItems: number; lists: DashboardShoppingList[] };
   };
@@ -32,19 +34,6 @@ export interface DashboardView {
 }
 
 // Placeholders typed now, filled by later phases.
-export interface DashboardChore {
-  id: string;
-  title: string;
-  assignee: string | null;
-  dueAt: string;
-}
-export interface DashboardTask {
-  id: string;
-  title: string;
-  assignee: string | null;
-  dueAt: string | null;
-  priority: string;
-}
 export interface DashboardBill {
   id: string;
   name: string;

@@ -68,6 +68,30 @@ export const routes: Routes = [
         title: 'Shopping list · HomeBase',
       },
       {
+        path: 'tasks',
+        loadComponent: () =>
+          import('./features/tasks/tasks-page/tasks-page.component').then(
+            (m) => m.TasksPageComponent,
+          ),
+        title: 'Tasks · HomeBase',
+      },
+      {
+        path: 'tasks/:taskId',
+        loadComponent: () =>
+          import('./features/tasks/task-detail/task-detail.component').then(
+            (m) => m.TaskDetailComponent,
+          ),
+        title: 'Task · HomeBase',
+      },
+      {
+        path: 'chores',
+        loadComponent: () =>
+          import('./features/chores/chores-page/chores-page.component').then(
+            (m) => m.ChoresPageComponent,
+          ),
+        title: 'Chores · HomeBase',
+      },
+      {
         path: 'activity',
         loadComponent: () =>
           import('./features/activity/activity-page.component').then(

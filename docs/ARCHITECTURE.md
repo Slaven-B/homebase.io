@@ -54,8 +54,10 @@ Current modules:
 | `activity`    | Append-only household activity log (`ActivityService.log`, cursor-paged list); global module |
 | `dashboard`   | `GET /api/households/:id/dashboard` — one round trip for the home screen                     |
 | `shopping`    | Shopping lists and items under `/households/:id/shopping-lists`; feeds the dashboard         |
+| `tasks`       | One-off tasks with status, priority, date-only due date, assignee, comments                  |
+| `chores`      | Recurring chores; `recurrence.ts` computes the next due date; completion history             |
 
-Planned modules follow the spec: `tasks`, `chores`, `expenses`, `bills`, `notes`,
+Planned modules follow the spec: `expenses`, `bills`, `notes`,
 `notifications`.
 
 ### Cross-cutting defaults (set in `main.ts`)
@@ -157,6 +159,25 @@ create lists and add, edit, complete or remove items; deleting a whole list is l
 and the list creator. Completing an item records who and when; reopening clears both.
 `clear-completed` bulk-deletes bought items. Item quantity is free text ("2", "500 g"). Writes go
 through one service, which is where a WebSocket broadcast will hook in later.
+
+## Tasks and chores
+
+Tasks are one-off (`TODO` → `IN_PROGRESS` → `DONE`); chores recur. Both live under the household
+path, validate that an assignee is a member, and limit deletion to admins and the creator.
+
+Due dates are **calendar dates** (`@db.Date`), handled as UTC-midnight `Date`s on the server and
+as `YYYY-MM-DD` strings on the wire, so nothing shifts with time zones.
+
+Chore recurrence (`chores/recurrence.ts`, unit-tested):
+
+- `DAILY`, `WEEKLY`, `BIWEEKLY`, `MONTHLY` or `CUSTOM` every N days.
+- Completing or skipping writes a `ChoreCompletion` row (who, when, for which scheduled date,
+  skipped or not) and advances `nextDueAt` **from the scheduled date**, so a weekly chore keeps
+  its weekday even when done late or early. Missed periods are skipped so the next date is always
+  after today. Monthly recurrence clamps to month end (Jan 31 → Feb 28).
+- Skipping does not update `lastCompletedAt`.
+
+The dashboard shows active chores and open tasks that are due today or overdue.
 
 ## Dashboard
 

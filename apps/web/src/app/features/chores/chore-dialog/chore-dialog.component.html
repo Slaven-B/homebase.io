@@ -1,0 +1,80 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit chore' : 'New chore' }}</h2>
+<form [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <mat-dialog-content class="content">
+    <mat-form-field appearance="outline">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" required maxlength="140" cdkFocusInitial />
+      @if (form.controls.title.hasError('required')) {
+        <mat-error>Give the chore a title.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="2" maxlength="2000"></textarea>
+    </mat-form-field>
+
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Repeats</mat-label>
+        <mat-select formControlName="frequency">
+          @for (f of frequencies; track f) {
+            <mat-option [value]="f">{{ frequencyLabels[f] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (form.controls.frequency.value === 'CUSTOM') {
+        <mat-form-field appearance="outline">
+          <mat-label>Every N days</mat-label>
+          <input matInput type="number" formControlName="intervalDays" min="1" max="365" />
+          @if (form.controls.intervalDays.hasError('required')) {
+            <mat-error>Enter the number of days.</mat-error>
+          }
+        </mat-form-field>
+      }
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Assignee</mat-label>
+        <mat-select formControlName="assigneeId">
+          <mat-option value="">Unassigned</mat-option>
+          @for (m of members(); track m.userId) {
+            <mat-option [value]="m.userId">{{ m.displayName }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Priority</mat-label>
+        <mat-select formControlName="priority">
+          @for (p of priorities; track p) {
+            <mat-option [value]="p">{{ priorityLabels[p] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ isEdit ? 'Next due' : 'First due' }}</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dueAt" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Minutes</mat-label>
+        <input matInput type="number" formControlName="estimatedMinutes" min="1" max="600" />
+        <mat-hint>Estimate, optional</mat-hint>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="ref.close()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit">
+      {{ isEdit ? 'Save' : 'Create chore' }}
+    </button>
+  </mat-dialog-actions>
+</form>

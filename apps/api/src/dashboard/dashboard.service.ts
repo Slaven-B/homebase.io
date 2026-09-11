@@ -1,9 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InvitationStatus } from '@prisma/client';
 import { ActivityService } from '../activity/activity.service';
+import { ChoresService } from '../chores/chores.service';
+import { todayUtc } from '../chores/recurrence';
 import { ADMIN_ROLES, HouseholdAccessService } from '../households/household-access.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ShoppingService } from '../shopping/shopping.service';
+import { TasksService } from '../tasks/tasks.service';
 import { DashboardView } from './dashboard.types';
 
 const RECENT_ACTIVITY_LIMIT = 10;
@@ -16,26 +19,32 @@ export class DashboardService {
     private readonly access: HouseholdAccessService,
     private readonly activity: ActivityService,
     private readonly shopping: ShoppingService,
+    private readonly tasks: TasksService,
+    private readonly chores: ChoresService,
   ) {}
 
   async get(userId: string, householdId: string): Promise<DashboardView> {
     const membership = await this.access.requireMember(userId, householdId);
     const isAdmin = ADMIN_ROLES.includes(membership.role);
     const now = new Date();
+    const today = todayUtc(now);
 
-    const [household, pendingInvitations, recentActivity, shopping] = await Promise.all([
-      this.prisma.household.findUnique({
-        where: { id: householdId },
-        select: { id: true, name: true, _count: { select: { members: true } } },
-      }),
-      isAdmin
-        ? this.prisma.householdInvitation.count({
-            where: { householdId, status: InvitationStatus.PENDING, expiresAt: { gt: now } },
-          })
-        : Promise.resolve(null),
-      this.activity.listUnchecked(householdId, { limit: RECENT_ACTIVITY_LIMIT }),
-      this.shopping.openSummaryUnchecked(householdId),
-    ]);
+    const [household, pendingInvitations, recentActivity, shopping, choresDue, tasksDue] =
+      await Promise.all([
+        this.prisma.household.findUnique({
+          where: { id: householdId },
+          select: { id: true, name: true, _count: { select: { members: true } } },
+        }),
+        isAdmin
+          ? this.prisma.householdInvitation.count({
+              where: { householdId, status: InvitationStatus.PENDING, expiresAt: { gt: now } },
+            })
+          : Promise.resolve(null),
+        this.activity.listUnchecked(householdId, { limit: RECENT_ACTIVITY_LIMIT }),
+        this.shopping.openSummaryUnchecked(householdId),
+        this.chores.dueUnchecked(householdId, today),
+        this.tasks.dueUnchecked(householdId, today),
+      ]);
 
     if (!household) {
       throw new NotFoundException('Household not found');
@@ -51,8 +60,8 @@ export class DashboardService {
       },
       today: {
         date: now.toISOString().slice(0, 10),
-        choresDue: [],
-        tasksDue: [],
+        choresDue,
+        tasksDue,
         upcomingBills: [],
         shopping,
       },
