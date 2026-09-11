@@ -31,6 +31,7 @@ model User {
 
   memberships     HouseholdMember[]
   sentInvitations HouseholdInvitation[] @relation("InvitationInviter")
+  refreshTokens   RefreshToken[]
 
   @@map("users")
 }
@@ -98,4 +99,28 @@ model HouseholdInvitation {
   @@index([householdId])
   @@index([email])
   @@map("household_invitations")
+}
+
+// ---------------------------------------------------------------------------
+// Authentication
+// ---------------------------------------------------------------------------
+
+/// Opaque refresh tokens. Only a SHA-256 hash is stored; the raw token lives in an
+/// httpOnly cookie. Tokens are rotated on every refresh; presenting a revoked token
+/// is treated as reuse and revokes the whole family.
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  /// Groups tokens that descend from one login so reuse can revoke the chain.
+  familyId  String    @map("family_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+  @@map("refresh_tokens")
 }

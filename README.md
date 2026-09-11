@@ -5,8 +5,8 @@ members, shared expenses, bills, chores, shopping lists, tasks, notes and househ
 
 **Stack:** Angular 19 · NestJS 11 · PostgreSQL 16 · Prisma 6 · Docker Compose
 
-> Status: **Phase 1 — Foundation.** The stack runs end to end
-> (Angular → NestJS → PostgreSQL) with a health check. No product features yet.
+> Status: **Phase 2 — Authentication done.** Accounts, login, refresh-token sessions and
+> profile editing work end to end. Households are next.
 > See [docs/ROADMAP.md](docs/ROADMAP.md) for the phased plan.
 
 ## Repository layout

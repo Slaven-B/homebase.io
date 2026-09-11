@@ -1,0 +1,40 @@
+<mat-toolbar color="primary" class="shell__toolbar">
+  <a routerLink="/" class="shell__brand" aria-label="HomeBase dashboard">
+    <mat-icon aria-hidden="true">home</mat-icon>
+    <span>HomeBase</span>
+  </a>
+
+  <nav class="shell__nav" aria-label="Main">
+    <a
+      mat-button
+      routerLink="/"
+      routerLinkActive="shell__nav-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Dashboard</a
+    >
+  </nav>
+
+  <span class="shell__spacer"></span>
+
+  @if (user(); as u) {
+    <button mat-button [matMenuTriggerFor]="userMenu" class="shell__user" aria-label="Account menu">
+      <mat-icon aria-hidden="true">account_circle</mat-icon>
+      <span class="shell__user-name">{{ u.displayName }}</span>
+      <mat-icon aria-hidden="true">arrow_drop_down</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu" xPosition="before">
+      <a mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </a>
+      <button mat-menu-item type="button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Sign out</span>
+      </button>
+    </mat-menu>
+  }
+</mat-toolbar>
+
+<main class="shell__content">
+  <router-outlet />
+</main>

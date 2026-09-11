@@ -46,9 +46,12 @@ Current modules:
 | `config` | Validated, typed environment access (`AppConfigService`)       |
 | `prisma` | Global `PrismaService` (connection lifecycle, health `ping()`) |
 | `health` | `GET /api/health` — 200 when DB reachable, 503 otherwise       |
+| `auth`   | Register, login, refresh, logout; global `JwtAuthGuard`        |
+| `users`  | `GET`/`PATCH /api/users/me` profile endpoints                  |
+| `common` | `@Public()`, `@CurrentUser()` decorators, shared request types |
 
-Planned modules follow the spec: `auth`, `users`, `households`, `invitations`, `expenses`,
-`bills`, `chores`, `tasks`, `shopping`, `notes`, `notifications`, `activity`, `common`.
+Planned modules follow the spec: `households`, `invitations`, `expenses`,
+`bills`, `chores`, `tasks`, `shopping`, `notes`, `notifications`, `activity`.
 
 ### Cross-cutting defaults (set in `main.ts`)
 
@@ -112,3 +115,34 @@ error and reports `degraded` so the failure is visible in the UI and to orchestr
 - Notifications: a `Notification` model + `NotificationsService` will be the single choke point;
   channels (in-app, email, push) become adapters.
 - Deployment: both apps have Dockerfiles; the compose `app` profile mirrors a single-host deploy.
+
+## Authentication
+
+```text
+Browser                              API                                   DB
+  │  POST /api/auth/login             │                                     │
+  │──────────────────────────────────▶│ argon2id verify                     │
+  │  { user, accessToken, expiresIn } │ create RefreshToken (sha256 hash) ─▶│
+  │◀──────────────────────────────────│ Set-Cookie: hb_refresh (httpOnly,   │
+  │                                   │   SameSite=Lax, Path=/api/auth)     │
+  │  GET /api/... Authorization:      │                                     │
+  │      Bearer <access JWT>          │ JwtAuthGuard verifies HS256         │
+  │  POST /api/auth/refresh (cookie)  │ revoke old, issue new (rotation)    │
+  │  POST /api/auth/logout  (cookie)  │ revoke whole family, clear cookie   │
+```
+
+- **Access token**: HS256 JWT, 15 minutes by default (`JWT_ACCESS_TTL_SECONDS`), held only in
+  memory by the SPA. Payload: `sub` (user id), `email`.
+- **Refresh token**: 256-bit opaque string; only its SHA-256 hash is stored. Sent as an httpOnly
+  cookie scoped to `/api/auth`, so it never accompanies normal API calls. 30 days by default.
+- **Rotation + reuse detection**: every refresh revokes the presented token and issues a new one
+  in the same `familyId`. Presenting an already-revoked token revokes the entire family.
+- **Secure by default**: `JwtAuthGuard` is a global `APP_GUARD`; routes opt out with `@Public()`.
+  `@CurrentUser()` gives handlers the verified identity — never trust ids from the body.
+- **Passwords**: argon2id (19 MiB, t=2). Login uses a constant-cost dummy hash for unknown emails
+  and returns the same message for wrong email or password.
+- **Rate limiting**: `@nestjs/throttler` globally (300/min) with tighter `@Throttle()` limits on
+  register (5/min), login (10/min) and refresh (30/min). Disabled when `NODE_ENV=test`.
+- **Frontend**: `AuthService` (signals) restores the session on startup via `/auth/refresh`;
+  `authInterceptor` adds the Bearer header and, on 401, refreshes once and retries;
+  `authGuard` / `guestGuard` protect routes and remember the redirect target.

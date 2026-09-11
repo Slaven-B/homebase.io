@@ -1,0 +1,48 @@
+.auth-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 1rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+
+  &__logo {
+    color: #005cbb;
+    margin-right: 0.5rem;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 1rem;
+  }
+
+  &__error {
+    margin: 0 0 0.5rem;
+    color: #b3261e;
+    font-size: 0.875rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0 1rem 1rem;
+
+    button {
+      min-width: 120px;
+    }
+  }
+
+  &__hint {
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}

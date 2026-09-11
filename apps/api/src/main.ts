@@ -1,6 +1,7 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
@@ -16,6 +17,7 @@ async function bootstrap(): Promise<void> {
 
   app.setGlobalPrefix(GLOBAL_PREFIX);
   app.use(helmet());
+  app.use(cookieParser());
   app.enableCors({
     origin: config.corsOrigins,
     credentials: true,

@@ -34,8 +34,8 @@ export default tseslint.config(
     },
   },
   {
-    // supertest responses are untyped (`body: any`); keep e2e tests pragmatic.
-    files: ['test/**/*.ts'],
+    // Jest matchers and supertest responses are loosely typed; keep tests pragmatic.
+    files: ['test/**/*.ts', 'src/**/*.spec.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',

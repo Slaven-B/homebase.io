@@ -33,4 +33,20 @@ export class AppConfigService {
       .map((origin) => origin.trim())
       .filter(Boolean);
   }
+
+  get jwtAccessSecret(): string {
+    return this.config.get('JWT_ACCESS_SECRET', { infer: true });
+  }
+
+  get jwtAccessTtlSeconds(): number {
+    return this.config.get('JWT_ACCESS_TTL_SECONDS', { infer: true });
+  }
+
+  get refreshTokenTtlDays(): number {
+    return this.config.get('REFRESH_TOKEN_TTL_DAYS', { infer: true });
+  }
+
+  get cookieSecure(): boolean {
+    return this.config.get('COOKIE_SECURE', { infer: true });
+  }
 }

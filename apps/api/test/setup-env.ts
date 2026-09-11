@@ -3,3 +3,4 @@ process.env.NODE_ENV ??= 'test';
 process.env.DATABASE_URL ??=
   'postgresql://homebase:homebase@localhost:5432/homebase_test?schema=public';
 process.env.CORS_ORIGIN ??= 'http://localhost:4200';
+process.env.JWT_ACCESS_SECRET ??= 'test-secret-test-secret-test-secret-0123456789';

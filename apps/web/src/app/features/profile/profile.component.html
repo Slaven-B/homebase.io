@@ -1,0 +1,42 @@
+<h1 class="profile__title">Profile</h1>
+
+<mat-card appearance="outlined" class="profile__card">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <mat-card-content class="profile__content">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput [value]="user()?.email ?? ''" disabled />
+        <mat-hint>Email changes are not supported yet.</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Display name</mat-label>
+        <input matInput formControlName="displayName" autocomplete="name" required />
+        @if (form.controls.displayName.hasError('required')) {
+          <mat-error>Display name is required.</mat-error>
+        } @else if (form.controls.displayName.hasError('maxlength')) {
+          <mat-error>Keep it under 60 characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Avatar URL</mat-label>
+        <input matInput formControlName="avatarUrl" type="url" placeholder="https://…" />
+        <mat-hint>Optional. Must start with https://</mat-hint>
+        @if (form.controls.avatarUrl.hasError('pattern')) {
+          <mat-error>Use a link that starts with https://</mat-error>
+        }
+      </mat-form-field>
+
+      @if (error(); as message) {
+        <p class="profile__error" role="alert">{{ message }}</p>
+      }
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-flat-button color="primary" type="submit" [disabled]="saving() || !form.dirty">
+        {{ saving() ? 'Saving…' : 'Save changes' }}
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>

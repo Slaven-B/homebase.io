@@ -88,5 +88,8 @@ add new variables there first so misconfiguration fails fast.
 - **Type errors mentioning two copies of `rxjs`** — run `npm dedupe`; both apps must resolve the
   same `rxjs` version (pinned to `^7.8.2`).
 - **Prisma client out of date** — `npm run prisma:generate`.
+- **API e2e tests fail to connect** — they use the `homebase_test` database. Create it once with
+  `docker exec homebase-postgres psql -U homebase -d postgres -c "CREATE DATABASE homebase_test"`;
+  `npm run test:api:e2e` migrates it automatically before running.
 - **`Environment variable not found: DATABASE_URL` from Prisma** — no root `.env`; run
   `cp .env.example .env`.
