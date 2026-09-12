@@ -70,7 +70,7 @@ export class BillsPageComponent {
   readonly urgencyLabels = BILL_URGENCY_LABELS;
   readonly describeDue = describeBillDue;
 
-  readonly currency = computed(() => this.bills()?.[0]?.currency ?? 'EUR');
+  readonly currency = computed(() => this.current()?.currency ?? 'EUR');
   readonly sections = computed(() => {
     const order: BillUrgency[] = ['OVERDUE', 'DUE_SOON', 'UPCOMING', 'INACTIVE'];
     const list = this.bills() ?? [];

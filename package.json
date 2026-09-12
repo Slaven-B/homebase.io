@@ -1,6 +1,6 @@
 {
   "name": "homebase",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "HomeBase - shared household manager (Angular + NestJS + PostgreSQL)",
   "workspaces": [

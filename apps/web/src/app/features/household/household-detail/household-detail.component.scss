@@ -151,3 +151,11 @@
   place-items: center;
   padding: 2rem;
 }
+
+.settings {
+  padding-top: 1rem;
+
+  mat-form-field {
+    width: 200px;
+  }
+}

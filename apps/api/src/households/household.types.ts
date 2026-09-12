@@ -3,6 +3,7 @@ import { HouseholdRole } from '@prisma/client';
 export interface HouseholdSummary {
   id: string;
   name: string;
+  currency: string;
   /** The requesting user's role in this household. */
   role: HouseholdRole;
   memberCount: number;
@@ -22,6 +23,7 @@ export interface HouseholdMemberView {
 export interface HouseholdDetail {
   id: string;
   name: string;
+  currency: string;
   myRole: HouseholdRole;
   members: HouseholdMemberView[];
   createdAt: Date;

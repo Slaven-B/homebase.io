@@ -4,6 +4,7 @@ export type AssignableRole = Exclude<HouseholdRole, 'OWNER'>;
 export interface HouseholdSummary {
   id: string;
   name: string;
+  currency: string;
   role: HouseholdRole;
   memberCount: number;
   createdAt: string;
@@ -22,6 +23,7 @@ export interface HouseholdMember {
 export interface HouseholdDetail {
   id: string;
   name: string;
+  currency: string;
   myRole: HouseholdRole;
   members: HouseholdMember[];
   createdAt: string;
@@ -62,3 +64,24 @@ export const ROLE_LABELS: Record<HouseholdRole, string> = {
 export function canAdminister(role: HouseholdRole | null | undefined): boolean {
   return role === 'OWNER' || role === 'ADMIN';
 }
+
+export const CURRENCIES = [
+  'EUR',
+  'USD',
+  'GBP',
+  'CHF',
+  'SEK',
+  'NOK',
+  'DKK',
+  'PLN',
+  'CZK',
+  'HUF',
+  'RON',
+  'BGN',
+  'HRK',
+  'RSD',
+  'BAM',
+  'CAD',
+  'AUD',
+  'JPY',
+] as const;

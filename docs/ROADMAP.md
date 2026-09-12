@@ -3,18 +3,21 @@
 The application is built incrementally. After every phase the app must run, tests must pass,
 migrations must apply cleanly, authorization must be verified, and the work is committed.
 
-| Phase | Scope                                                        | Status  |
-| ----- | ------------------------------------------------------------ | ------- |
-| 1     | Foundation: monorepo, Docker, Prisma, NestJS, Angular, CI    | ✅ done |
-| 2     | Authentication: register, login, refresh, logout, guards     | ✅ done |
-| 3     | Households: creation, members, invitations, roles            | ✅ done |
-| 4     | Dashboard (+ activity feed infrastructure)                   | ✅ done |
-| 5     | Shopping lists                                               | ✅ done |
-| 6     | Tasks + chores (recurrence, comments, dashboard cards)       | ✅ done |
-| 7     | Expenses, splits, balances, settlements                      | ✅ done |
-| 8     | Bills (recurring, mark paid, optional expense)               | ✅ done |
-| 9     | Notes + in-app notifications                                 | ✅ done |
-| 10    | Polish: responsive, a11y, empty/loading/error states, deploy | ⏳ next |
+| Phase | Scope                                                     | Status  |
+| ----- | --------------------------------------------------------- | ------- |
+| 1     | Foundation: monorepo, Docker, Prisma, NestJS, Angular, CI | ✅ done |
+| 2     | Authentication: register, login, refresh, logout, guards  | ✅ done |
+| 3     | Households: creation, members, invitations, roles         | ✅ done |
+| 4     | Dashboard (+ activity feed infrastructure)                | ✅ done |
+| 5     | Shopping lists                                            | ✅ done |
+| 6     | Tasks + chores (recurrence, comments, dashboard cards)    | ✅ done |
+| 7     | Expenses, splits, balances, settlements                   | ✅ done |
+| 8     | Bills (recurring, mark paid, optional expense)            | ✅ done |
+| 9     | Notes + in-app notifications                              | ✅ done |
+| 10    | Polish: error handling, a11y, settings, deployment guide  | ✅ done |
+
+**MVP complete — v1.0.0.** Everything below is implemented and verified by the automated suites.
+See [DEPLOYMENT.md](DEPLOYMENT.md) to run it for real.
 
 ## MVP definition of done
 

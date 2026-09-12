@@ -62,8 +62,12 @@ export class HouseholdService {
   }
 
   rename(id: string, name: string): Observable<HouseholdDetail> {
+    return this.update(id, { name });
+  }
+
+  update(id: string, patch: { name?: string; currency?: string }): Observable<HouseholdDetail> {
     return this.http
-      .patch<HouseholdDetail>(`${this.base}/${id}`, { name })
+      .patch<HouseholdDetail>(`${this.base}/${id}`, patch)
       .pipe(tap((h) => this.upsertSummary(h, h.myRole)));
   }
 
@@ -142,6 +146,7 @@ export class HouseholdService {
     const summary: HouseholdSummary = {
       id: h.id,
       name: h.name,
+      currency: h.currency,
       role,
       memberCount: h.members.length,
       createdAt: h.createdAt,

@@ -1,3 +1,20 @@
+.shell__skip {
+  position: absolute;
+  left: 0.5rem;
+  top: -100px;
+  z-index: 100;
+  padding: 0.5rem 0.75rem;
+  background: #fff;
+  color: #005cbb;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+
+  &:focus {
+    top: 0.5rem;
+  }
+}
+
 .shell__toolbar {
   position: sticky;
   top: 0;
@@ -41,6 +58,7 @@
 }
 
 .shell__content {
+  outline: none;
   max-width: 1100px;
   margin: 0 auto;
   padding: 1.5rem 1rem;

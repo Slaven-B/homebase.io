@@ -98,7 +98,9 @@ src/app/
 ```
 
 - Angular Material for UI, `OnPush` change detection by default (configured in `angular.json`).
-- HTTP via `provideHttpClient(withFetch())`; API base URL from `src/environments`.
+- HTTP via `provideHttpClient(withFetch())` with two interceptors: `authInterceptor` (bearer token,
+  silent refresh) and `errorInterceptor` (one rate-limited toast for network/5xx failures; 4xx is
+  left to the feature code). Routes are lazy and preloaded after first paint.
 - Components read state through signals; services expose `Observable`s or signals as fits.
 
 ## Health check contract

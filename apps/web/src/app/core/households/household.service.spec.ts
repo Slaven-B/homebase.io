@@ -5,13 +5,28 @@ import { HouseholdDetail, HouseholdSummary } from './household.models';
 import { HouseholdService } from './household.service';
 
 const summaries: HouseholdSummary[] = [
-  { id: 'h1', name: 'Home', role: 'OWNER', memberCount: 2, createdAt: '2026-01-01T00:00:00Z' },
-  { id: 'h2', name: 'Cabin', role: 'MEMBER', memberCount: 4, createdAt: '2026-01-02T00:00:00Z' },
+  {
+    id: 'h1',
+    name: 'Home',
+    currency: 'EUR',
+    role: 'OWNER',
+    memberCount: 2,
+    createdAt: '2026-01-01T00:00:00Z',
+  },
+  {
+    id: 'h2',
+    name: 'Cabin',
+    currency: 'EUR',
+    role: 'MEMBER',
+    memberCount: 4,
+    createdAt: '2026-01-02T00:00:00Z',
+  },
 ];
 
 const detail: HouseholdDetail = {
   id: 'h3',
   name: 'New Place',
+  currency: 'EUR',
   myRole: 'OWNER',
   members: [
     {

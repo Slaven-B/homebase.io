@@ -304,6 +304,19 @@ describe('Households & invitations (e2e)', () => {
         .send({ name: 'Renamed by admin' })
         .expect(200);
       expect(renamed.body.name).toBe('Renamed by admin');
+      expect(renamed.body.currency).toBe('EUR');
+
+      const currency = await request(app.getHttpServer())
+        .patch(base)
+        .set(auth(admin))
+        .send({ currency: 'usd' })
+        .expect(200);
+      expect(currency.body).toMatchObject({ name: 'Renamed by admin', currency: 'USD' });
+      await request(app.getHttpServer())
+        .patch(base)
+        .set(auth(admin))
+        .send({ currency: 'dollars' })
+        .expect(400);
 
       await request(app.getHttpServer()).delete(base).set(auth(admin)).expect(403);
       await request(app.getHttpServer())

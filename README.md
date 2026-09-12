@@ -5,9 +5,9 @@ members, shared expenses, bills, chores, shopping lists, tasks, notes and househ
 
 **Stack:** Angular 19 · NestJS 11 · PostgreSQL 16 · Prisma 6 · Docker Compose
 
-> Status: **Phase 9 — Notes and notifications done.** All MVP modules are implemented:
-> accounts, households, invitations, activity, dashboard, shopping, tasks, chores, expenses with
-> balances, bills, notes and in-app notifications. Polish and deployment are next.
+> Status: **MVP complete (v1.0.0).** Accounts, households, invitations, activity, dashboard,
+> shopping, tasks, chores, expenses with balances and settlements, bills, notes and in-app
+> notifications work end to end on desktop and mobile. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 > See [docs/ROADMAP.md](docs/ROADMAP.md) for the phased plan.
 
 ## Repository layout
@@ -90,3 +90,4 @@ on http://localhost:4200.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — how the pieces fit together
 - [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) — day-to-day workflow, conventions, testing
 - [docs/ROADMAP.md](docs/ROADMAP.md) — development phases and definition of done
+- [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — running HomeBase on a server

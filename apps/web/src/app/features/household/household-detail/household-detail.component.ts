@@ -24,6 +24,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth';
 import {
   AssignableRole,
+  CURRENCIES,
   CreatedInvitation,
   HouseholdDetail,
   HouseholdMember,
@@ -72,6 +73,7 @@ export class HouseholdDetailComponent {
   readonly renaming = signal(false);
   readonly editingName = signal(false);
   readonly roleLabels = ROLE_LABELS;
+  readonly currencies = CURRENCIES;
 
   readonly myRole = computed(() => this.household()?.myRole ?? null);
   readonly isAdmin = computed(() => canAdminister(this.myRole()));
@@ -166,6 +168,17 @@ export class HouseholdDetailComponent {
         this.renaming.set(false);
         this.toast(err, 'Could not rename the household.');
       },
+    });
+  }
+
+  setCurrency(currency: string): void {
+    if (!currency || currency === this.household()?.currency) return;
+    this.households.update(this.id(), { currency }).subscribe({
+      next: (h) => {
+        this.household.set(h);
+        this.snackBar.open(`Currency set to ${h.currency}`, undefined, { duration: 2000 });
+      },
+      error: (err: unknown) => this.toast(err, 'Could not change the currency.'),
     });
   }
 

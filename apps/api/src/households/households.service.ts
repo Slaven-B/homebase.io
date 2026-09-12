@@ -58,6 +58,7 @@ export class HouseholdsService {
     return memberships.map((m) => ({
       id: m.household.id,
       name: m.household.name,
+      currency: m.household.currency,
       role: m.role,
       memberCount: m.household._count.members,
       createdAt: m.household.createdAt,
@@ -100,6 +101,7 @@ export class HouseholdsService {
     return {
       id: household.id,
       name: household.name,
+      currency: household.currency,
       myRole: membership.role,
       members: household.members.map(toMemberView),
       createdAt: household.createdAt,
@@ -117,8 +119,11 @@ export class HouseholdsService {
       where: { id: householdId },
       select: { name: true },
     });
-    await this.prisma.household.update({ where: { id: householdId }, data: { name: dto.name } });
-    if (before && before.name !== dto.name) {
+    await this.prisma.household.update({
+      where: { id: householdId },
+      data: { name: dto.name, currency: dto.currency },
+    });
+    if (before && dto.name !== undefined && before.name !== dto.name) {
       await this.activity.log({
         householdId,
         userId,

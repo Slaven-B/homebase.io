@@ -67,10 +67,8 @@ export class ExpensesPageComponent {
 
   readonly monthTitle = computed(() => monthLabel(this.month()));
   readonly isCurrentMonth = computed(() => this.month() === currentMonth());
-  /** Household currency, falling back to the first total's currency. */
-  readonly currency = computed(
-    () => this.balance()?.currency ?? this.totals()[0]?.currency ?? 'EUR',
-  );
+  /** Household default currency. */
+  readonly currency = computed(() => this.current()?.currency ?? 'EUR');
 
   constructor() {
     effect(() => {

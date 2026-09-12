@@ -1,3 +1,4 @@
+<a class="shell__skip" href="#main">Skip to content</a>
 <mat-toolbar color="primary" class="shell__toolbar">
   <a routerLink="/" class="shell__brand" aria-label="HomeBase dashboard">
     <mat-icon aria-hidden="true">home</mat-icon>
@@ -71,7 +72,7 @@
   }
 </mat-toolbar>
 
-<main class="shell__content">
+<main id="main" class="shell__content" tabindex="-1">
   <router-outlet />
 </main>
 
