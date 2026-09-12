@@ -4,11 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, SplitMethod } from '@prisma/client';
+import { NotificationType, Prisma, SplitMethod } from '@prisma/client';
 import { ActivityService } from '../activity/activity.service';
 import { ActivityAction, ActivityEntity } from '../activity/activity.types';
 import { formatDateOnly, toDateOnly, todayUtc } from '../chores/recurrence';
 import { ADMIN_ROLES, HouseholdAccessService } from '../households/household-access.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateExpenseDto,
@@ -39,6 +40,10 @@ const settlementInclude = { fromUser: userRef, toUser: userRef, createdBy: userR
 type SettlementRow = Prisma.SettlementGetPayload<{ include: typeof settlementInclude }>;
 
 const DEFAULT_LIMIT = 30;
+
+function fmt(cents: number, currency: string): string {
+  return `${(cents / 100).toFixed(2)} ${currency}`;
+}
 
 function toView(row: ExpenseRow, viewerId: string): ExpenseView {
   return {
@@ -91,6 +96,7 @@ export class ExpensesService {
     private readonly prisma: PrismaService,
     private readonly access: HouseholdAccessService,
     private readonly activity: ActivityService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   // --- expenses ------------------------------------------------------------
@@ -162,6 +168,20 @@ export class ExpensesService {
       );
       return expense;
     });
+    const payerName = created.paidBy?.displayName ?? 'Someone';
+    for (const split of created.splits) {
+      if (split.amountCents === 0) continue;
+      await this.notifications.notify({
+        userId: split.userId,
+        actorId: userId,
+        householdId,
+        type: NotificationType.EXPENSE_SHARED,
+        title: `New shared expense: ${created.description}`,
+        body: `${payerName} paid ${fmt(created.amountCents, currency)} · your share ${fmt(split.amountCents, currency)}`,
+        link: '/expenses',
+        metadata: { expenseId: created.id, shareCents: split.amountCents, currency },
+      });
+    }
     return toView(created, userId);
   }
 
@@ -338,6 +358,16 @@ export class ExpensesService {
         amountCents: created.amountCents,
         currency,
       },
+    });
+    await this.notifications.notify({
+      userId: created.toUserId,
+      actorId: userId,
+      householdId,
+      type: NotificationType.SETTLEMENT_RECEIVED,
+      title: `${created.fromUser.displayName} paid you ${fmt(created.amountCents, currency)}`,
+      body: created.note ?? null,
+      link: '/expenses/balances',
+      metadata: { settlementId: created.id },
     });
     return toSettlementView(created);
   }

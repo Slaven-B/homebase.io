@@ -5,8 +5,9 @@ members, shared expenses, bills, chores, shopping lists, tasks, notes and househ
 
 **Stack:** Angular 19 · NestJS 11 · PostgreSQL 16 · Prisma 6 · Docker Compose
 
-> Status: **Phase 8 — Bills done.** Accounts, households, invitations, activity, dashboard,
-> shopping, tasks, chores, expenses with balances, and recurring bills. Notes and notifications next.
+> Status: **Phase 9 — Notes and notifications done.** All MVP modules are implemented:
+> accounts, households, invitations, activity, dashboard, shopping, tasks, chores, expenses with
+> balances, bills, notes and in-app notifications. Polish and deployment are next.
 > See [docs/ROADMAP.md](docs/ROADMAP.md) for the phased plan.
 
 ## Repository layout

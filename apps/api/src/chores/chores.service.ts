@@ -4,10 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ChoreFrequency, Prisma } from '@prisma/client';
+import { ChoreFrequency, NotificationType, Prisma } from '@prisma/client';
 import { ActivityService } from '../activity/activity.service';
 import { ActivityAction, ActivityEntity } from '../activity/activity.types';
 import { ADMIN_ROLES, HouseholdAccessService } from '../households/household-access.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ChoreCompletionView, ChoreDetail, ChoreView } from './chore.types';
 import { CompleteChoreDto, CreateChoreDto, UpdateChoreDto } from './dto/chore.dto';
@@ -60,6 +61,7 @@ export class ChoresService {
     private readonly prisma: PrismaService,
     private readonly access: HouseholdAccessService,
     private readonly activity: ActivityService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async list(userId: string, householdId: string, includeInactive = false): Promise<ChoreView[]> {
@@ -100,6 +102,7 @@ export class ChoresService {
       entityId: created.id,
       metadata: { title: created.title, frequency: created.frequency },
     });
+    await this.notifyAssigned(userId, householdId, created.id, created.title, created.assigneeId);
     return this.get(userId, householdId, created.id);
   }
 
@@ -145,7 +148,10 @@ export class ChoresService {
     if (dto.priority !== undefined) data.priority = dto.priority;
     if (dto.isActive !== undefined) data.isActive = dto.isActive;
 
-    await this.prisma.chore.update({ where: { id: choreId }, data });
+    const updated = await this.prisma.chore.update({ where: { id: choreId }, data });
+    if (dto.assigneeId !== undefined && dto.assigneeId !== existing.assigneeId) {
+      await this.notifyAssigned(userId, householdId, updated.id, updated.title, updated.assigneeId);
+    }
     return this.get(userId, householdId, choreId);
   }
 
@@ -188,6 +194,30 @@ export class ChoresService {
   }
 
   // --- helpers -------------------------------------------------------------
+
+  private async notifyAssigned(
+    actorId: string,
+    householdId: string,
+    choreId: string,
+    title: string,
+    assigneeId: string | null,
+  ): Promise<void> {
+    if (!assigneeId) return;
+    const actor = await this.prisma.user.findUnique({
+      where: { id: actorId },
+      select: { displayName: true },
+    });
+    await this.notifications.notify({
+      userId: assigneeId,
+      actorId,
+      householdId,
+      type: NotificationType.CHORE_ASSIGNED,
+      title: 'You have been assigned a chore',
+      body: `${actor?.displayName ?? 'Someone'} put you on "${title}"`,
+      link: '/chores',
+      metadata: { choreId },
+    });
+  }
 
   private async closeOccurrence(
     userId: string,

@@ -51,6 +51,9 @@ model User {
   createdBills           Bill[]                @relation("BillCreator")
   responsibleBills       Bill[]                @relation("BillResponsible")
   billPayments           BillPayment[]
+  authoredNotes          Note[]                @relation("NoteAuthor")
+  editedNotes            Note[]                @relation("NoteEditor")
+  notifications          Notification[]
 
   @@map("users")
 }
@@ -81,6 +84,8 @@ model Household {
   expenses      Expense[]
   settlements   Settlement[]
   bills         Bill[]
+  notes         Note[]
+  notifications Notification[]
   invitations   HouseholdInvitation[]
 
   @@map("households")
@@ -468,4 +473,68 @@ model BillPayment {
 
   @@index([billId, paidAt(sort: Desc)])
   @@map("bill_payments")
+}
+
+// ---------------------------------------------------------------------------
+// Notes
+// ---------------------------------------------------------------------------
+
+model Note {
+  id             String   @id @default(uuid()) @db.Uuid
+  householdId    String   @map("household_id") @db.Uuid
+  authorId       String?  @map("author_id") @db.Uuid
+  lastEditedById String?  @map("last_edited_by_id") @db.Uuid
+  title          String
+  /// Plain text / light markdown. Kept simple on purpose.
+  content        String
+  isPinned       Boolean  @default(false) @map("is_pinned")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  household    Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  author       User?     @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  lastEditedBy User?     @relation("NoteEditor", fields: [lastEditedById], references: [id], onDelete: SetNull)
+
+  @@index([householdId, isPinned, updatedAt(sort: Desc)])
+  @@map("notes")
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+
+enum NotificationType {
+  TASK_ASSIGNED
+  CHORE_ASSIGNED
+  CHORE_DUE
+  BILL_DUE
+  INVITATION
+  EXPENSE_SHARED
+  SETTLEMENT_RECEIVED
+  GENERIC
+}
+
+/// In-app notification for one recipient. Additional channels (email, push)
+/// will be adapters fed from the same rows.
+model Notification {
+  id          String           @id @default(uuid()) @db.Uuid
+  userId      String           @map("user_id") @db.Uuid
+  householdId String?          @map("household_id") @db.Uuid
+  type        NotificationType
+  title       String
+  body        String?
+  /// Frontend route, e.g. "/tasks/123".
+  link        String?
+  metadata    Json             @default("{}")
+  /// Stable key to avoid duplicates for reminders (e.g. "bill:<id>:2026-09-15").
+  dedupeKey   String?          @map("dedupe_key")
+  readAt      DateTime?        @map("read_at") @db.Timestamptz(6)
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  household Household? @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, readAt, createdAt(sort: Desc)])
+  @@map("notifications")
 }

@@ -41,26 +41,27 @@ dto/        → request/response shapes with class-validator decorators
 
 Current modules:
 
-| Module        | Purpose                                                                                      |
-| ------------- | -------------------------------------------------------------------------------------------- |
-| `config`      | Validated, typed environment access (`AppConfigService`)                                     |
-| `prisma`      | Global `PrismaService` (connection lifecycle, health `ping()`)                               |
-| `health`      | `GET /api/health` — 200 when DB reachable, 503 otherwise                                     |
-| `auth`        | Register, login, refresh, logout; global `JwtAuthGuard`                                      |
-| `users`       | `GET`/`PATCH /api/users/me` profile endpoints                                                |
-| `common`      | `@Public()`, `@CurrentUser()` decorators, shared request types                               |
-| `households`  | Households, members, roles; exports `HouseholdAccessService`                                 |
-| `invitations` | Email-bound invitations: create/revoke (admins), list/accept/decline (invitee)               |
-| `activity`    | Append-only household activity log (`ActivityService.log`, cursor-paged list); global module |
-| `dashboard`   | `GET /api/households/:id/dashboard` — one round trip for the home screen                     |
-| `shopping`    | Shopping lists and items under `/households/:id/shopping-lists`; feeds the dashboard         |
-| `tasks`       | One-off tasks with status, priority, date-only due date, assignee, comments                  |
-| `chores`      | Recurring chores; `recurrence.ts` computes the next due date; completion history             |
-| `expenses`    | Expenses with EQUAL/PERCENTAGE/CUSTOM splits, balances, settlements; `money.ts` is pure      |
-| `bills`       | Recurring/one-time bills, mark paid (advances one period), optional shared expense           |
+| Module          | Purpose                                                                                      |
+| --------------- | -------------------------------------------------------------------------------------------- |
+| `config`        | Validated, typed environment access (`AppConfigService`)                                     |
+| `prisma`        | Global `PrismaService` (connection lifecycle, health `ping()`)                               |
+| `health`        | `GET /api/health` — 200 when DB reachable, 503 otherwise                                     |
+| `auth`          | Register, login, refresh, logout; global `JwtAuthGuard`                                      |
+| `users`         | `GET`/`PATCH /api/users/me` profile endpoints                                                |
+| `common`        | `@Public()`, `@CurrentUser()` decorators, shared request types                               |
+| `households`    | Households, members, roles; exports `HouseholdAccessService`                                 |
+| `invitations`   | Email-bound invitations: create/revoke (admins), list/accept/decline (invitee)               |
+| `activity`      | Append-only household activity log (`ActivityService.log`, cursor-paged list); global module |
+| `dashboard`     | `GET /api/households/:id/dashboard` — one round trip for the home screen                     |
+| `shopping`      | Shopping lists and items under `/households/:id/shopping-lists`; feeds the dashboard         |
+| `tasks`         | One-off tasks with status, priority, date-only due date, assignee, comments                  |
+| `chores`        | Recurring chores; `recurrence.ts` computes the next due date; completion history             |
+| `expenses`      | Expenses with EQUAL/PERCENTAGE/CUSTOM splits, balances, settlements; `money.ts` is pure      |
+| `bills`         | Recurring/one-time bills, mark paid (advances one period), optional shared expense           |
+| `notes`         | Shared household notes (plain text, pinning, last editor)                                    |
+| `notifications` | Global `NotificationsService.notify()`, per-user list/read APIs, daily reminder cron         |
 
-Planned modules follow the spec: `notes`,
-`notifications`.
+All MVP modules are in place.
 
 ### Cross-cutting defaults (set in `main.ts`)
 
@@ -212,6 +213,31 @@ EQUAL between current members) inside the same transaction and links it from the
 flow into balances when the household wants them to. Urgency is derived: OVERDUE, DUE_SOON (≤ 7
 days), UPCOMING, INACTIVE. The dashboard lists active bills overdue or due within 14 days, and the
 finance snapshot bills line is this month payments plus unpaid bills due this month.
+
+## Notes
+
+Plain-text notes per household with a pinned flag. Any member can create and edit (the last editor
+is recorded); only the author or an admin can delete. The list endpoint returns a short preview
+instead of the full body.
+
+## Notifications
+
+`NotificationsService.notify()` is the single entry point (global module). It skips
+self-notifications (`actorId === userId`), supports an optional `dedupeKey` (unique per user) so
+reminders are idempotent, and never throws. Producers today:
+
+| Event                                 | Type                           | Recipient                                    |
+| ------------------------------------- | ------------------------------ | -------------------------------------------- |
+| task / chore assigned or reassigned   | TASK_ASSIGNED / CHORE_ASSIGNED | new assignee                                 |
+| invitation to an existing account     | INVITATION                     | invitee                                      |
+| shared expense created                | EXPENSE_SHARED                 | each participant                             |
+| settlement recorded                   | SETTLEMENT_RECEIVED            | the person paid                              |
+| daily 08:00 cron (`RemindersService`) | BILL_DUE, CHORE_DUE            | responsible / assignee (all members if none) |
+
+The API exposes `GET /notifications` (unread filter, cursor paging), `GET /notifications/unread-count`,
+`PATCH /notifications/:id/read`, `POST /notifications/read-all`, `DELETE /notifications/:id`. The SPA
+polls the unread count every 60 s; a push channel can replace polling later without touching producers.
+Email/push delivery would be adapters reading the same rows.
 
 ## Dashboard
 

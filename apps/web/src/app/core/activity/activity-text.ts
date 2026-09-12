@@ -90,6 +90,8 @@ export function describeActivity(entry: ActivityEntry): ActivityText {
       };
     case 'bill.paid':
       return { icon: 'price_check', text: `paid the ${str(m['name'], 'bill')} bill (${money(m)})` };
+    case 'note.created':
+      return { icon: 'sticky_note_2', text: `added the note "${str(m['title'], 'Untitled')}"` };
     default:
       return { icon: 'info', text: entry.action.replace(/[._]/g, ' ') };
   }

@@ -43,11 +43,14 @@
     <a mat-button routerLink="/chores" routerLinkActive="shell__nav-active">Chores</a>
     <a mat-button routerLink="/expenses" routerLinkActive="shell__nav-active">Expenses</a>
     <a mat-button routerLink="/bills" routerLinkActive="shell__nav-active">Bills</a>
+    <a mat-button routerLink="/notes" routerLinkActive="shell__nav-active">Notes</a>
     <a mat-button routerLink="/households" routerLinkActive="shell__nav-active">Households</a>
     <a mat-button routerLink="/activity" routerLinkActive="shell__nav-active">Activity</a>
   </nav>
 
   <span class="shell__spacer"></span>
+
+  <app-notification-bell />
 
   @if (user(); as u) {
     <button mat-button [matMenuTriggerFor]="userMenu" class="shell__user" aria-label="Account menu">
@@ -102,6 +105,10 @@
       ><mat-icon>cleaning_services</mat-icon><span>Chores</span></a
     >
     <a mat-menu-item routerLink="/bills"><mat-icon>receipt</mat-icon><span>Bills</span></a>
+    <a mat-menu-item routerLink="/notes"><mat-icon>sticky_note_2</mat-icon><span>Notes</span></a>
+    <a mat-menu-item routerLink="/notifications"
+      ><mat-icon>notifications</mat-icon><span>Notifications</span></a
+    >
     <a mat-menu-item routerLink="/activity"><mat-icon>history</mat-icon><span>Activity</span></a>
     <a mat-menu-item routerLink="/households"
       ><mat-icon>home_work</mat-icon><span>Households</span></a

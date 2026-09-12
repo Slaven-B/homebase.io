@@ -4,13 +4,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { HouseholdRole, InvitationStatus } from '@prisma/client';
+import { HouseholdRole, InvitationStatus, NotificationType } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
 import { ActivityService } from '../activity/activity.service';
 import { ActivityAction, ActivityEntity } from '../activity/activity.types';
 import { HouseholdAccessService } from '../households/household-access.service';
 import { HouseholdDetail } from '../households/household.types';
 import { HouseholdsService } from '../households/households.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
@@ -85,6 +86,7 @@ export class InvitationsService {
     private readonly households: HouseholdsService,
     private readonly users: UsersService,
     private readonly activity: ActivityService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async listForHousehold(userId: string, householdId: string): Promise<InvitationView[]> {
@@ -144,6 +146,24 @@ export class InvitationsService {
       entityId: created.id,
       metadata: { email: created.email, role: created.role },
     });
+
+    if (existingUser) {
+      const household = await this.prisma.household.findUnique({
+        where: { id: householdId },
+        select: { name: true },
+      });
+      await this.notifications.notify({
+        userId: existingUser.id,
+        actorId: userId,
+        householdId,
+        type: NotificationType.INVITATION,
+        title: `You are invited to ${household?.name ?? 'a household'}`,
+        body: `${created.invitedBy.displayName} invited you as ${created.role.toLowerCase()}`,
+        link: `/invite/${created.token}`,
+        metadata: { invitationId: created.id },
+        dedupeKey: `invitation:${created.id}`,
+      });
+    }
 
     return { ...toView(created), token: created.token };
   }

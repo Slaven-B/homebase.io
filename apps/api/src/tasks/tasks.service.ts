@@ -4,11 +4,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma, TaskStatus } from '@prisma/client';
+import { NotificationType, Prisma, TaskStatus } from '@prisma/client';
 import { ActivityService } from '../activity/activity.service';
 import { ActivityAction, ActivityEntity } from '../activity/activity.types';
 import { formatDateOnly, toDateOnly } from '../chores/recurrence';
 import { ADMIN_ROLES, HouseholdAccessService } from '../households/household-access.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTaskCommentDto, CreateTaskDto, ListTasksQuery, UpdateTaskDto } from './dto/task.dto';
 import { TaskCommentView, TaskDetail, TaskView } from './task.types';
@@ -67,6 +68,7 @@ export class TasksService {
     private readonly prisma: PrismaService,
     private readonly access: HouseholdAccessService,
     private readonly activity: ActivityService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async list(userId: string, householdId: string, query: ListTasksQuery): Promise<TaskView[]> {
@@ -111,6 +113,7 @@ export class TasksService {
       entityId: created.id,
       metadata: { title: created.title },
     });
+    await this.notifyAssigned(userId, householdId, created.id, created.title, created.assigneeId);
     return this.get(userId, householdId, created.id);
   }
 
@@ -154,6 +157,9 @@ export class TasksService {
     }
 
     const updated = await this.prisma.task.update({ where: { id: taskId }, data });
+    if (dto.assigneeId !== undefined && dto.assigneeId !== existing.assigneeId) {
+      await this.notifyAssigned(userId, householdId, updated.id, updated.title, updated.assigneeId);
+    }
 
     if (becomingDone) {
       await this.activity.log({
@@ -226,6 +232,30 @@ export class TasksService {
   }
 
   // --- helpers -------------------------------------------------------------
+
+  private async notifyAssigned(
+    actorId: string,
+    householdId: string,
+    taskId: string,
+    title: string,
+    assigneeId: string | null,
+  ): Promise<void> {
+    if (!assigneeId) return;
+    const actor = await this.prisma.user.findUnique({
+      where: { id: actorId },
+      select: { displayName: true },
+    });
+    await this.notifications.notify({
+      userId: assigneeId,
+      actorId,
+      householdId,
+      type: NotificationType.TASK_ASSIGNED,
+      title: 'You have been assigned a task',
+      body: `${actor?.displayName ?? 'Someone'} assigned you "${title}"`,
+      link: `/tasks/${taskId}`,
+      metadata: { taskId },
+    });
+  }
 
   private async requireTask(householdId: string, taskId: string) {
     const task = await this.prisma.task.findFirst({ where: { id: taskId, householdId } });

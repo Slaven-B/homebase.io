@@ -116,6 +116,38 @@ export const routes: Routes = [
         title: 'Bills · HomeBase',
       },
       {
+        path: 'notes',
+        loadComponent: () =>
+          import('./features/notes/notes-page/notes-page.component').then(
+            (m) => m.NotesPageComponent,
+          ),
+        title: 'Notes · HomeBase',
+      },
+      {
+        path: 'notes/new',
+        loadComponent: () =>
+          import('./features/notes/note-editor/note-editor.component').then(
+            (m) => m.NoteEditorComponent,
+          ),
+        title: 'New note · HomeBase',
+      },
+      {
+        path: 'notes/:noteId',
+        loadComponent: () =>
+          import('./features/notes/note-editor/note-editor.component').then(
+            (m) => m.NoteEditorComponent,
+          ),
+        title: 'Note · HomeBase',
+      },
+      {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/notifications/notifications-page/notifications-page.component').then(
+            (m) => m.NotificationsPageComponent,
+          ),
+        title: 'Notifications · HomeBase',
+      },
+      {
         path: 'activity',
         loadComponent: () =>
           import('./features/activity/activity-page.component').then(

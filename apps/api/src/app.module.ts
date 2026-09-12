@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ActivityModule } from './activity/activity.module';
@@ -13,6 +14,8 @@ import { Environment } from './config/env.validation';
 import { HealthModule } from './health/health.module';
 import { HouseholdsModule } from './households/households.module';
 import { InvitationsModule } from './invitations/invitations.module';
+import { NotesModule } from './notes/notes.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ShoppingModule } from './shopping/shopping.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -32,6 +35,8 @@ import { UsersModule } from './users/users.module';
       }),
     }),
     HealthModule,
+    ScheduleModule.forRoot(),
+    NotificationsModule,
     UsersModule,
     AuthModule,
     HouseholdsModule,
@@ -42,6 +47,7 @@ import { UsersModule } from './users/users.module';
     ChoresModule,
     ExpensesModule,
     BillsModule,
+    NotesModule,
     DashboardModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
