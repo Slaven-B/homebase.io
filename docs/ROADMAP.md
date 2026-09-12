@@ -17,7 +17,8 @@ migrations must apply cleanly, authorization must be verified, and the work is c
 | 10    | Polish: error handling, a11y, settings, deployment guide  | ✅ done |
 
 **MVP complete — v1.0.0.** Everything below is implemented and verified by the automated suites.
-See [DEPLOYMENT.md](DEPLOYMENT.md) to run it for real.
+See [DEPLOYMENT.md](DEPLOYMENT.md) to run it for real. What comes after v1.0 is tracked in
+[BACKLOG.md](BACKLOG.md); the next step is the Design & UX area (adopting the Claude Design system).
 
 ## MVP definition of done
 

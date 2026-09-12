@@ -91,3 +91,4 @@ on http://localhost:4200.
 - [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) — day-to-day workflow, conventions, testing
 - [docs/ROADMAP.md](docs/ROADMAP.md) — development phases and definition of done
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — running HomeBase on a server
+- [docs/BACKLOG.md](docs/BACKLOG.md) — the long-term feature backlog (mirrors the shared tracker)
