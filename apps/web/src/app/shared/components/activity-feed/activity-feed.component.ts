@@ -29,7 +29,7 @@ import { describeActivity, relativeTime } from '../../../core/activity/activity-
   styles: `
     .feed__empty {
       margin: 0.5rem 1rem 1rem;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
       font-size: 0.875rem;
     }
     .feed__text {
@@ -37,7 +37,7 @@ import { describeActivity, relativeTime } from '../../../core/activity/activity-
       line-height: 1.3;
     }
     .feed__time {
-      color: rgba(0, 0, 0, 0.55);
+      color: var(--hb-text-quaternary);
       font-size: 0.75rem;
     }
   `,

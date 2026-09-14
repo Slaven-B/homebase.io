@@ -1,0 +1,254 @@
+// Reusable layout & surface classes built on the tokens. Pages use these instead of
+// re-declaring page headers, cards, chips and empty states in every component.
+
+// --- Page scaffold ---------------------------------------------------------
+
+.hb-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hb-space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--hb-space-5);
+
+  h1 {
+    margin: 0;
+    font-size: var(--hb-display-xs);
+    line-height: var(--hb-display-xs-lh);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--hb-text-primary);
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--hb-space-2);
+    flex-wrap: wrap;
+  }
+}
+
+.hb-section-title {
+  margin: var(--hb-space-6) 0 var(--hb-space-2);
+  font-size: var(--hb-text-sm);
+  line-height: var(--hb-text-sm-lh);
+  font-weight: 600;
+  color: var(--hb-text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--hb-space-2);
+
+  &--danger {
+    color: var(--hb-text-error-primary);
+  }
+  &--warning {
+    color: var(--hb-text-warning-primary);
+  }
+}
+
+.hb-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--hb-space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--hb-space-4);
+
+  &__spacer {
+    flex: 1;
+  }
+}
+
+// --- Surfaces --------------------------------------------------------------
+
+.hb-card {
+  background: var(--hb-bg-primary);
+  border: 1px solid var(--hb-border-secondary);
+  border-radius: var(--hb-radius-xl);
+  box-shadow: var(--hb-shadow-xs);
+  overflow: hidden;
+}
+
+// Row inside a card list: divider between rows, comfortable touch height.
+.hb-row {
+  display: flex;
+  align-items: center;
+  gap: var(--hb-space-3);
+  padding: var(--hb-space-3) var(--hb-space-4);
+  min-height: 56px;
+  border-top: 1px solid var(--hb-border-secondary);
+
+  &:first-child {
+    border-top: 0;
+  }
+
+  &--link {
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--hb-bg-primary-hover);
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title {
+    font-weight: 500;
+    color: var(--hb-text-primary);
+    overflow-wrap: anywhere;
+  }
+
+  &__meta {
+    font-size: var(--hb-text-sm);
+    line-height: var(--hb-text-sm-lh);
+    color: var(--hb-text-tertiary);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--hb-space-1) var(--hb-space-2);
+    align-items: center;
+  }
+}
+
+.hb-grid {
+  display: grid;
+  gap: var(--hb-space-4);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+// --- Badges / chips --------------------------------------------------------
+
+.hb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hb-space-1);
+  padding: 2px var(--hb-space-2);
+  border-radius: var(--hb-radius-full);
+  border: 1px solid var(--hb-badge-gray-border);
+  background: var(--hb-badge-gray-bg);
+  color: var(--hb-badge-gray-fg);
+  font-size: var(--hb-text-xs);
+  line-height: var(--hb-text-xs-lh);
+  font-weight: 500;
+  white-space: nowrap;
+
+  mat-icon,
+  .mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+
+  &--brand {
+    border-color: var(--hb-badge-brand-border);
+    background: var(--hb-badge-brand-bg);
+    color: var(--hb-badge-brand-fg);
+  }
+  &--error {
+    border-color: var(--hb-badge-error-border);
+    background: var(--hb-badge-error-bg);
+    color: var(--hb-badge-error-fg);
+  }
+  &--warning {
+    border-color: var(--hb-badge-warning-border);
+    background: var(--hb-badge-warning-bg);
+    color: var(--hb-badge-warning-fg);
+  }
+  &--success {
+    border-color: var(--hb-badge-success-border);
+    background: var(--hb-badge-success-bg);
+    color: var(--hb-badge-success-fg);
+  }
+  &--outline {
+    background: transparent;
+  }
+}
+
+// --- Text helpers ----------------------------------------------------------
+
+.hb-muted {
+  color: var(--hb-text-tertiary);
+}
+.hb-subtle {
+  color: var(--hb-text-quaternary);
+  font-size: var(--hb-text-xs);
+  line-height: var(--hb-text-xs-lh);
+}
+.hb-error-text {
+  color: var(--hb-text-error-primary);
+}
+.hb-success-text {
+  color: var(--hb-text-success-primary);
+}
+.hb-warning-text {
+  color: var(--hb-text-warning-primary);
+}
+.hb-num {
+  font-variant-numeric: tabular-nums;
+}
+.hb-strike {
+  text-decoration: line-through;
+  text-decoration-color: var(--hb-border-primary);
+  color: var(--hb-text-quaternary);
+}
+
+// --- States ----------------------------------------------------------------
+
+.hb-loading {
+  display: grid;
+  place-items: center;
+  padding: var(--hb-space-10) var(--hb-space-4);
+}
+
+.hb-alert {
+  display: flex;
+  gap: var(--hb-space-3);
+  align-items: flex-start;
+  padding: var(--hb-space-3) var(--hb-space-4);
+  border-radius: var(--hb-radius-lg);
+  border: 1px solid var(--hb-border-secondary);
+  background: var(--hb-bg-secondary);
+  color: var(--hb-text-secondary);
+  font-size: var(--hb-text-sm);
+  line-height: var(--hb-text-sm-lh);
+
+  &--error {
+    border-color: var(--hb-badge-error-border);
+    background: var(--hb-bg-error-primary);
+    color: var(--hb-error-700);
+  }
+  &--brand {
+    border-color: var(--hb-badge-brand-border);
+    background: var(--hb-bg-brand-primary);
+    color: var(--hb-text-brand-secondary);
+  }
+}
+
+// --- Two-column detail layout ---------------------------------------------
+
+.hb-columns {
+  display: grid;
+  gap: var(--hb-space-4);
+  grid-template-columns: 1fr;
+  align-items: start;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  > * {
+    min-width: 0;
+  }
+
+  &--wide-left {
+    @media (min-width: 900px) {
+      grid-template-columns: 3fr 2fr;
+    }
+  }
+}

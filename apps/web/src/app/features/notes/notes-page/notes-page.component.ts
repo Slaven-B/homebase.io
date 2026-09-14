@@ -133,7 +133,7 @@ import { NotesService } from '../../../core/notes/notes.service';
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     }
     .card {
-      background: #fff;
+      background: var(--hb-bg-primary);
       &--empty {
         text-align: center;
         padding: 1.5rem 1rem;
@@ -144,13 +144,13 @@ import { NotesService } from '../../../core/notes/notes.service';
         p {
           margin: 0 auto 1rem;
           max-width: 440px;
-          color: rgba(0, 0, 0, 0.6);
+          color: var(--hb-text-tertiary);
         }
         mat-icon {
           font-size: 40px;
           width: 40px;
           height: 40px;
-          color: #005cbb;
+          color: var(--hb-fg-brand-primary);
         }
       }
     }
@@ -159,14 +159,14 @@ import { NotesService } from '../../../core/notes/notes.service';
       color: inherit;
     }
     .note {
-      background: #fff;
+      background: var(--hb-bg-primary);
       height: 100%;
       transition: box-shadow 120ms ease;
       &:hover {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        box-shadow: var(--hb-shadow-md);
       }
       &--pinned {
-        background: #fffbe9;
+        background: var(--hb-warning-25);
       }
     }
     .note__head {
@@ -182,13 +182,13 @@ import { NotesService } from '../../../core/notes/notes.service';
       font-size: 18px;
       width: 18px;
       height: 18px;
-      color: #7a4b00;
+      color: var(--hb-text-warning-primary);
       transform: rotate(45deg);
     }
     .note__preview {
       margin: 0.375rem 0 0.5rem;
       font-size: 0.875rem;
-      color: rgba(0, 0, 0, 0.7);
+      color: var(--hb-text-secondary);
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -196,10 +196,10 @@ import { NotesService } from '../../../core/notes/notes.service';
     }
     .note__meta {
       font-size: 0.75rem;
-      color: rgba(0, 0, 0, 0.55);
+      color: var(--hb-text-quaternary);
     }
     .muted {
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
     }
     .loading {
       display: grid;
@@ -207,7 +207,7 @@ import { NotesService } from '../../../core/notes/notes.service';
       padding: 2rem;
     }
     .error {
-      color: #b3261e;
+      color: var(--hb-text-error-primary);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

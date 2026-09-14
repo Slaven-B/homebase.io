@@ -48,7 +48,7 @@
 }
 
 .card {
-  background: #fff;
+  background: var(--hb-bg-primary);
 
   &--center {
     text-align: center;
@@ -59,7 +59,7 @@
       font-size: 1.125rem;
     }
     p {
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
       margin: 0 0 1rem;
     }
   }
@@ -69,11 +69,11 @@
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: rgba(0, 0, 0, 0.4);
+  color: var(--hb-fg-quaternary);
 }
 
 .muted {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--hb-text-tertiary);
 }
 
 .member__meta {
@@ -86,16 +86,16 @@
   font-size: 0.75rem;
   padding: 0.125rem 0.5rem;
   border-radius: 999px;
-  background: #eceff3;
-  color: rgba(0, 0, 0, 0.7);
+  background: var(--hb-bg-tertiary);
+  color: var(--hb-text-secondary);
 
   &--owner {
-    background: #fff1d6;
-    color: #7a4b00;
+    background: var(--hb-badge-warning-bg);
+    color: var(--hb-text-warning-primary);
   }
   &--admin {
-    background: #e3ecfb;
-    color: #005cbb;
+    background: var(--hb-badge-brand-bg);
+    color: var(--hb-fg-brand-primary);
   }
 }
 
@@ -123,8 +123,8 @@
   margin: 0 1rem 1rem;
   padding: 0.75rem;
   border-radius: 8px;
-  background: #f1f6ff;
-  color: #003a75;
+  background: var(--hb-bg-brand-primary);
+  color: var(--hb-text-brand-primary);
 
   mat-icon {
     flex-shrink: 0;

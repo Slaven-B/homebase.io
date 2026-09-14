@@ -40,7 +40,7 @@
 .participants {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--hb-border-secondary);
   border-radius: 8px;
   margin-bottom: 0.75rem;
 }
@@ -50,7 +50,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem 0.25rem 0.25rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid var(--hb-border-secondary);
   min-height: 48px;
 
   &:first-child {
@@ -58,7 +58,7 @@
   }
 
   &--off {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--hb-text-quaternary);
   }
 }
 
@@ -74,11 +74,11 @@
   min-width: 80px;
   text-align: right;
   font-variant-numeric: tabular-nums;
-  color: rgba(0, 0, 0, 0.7);
+  color: var(--hb-text-secondary);
 }
 
 .split-error {
   margin: -0.25rem 0 0.75rem;
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
   font-size: 0.875rem;
 }

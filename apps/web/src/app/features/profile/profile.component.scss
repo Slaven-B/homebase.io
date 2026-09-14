@@ -6,7 +6,7 @@
 
 .profile__card {
   max-width: 560px;
-  background: #fff;
+  background: var(--hb-bg-primary);
 }
 
 .profile__content {
@@ -18,6 +18,6 @@
 
 .profile__error {
   margin: 0;
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
   font-size: 0.875rem;
 }

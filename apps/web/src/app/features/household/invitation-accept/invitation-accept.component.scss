@@ -7,7 +7,7 @@
 .card {
   max-width: 480px;
   width: 100%;
-  background: #fff;
+  background: var(--hb-bg-primary);
 }
 
 .card__body {
@@ -25,7 +25,7 @@
   }
   p {
     margin: 0 0 0.5rem;
-    color: rgba(0, 0, 0, 0.7);
+    color: var(--hb-text-secondary);
   }
 }
 
@@ -33,13 +33,13 @@
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: #005cbb;
+  color: var(--hb-fg-brand-primary);
 
   &--muted {
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--hb-fg-quaternary);
   }
   &--warn {
-    color: #b26a00;
+    color: var(--hb-text-warning-primary);
   }
 }
 

@@ -35,7 +35,7 @@
   position: sticky;
   top: 64px;
   z-index: 4;
-  background: #f6f7fb;
+  background: var(--hb-bg-secondary);
   padding: 0.25rem 0;
 }
 
@@ -44,7 +44,7 @@
 }
 
 .card {
-  background: #fff;
+  background: var(--hb-bg-primary);
   max-width: 760px;
 }
 
@@ -56,7 +56,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--hb-text-quaternary);
   padding: 0.75rem 1rem 0.25rem;
   margin: 0;
 }
@@ -66,16 +66,16 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.375rem 0.5rem 0.375rem 0.75rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid var(--hb-border-secondary);
   min-height: 48px;
 
   &--done {
     .item__name {
       text-decoration: line-through;
-      color: rgba(0, 0, 0, 0.45);
+      color: var(--hb-text-quaternary);
     }
     .item__meta {
-      color: rgba(0, 0, 0, 0.4);
+      color: var(--hb-fg-quaternary);
     }
   }
 }
@@ -94,7 +94,7 @@
 
 .item__meta {
   font-size: 0.75rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--hb-text-tertiary);
   display: flex;
   gap: 0.375rem;
   flex-wrap: wrap;
@@ -103,13 +103,13 @@
 .empty {
   padding: 1.5rem 1rem 2rem;
   text-align: center;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--hb-text-tertiary);
 
   mat-icon {
     font-size: 40px;
     width: 40px;
     height: 40px;
-    color: #005cbb;
+    color: var(--hb-fg-brand-primary);
   }
   p {
     margin: 0.5rem 0 0;
@@ -123,5 +123,5 @@
 }
 
 .error {
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
 }

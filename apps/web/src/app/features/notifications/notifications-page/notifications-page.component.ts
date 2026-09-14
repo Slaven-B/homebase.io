@@ -109,7 +109,7 @@ const PAGE_SIZE = 25;
       margin-bottom: 1rem;
     }
     .card {
-      background: #fff;
+      background: var(--hb-bg-primary);
       max-width: 760px;
       &--empty {
         text-align: center;
@@ -121,13 +121,13 @@ const PAGE_SIZE = 25;
         p {
           margin: 0 auto;
           max-width: 420px;
-          color: rgba(0, 0, 0, 0.6);
+          color: var(--hb-text-tertiary);
         }
         mat-icon {
           font-size: 40px;
           width: 40px;
           height: 40px;
-          color: #005cbb;
+          color: var(--hb-fg-brand-primary);
         }
       }
     }
@@ -136,19 +136,19 @@ const PAGE_SIZE = 25;
       align-items: center;
       gap: 0.5rem;
       padding: 0.375rem 0.5rem 0.375rem 1rem;
-      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      border-top: 1px solid var(--hb-border-secondary);
       &:first-child {
         border-top: 0;
       }
       &--unread {
-        background: #f1f6ff;
+        background: var(--hb-bg-brand-primary);
         .item__title {
           font-weight: 500;
         }
       }
     }
     .item__icon {
-      color: #005cbb;
+      color: var(--hb-fg-brand-primary);
       flex-shrink: 0;
     }
     .item__main {
@@ -165,12 +165,12 @@ const PAGE_SIZE = 25;
     }
     .item__body {
       font-size: 0.875rem;
-      color: rgba(0, 0, 0, 0.7);
+      color: var(--hb-text-secondary);
       overflow-wrap: anywhere;
     }
     .item__time {
       font-size: 0.75rem;
-      color: rgba(0, 0, 0, 0.55);
+      color: var(--hb-text-quaternary);
     }
     .loading {
       display: grid;

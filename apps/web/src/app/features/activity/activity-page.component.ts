@@ -62,14 +62,14 @@ const PAGE_SIZE = 25;
       margin: 0 0 1rem;
     }
     .card {
-      background: #fff;
+      background: var(--hb-bg-primary);
       max-width: 760px;
     }
     .card--empty {
       text-align: center;
       padding: 1rem;
       p {
-        color: rgba(0, 0, 0, 0.6);
+        color: var(--hb-text-tertiary);
       }
     }
     .loading {
@@ -79,7 +79,7 @@ const PAGE_SIZE = 25;
     }
     .error {
       margin: 0 1rem 1rem;
-      color: #b3261e;
+      color: var(--hb-text-error-primary);
       font-size: 0.875rem;
     }
   `,

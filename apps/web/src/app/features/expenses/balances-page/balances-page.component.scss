@@ -31,7 +31,7 @@
 }
 
 .card {
-  background: #fff;
+  background: var(--hb-bg-primary);
 
   &--empty {
     text-align: center;
@@ -44,13 +44,13 @@
     p {
       margin: 0 auto 1rem;
       max-width: 420px;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
     }
     mat-icon {
       font-size: 40px;
       width: 40px;
       height: 40px;
-      color: #005cbb;
+      color: var(--hb-fg-brand-primary);
     }
   }
 }
@@ -60,12 +60,12 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--hb-text-quaternary);
   margin: 1rem 0 0.5rem;
 }
 
 .muted {
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--hb-text-quaternary);
 }
 
 .transfer,
@@ -75,7 +75,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.5rem 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid var(--hb-border-secondary);
 
   &:first-child {
     border-top: 0;
@@ -87,7 +87,7 @@
 }
 
 .transfer--mine {
-  background: #fff8ec;
+  background: var(--hb-warning-25);
   margin: 0 -1rem;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -113,11 +113,11 @@
 }
 
 .net__value--positive {
-  color: #1b7f3b;
+  color: var(--hb-text-success-primary);
 }
 
 .net__value--negative {
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
 }
 
 .loading {
@@ -127,5 +127,5 @@
 }
 
 .error {
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
 }

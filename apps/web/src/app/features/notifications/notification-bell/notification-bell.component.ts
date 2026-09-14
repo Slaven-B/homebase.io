@@ -97,7 +97,7 @@ import { NotificationsService } from '../../../core/notifications/notifications.
     .bell__empty {
       margin: 0;
       padding: 1rem;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
       font-size: 0.875rem;
     }
     .bell__all {
@@ -115,19 +115,19 @@ import { NotificationsService } from '../../../core/notifications/notifications.
       font: inherit;
       padding: 0.5rem 1rem;
       cursor: pointer;
-      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      border-top: 1px solid var(--hb-border-secondary);
       &:hover {
-        background: rgba(0, 0, 0, 0.04);
+        background: var(--hb-bg-primary-hover);
       }
       &--unread {
-        background: #f1f6ff;
+        background: var(--hb-bg-brand-primary);
         .item__title {
           font-weight: 500;
         }
       }
     }
     .item__icon {
-      color: #005cbb;
+      color: var(--hb-fg-brand-primary);
       flex-shrink: 0;
     }
     .item__text {
@@ -137,14 +137,14 @@ import { NotificationsService } from '../../../core/notifications/notifications.
       font-size: 0.875rem;
     }
     .item__body {
-      color: rgba(0, 0, 0, 0.7);
+      color: var(--hb-text-secondary);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
     .item__time {
       font-size: 0.75rem;
-      color: rgba(0, 0, 0, 0.55);
+      color: var(--hb-text-quaternary);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

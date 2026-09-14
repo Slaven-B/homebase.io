@@ -13,7 +13,7 @@
 }
 
 .error {
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
 }
 
 .section {
@@ -23,7 +23,7 @@
 .section__title {
   font-size: 1rem;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--hb-text-tertiary);
   margin: 0 0 0.5rem;
 }
 
@@ -40,7 +40,7 @@
 .invitation,
 .household,
 .create-card {
-  background: #fff;
+  background: var(--hb-bg-primary);
 }
 
 .invitation__body,
@@ -59,13 +59,13 @@
 
   span {
     font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--hb-text-tertiary);
   }
 }
 
 .invitation__icon,
 .household__icon {
-  color: #005cbb;
+  color: var(--hb-fg-brand-primary);
 }
 
 .invitation__actions {
@@ -81,12 +81,12 @@
 
   &:hover,
   &:focus-visible {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--hb-shadow-md);
     outline: none;
   }
 
   &--current {
-    border-color: #005cbb;
+    border-color: var(--hb-fg-brand-primary);
   }
 }
 
@@ -94,8 +94,8 @@
   font-size: 0.75rem;
   padding: 0.125rem 0.5rem;
   border-radius: 999px;
-  background: #e3ecfb;
-  color: #005cbb;
+  background: var(--hb-badge-brand-bg);
+  color: var(--hb-fg-brand-primary);
 }
 
 .create-card {
@@ -118,7 +118,7 @@
 
 .create-card__hint {
   margin: 0;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--hb-text-tertiary);
   font-size: 0.875rem;
   max-width: 320px;
 }

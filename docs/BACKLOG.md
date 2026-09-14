@@ -20,13 +20,13 @@ The long-term product roadmap. It lives in two places that must stay in sync:
 
 Adopt the Claude Design system as the single visual source of truth across the Angular app.
 
-| Status  | Priority | Request                                                                                                                                                                                                                    |
-| ------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Planned | now      | **Adopt the chosen Claude Design system across the Angular application** — replace the prebuilt Material azure-blue theme on every screen                                                                                  |
-| Planned | now      | **Keep the design system as the visual source of truth** _(principle)_ — design decisions live in the system first; no one-off page styling                                                                                |
-| Planned | now      | **Make all screens responsive and consistent**                                                                                                                                                                             |
-| Planned | now      | **Establish reusable components and tokens rather than page-specific styling** — shared page header, section title, empty state, chip and list-row; tokens in one place                                                    |
-| Planned | now      | **UI template: Untitled UI – Free Figma UI kit & design system v2.0** _(research)_ — https://www.figma.com/design/c2BAK2bcFtnjCwigKgJnxE/ ; 2k+ components, 350+ styles, 4px grid, Inter; dark-mode variables are PRO-only |
+| Status      | Priority | Request                                                                                                                                                                                                                    |
+| ----------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| In progress | now      | **Adopt the chosen design system (Untitled UI) across the Angular application** — Material theme + tokens landed; page-by-page migration under way                                                                         |
+| In progress | now      | **Keep the design system as the visual source of truth** _(principle)_ — rules in docs/DESIGN.md; no one-off page styling                                                                                                  |
+| Planned     | now      | **Make all screens responsive and consistent**                                                                                                                                                                             |
+| In progress | now      | **Establish reusable components and tokens rather than page-specific styling** — tokens (`_tokens.scss`), utilities (`_utilities.scss`), `app-page-header`, `app-empty-state` in place; pages migrating                    |
+| Planned     | now      | **UI template: Untitled UI – Free Figma UI kit & design system v2.0** _(research)_ — https://www.figma.com/design/c2BAK2bcFtnjCwigKgJnxE/ ; 2k+ components, 350+ styles, 4px grid, Inter; dark-mode variables are PRO-only |
 
 ## Dashboard
 

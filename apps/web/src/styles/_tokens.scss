@@ -1,0 +1,199 @@
+// HomeBase design tokens — derived from the Untitled UI design system (free kit v2.0).
+// Primitives first (color scales, radius, shadows, type), then the semantic layer the
+// app actually uses. Components must reference semantic tokens (`--hb-text-secondary`),
+// never raw scale steps, so the palette can change in one place.
+//
+// Source of truth: docs/DESIGN.md.
+
+:root {
+  // ---------------------------------------------------------------------------
+  // Primitives — color scales
+  // ---------------------------------------------------------------------------
+  --hb-gray-25: #fcfcfd;
+  --hb-gray-50: #f9fafb;
+  --hb-gray-100: #f2f4f7;
+  --hb-gray-200: #eaecf0;
+  --hb-gray-300: #d0d5dd;
+  --hb-gray-400: #98a2b3;
+  --hb-gray-500: #667085;
+  --hb-gray-600: #475467;
+  --hb-gray-700: #344054;
+  --hb-gray-800: #182230;
+  --hb-gray-900: #101828;
+  --hb-gray-950: #0c111d;
+
+  --hb-brand-25: #fcfaff;
+  --hb-brand-50: #f9f5ff;
+  --hb-brand-100: #f4ebff;
+  --hb-brand-200: #e9d7fe;
+  --hb-brand-300: #d6bbfb;
+  --hb-brand-400: #b692f6;
+  --hb-brand-500: #9e77ed;
+  --hb-brand-600: #7f56d9;
+  --hb-brand-700: #6941c6;
+  --hb-brand-800: #53389e;
+  --hb-brand-900: #42307d;
+  --hb-brand-950: #2c1c5f;
+
+  --hb-error-25: #fffbfa;
+  --hb-error-50: #fef3f2;
+  --hb-error-100: #fee4e2;
+  --hb-error-200: #fecdca;
+  --hb-error-300: #fda29b;
+  --hb-error-400: #f97066;
+  --hb-error-500: #f04438;
+  --hb-error-600: #d92d20;
+  --hb-error-700: #b42318;
+  --hb-error-800: #912018;
+  --hb-error-900: #7a271a;
+
+  --hb-warning-25: #fffcf5;
+  --hb-warning-50: #fffaeb;
+  --hb-warning-100: #fef0c7;
+  --hb-warning-200: #fedf89;
+  --hb-warning-300: #fec84b;
+  --hb-warning-400: #fdb022;
+  --hb-warning-500: #f79009;
+  --hb-warning-600: #dc6803;
+  --hb-warning-700: #b54708;
+  --hb-warning-800: #93370d;
+  --hb-warning-900: #7a2e0e;
+
+  --hb-success-25: #f6fef9;
+  --hb-success-50: #ecfdf3;
+  --hb-success-100: #dcfae6;
+  --hb-success-200: #abefc6;
+  --hb-success-300: #75e0a7;
+  --hb-success-400: #47cd89;
+  --hb-success-500: #17b26a;
+  --hb-success-600: #079455;
+  --hb-success-700: #067647;
+  --hb-success-800: #085d3a;
+  --hb-success-900: #074d31;
+
+  // ---------------------------------------------------------------------------
+  // Primitives — shape, elevation, type, spacing
+  // ---------------------------------------------------------------------------
+  --hb-radius-xs: 4px;
+  --hb-radius-sm: 6px;
+  --hb-radius-md: 8px;
+  --hb-radius-lg: 10px;
+  --hb-radius-xl: 12px;
+  --hb-radius-2xl: 16px;
+  --hb-radius-full: 9999px;
+
+  --hb-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --hb-shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px -1px rgba(16, 24, 40, 0.1);
+  --hb-shadow-md: 0 4px 6px -1px rgba(16, 24, 40, 0.1), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --hb-shadow-lg:
+    0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03),
+    0 2px 2px -1px rgba(16, 24, 40, 0.04);
+  --hb-shadow-xl:
+    0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03),
+    0 3px 3px -1.5px rgba(16, 24, 40, 0.04);
+
+  --hb-font-sans: 'Inter', -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --hb-font-mono:
+    ui-monospace, 'Roboto Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  // Untitled UI type scale (size / line-height).
+  --hb-text-xs: 0.75rem; // 12
+  --hb-text-xs-lh: 1.125rem; // 18
+  --hb-text-sm: 0.875rem; // 14
+  --hb-text-sm-lh: 1.25rem; // 20
+  --hb-text-md: 1rem; // 16
+  --hb-text-md-lh: 1.5rem; // 24
+  --hb-text-lg: 1.125rem; // 18
+  --hb-text-lg-lh: 1.75rem; // 28
+  --hb-text-xl: 1.25rem; // 20
+  --hb-text-xl-lh: 1.875rem; // 30
+  --hb-display-xs: 1.5rem; // 24
+  --hb-display-xs-lh: 2rem; // 32
+  --hb-display-sm: 1.875rem; // 30
+  --hb-display-sm-lh: 2.375rem; // 38
+  --hb-display-md: 2.25rem; // 36
+  --hb-display-md-lh: 2.75rem; // 44
+
+  // 4px soft grid.
+  --hb-space-1: 4px;
+  --hb-space-2: 8px;
+  --hb-space-3: 12px;
+  --hb-space-4: 16px;
+  --hb-space-5: 20px;
+  --hb-space-6: 24px;
+  --hb-space-8: 32px;
+  --hb-space-10: 40px;
+  --hb-space-12: 48px;
+
+  // ---------------------------------------------------------------------------
+  // Semantic layer (light). Names follow Untitled UI: bg / text / fg / border.
+  // ---------------------------------------------------------------------------
+  --hb-bg-primary: #ffffff;
+  --hb-bg-primary-hover: var(--hb-gray-50);
+  --hb-bg-secondary: var(--hb-gray-50);
+  --hb-bg-secondary-hover: var(--hb-gray-100);
+  --hb-bg-tertiary: var(--hb-gray-100);
+  --hb-bg-active: var(--hb-gray-50);
+  --hb-bg-disabled: var(--hb-gray-100);
+  --hb-bg-brand-primary: var(--hb-brand-50);
+  --hb-bg-brand-secondary: var(--hb-brand-100);
+  --hb-bg-brand-solid: var(--hb-brand-600);
+  --hb-bg-brand-solid-hover: var(--hb-brand-700);
+  --hb-bg-error-primary: var(--hb-error-50);
+  --hb-bg-error-secondary: var(--hb-error-100);
+  --hb-bg-warning-primary: var(--hb-warning-50);
+  --hb-bg-warning-secondary: var(--hb-warning-100);
+  --hb-bg-success-primary: var(--hb-success-50);
+  --hb-bg-success-secondary: var(--hb-success-100);
+
+  --hb-text-primary: var(--hb-gray-900);
+  --hb-text-primary-on-brand: #ffffff;
+  --hb-text-secondary: var(--hb-gray-700);
+  --hb-text-secondary-hover: var(--hb-gray-800);
+  --hb-text-tertiary: var(--hb-gray-600);
+  --hb-text-quaternary: var(--hb-gray-500);
+  --hb-text-placeholder: var(--hb-gray-500);
+  --hb-text-disabled: var(--hb-gray-500);
+  --hb-text-brand-primary: var(--hb-brand-900);
+  --hb-text-brand-secondary: var(--hb-brand-700);
+  --hb-text-error-primary: var(--hb-error-600);
+  --hb-text-warning-primary: var(--hb-warning-600);
+  --hb-text-success-primary: var(--hb-success-600);
+
+  --hb-fg-primary: var(--hb-gray-900);
+  --hb-fg-secondary: var(--hb-gray-700);
+  --hb-fg-tertiary: var(--hb-gray-600);
+  --hb-fg-quaternary: var(--hb-gray-400);
+  --hb-fg-disabled: var(--hb-gray-400);
+  --hb-fg-brand-primary: var(--hb-brand-600);
+  --hb-fg-brand-secondary: var(--hb-brand-500);
+  --hb-fg-error-primary: var(--hb-error-600);
+  --hb-fg-warning-primary: var(--hb-warning-600);
+  --hb-fg-success-primary: var(--hb-success-600);
+
+  --hb-border-primary: var(--hb-gray-300);
+  --hb-border-secondary: var(--hb-gray-200);
+  --hb-border-tertiary: var(--hb-gray-100);
+  --hb-border-brand: var(--hb-brand-300);
+  --hb-border-brand-solid: var(--hb-brand-600);
+  --hb-border-error: var(--hb-error-300);
+
+  --hb-focus-ring: 0 0 0 4px var(--hb-brand-100);
+
+  // Utility badges (Untitled UI "badge" colors) used for status chips.
+  --hb-badge-gray-bg: var(--hb-gray-50);
+  --hb-badge-gray-fg: var(--hb-gray-700);
+  --hb-badge-gray-border: var(--hb-gray-200);
+  --hb-badge-brand-bg: var(--hb-brand-50);
+  --hb-badge-brand-fg: var(--hb-brand-700);
+  --hb-badge-brand-border: var(--hb-brand-200);
+  --hb-badge-error-bg: var(--hb-error-50);
+  --hb-badge-error-fg: var(--hb-error-700);
+  --hb-badge-error-border: var(--hb-error-200);
+  --hb-badge-warning-bg: var(--hb-warning-50);
+  --hb-badge-warning-fg: var(--hb-warning-700);
+  --hb-badge-warning-border: var(--hb-warning-200);
+  --hb-badge-success-bg: var(--hb-success-50);
+  --hb-badge-success-fg: var(--hb-success-700);
+  --hb-badge-success-border: var(--hb-success-200);
+}

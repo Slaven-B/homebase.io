@@ -108,7 +108,7 @@ export interface PayDialogData {
     .hint {
       display: block;
       font-size: 0.8125rem;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
     }
     .hint--block {
       margin: 0.5rem 0 0;

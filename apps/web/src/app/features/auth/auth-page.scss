@@ -8,10 +8,10 @@
 .auth-card {
   width: 100%;
   max-width: 420px;
-  background: #fff;
+  background: var(--hb-bg-primary);
 
   &__logo {
-    color: #005cbb;
+    color: var(--hb-fg-brand-primary);
     margin-right: 0.5rem;
   }
 
@@ -24,7 +24,7 @@
 
   &__error {
     margin: 0 0 0.5rem;
-    color: #b3261e;
+    color: var(--hb-text-error-primary);
     font-size: 0.875rem;
   }
 
@@ -43,6 +43,6 @@
 
   &__hint {
     font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--hb-text-tertiary);
   }
 }

@@ -1,4 +1,124 @@
-/* Global styles. Component styles live next to their components. */
+// Global styles: design tokens, Angular Material theme, shared utilities.
+// See docs/DESIGN.md for the rules. Component styles live next to their components and
+// must reference tokens (--hb-*) rather than literal colors.
+
+@use '@angular/material' as mat;
+@use './styles/theme-colors' as hb;
+@use './styles/tokens';
+@use './styles/utilities';
+
+// ---------------------------------------------------------------------------
+// Angular Material (M3) theme generated from the Untitled UI seed colors, then pinned to
+// the exact Untitled UI values where Material's derived colors would drift.
+// ---------------------------------------------------------------------------
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        primary: hb.$primary-palette,
+        tertiary: hb.$tertiary-palette,
+        theme-type: light,
+      ),
+      typography: (
+        plain-family: 'Inter',
+        brand-family: 'Inter',
+        bold-weight: 600,
+        medium-weight: 500,
+        regular-weight: 400,
+      ),
+      density: 0,
+    )
+  );
+
+  @include mat.theme-overrides(
+    (
+      primary: #7f56d9,
+      on-primary: #ffffff,
+      primary-container: #f4ebff,
+      on-primary-container: #53389e,
+      secondary: #475467,
+      on-secondary: #ffffff,
+      secondary-container: #f2f4f7,
+      on-secondary-container: #344054,
+      tertiary: #079455,
+      on-tertiary: #ffffff,
+      tertiary-container: #dcfae6,
+      on-tertiary-container: #085d3a,
+      error: #d92d20,
+      on-error: #ffffff,
+      error-container: #fee4e2,
+      on-error-container: #912018,
+      surface: #ffffff,
+      surface-dim: #f2f4f7,
+      surface-bright: #ffffff,
+      surface-container-lowest: #ffffff,
+      surface-container-low: #f9fafb,
+      surface-container: #f2f4f7,
+      surface-container-high: #eaecf0,
+      surface-container-highest: #d0d5dd,
+      on-surface: #101828,
+      on-surface-variant: #475467,
+      outline: #d0d5dd,
+      outline-variant: #eaecf0,
+      inverse-surface: #101828,
+      inverse-on-surface: #f9fafb,
+      inverse-primary: #d6bbfb,
+      background: #f9fafb,
+      on-background: #101828,
+    )
+  );
+
+  // Component shapes: Untitled UI uses 8px controls and 12px cards.
+  @include mat.button-overrides(
+    (
+      filled-container-shape: var(--hb-radius-md),
+      outlined-container-shape: var(--hb-radius-md),
+      protected-container-shape: var(--hb-radius-md),
+      text-container-shape: var(--hb-radius-md),
+      outlined-outline-color: var(--hb-border-primary),
+    )
+  );
+  @include mat.card-overrides(
+    (
+      outlined-container-shape: var(--hb-radius-xl),
+      outlined-outline-color: var(--hb-border-secondary),
+      elevated-container-shape: var(--hb-radius-xl),
+    )
+  );
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: var(--hb-radius-md),
+      outlined-outline-color: var(--hb-border-primary),
+      outlined-hover-outline-color: var(--hb-gray-400),
+    )
+  );
+  @include mat.dialog-overrides(
+    (
+      container-shape: var(--hb-radius-2xl),
+    )
+  );
+  @include mat.menu-overrides(
+    (
+      container-shape: var(--hb-radius-lg),
+    )
+  );
+  @include mat.chips-overrides(
+    (
+      container-shape-radius: var(--hb-radius-full),
+    )
+  );
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: var(--hb-bg-primary),
+      container-text-color: var(--hb-text-primary),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Base
+// ---------------------------------------------------------------------------
 
 html,
 body {
@@ -7,10 +127,13 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-  background: #f6f7fb;
-  color: rgba(0, 0, 0, 0.87);
+  font-family: var(--hb-font-sans);
+  font-size: var(--hb-text-md);
+  line-height: var(--hb-text-md-lh);
+  background: var(--hb-bg-secondary);
+  color: var(--hb-text-primary);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 *,
@@ -19,13 +142,34 @@ body {
   box-sizing: border-box;
 }
 
-/* Visible keyboard focus everywhere, without affecting mouse users. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  color: var(--hb-text-primary);
+}
+
+a {
+  color: var(--hb-text-brand-secondary);
+}
+
+// Material Icons render slightly heavy against Inter; keep the outlined look.
+.material-icons {
+  font-feature-settings: 'liga';
+}
+
+// Visible keyboard focus everywhere, without affecting mouse users.
 :focus-visible {
-  outline: 2px solid #005cbb;
+  outline: 2px solid var(--hb-brand-600);
   outline-offset: 2px;
 }
 
-/* Respect reduced-motion preferences. */
+// Snack bars inherit the dark inverse surface; keep the action readable.
+.mat-mdc-snack-bar-container {
+  --mdc-snackbar-container-shape: var(--hb-radius-lg);
+}
+
+// Respect reduced-motion preferences.
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

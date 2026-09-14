@@ -28,7 +28,7 @@
 }
 
 .card {
-  background: #fff;
+  background: var(--hb-bg-primary);
 
   &--empty {
     text-align: center;
@@ -41,13 +41,13 @@
     p {
       margin: 0 auto 1rem;
       max-width: 420px;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
     }
     mat-icon {
       font-size: 40px;
       width: 40px;
       height: 40px;
-      color: #005cbb;
+      color: var(--hb-fg-brand-primary);
     }
   }
 }
@@ -61,7 +61,7 @@
   }
   &:hover .card,
   &:focus-visible .card {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--hb-shadow-md);
   }
 }
 
@@ -72,7 +72,7 @@
 }
 
 .list-card__icon {
-  color: #005cbb;
+  color: var(--hb-fg-brand-primary);
 }
 
 .list-card__text {
@@ -83,7 +83,7 @@
 
   span {
     font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--hb-text-tertiary);
   }
 }
 
@@ -94,5 +94,5 @@
 }
 
 .error {
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
 }

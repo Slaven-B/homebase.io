@@ -4,10 +4,10 @@
   top: -100px;
   z-index: 100;
   padding: 0.5rem 0.75rem;
-  background: #fff;
-  color: #005cbb;
+  background: var(--hb-bg-primary);
+  color: var(--hb-fg-brand-primary);
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px var(--hb-border-primary);
   text-decoration: none;
 
   &:focus {
@@ -19,17 +19,32 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  gap: 0.5rem;
+  gap: var(--hb-space-2);
+  border-bottom: 1px solid var(--hb-border-secondary);
+  background: var(--hb-bg-primary);
+  color: var(--hb-text-primary);
 }
 
 .shell__brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  color: inherit;
+  gap: var(--hb-space-2);
+  color: var(--hb-text-primary);
   text-decoration: none;
-  font-weight: 500;
-  margin-right: 0.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-right: var(--hb-space-2);
+
+  mat-icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    border-radius: var(--hb-radius-md);
+    background: var(--hb-bg-brand-solid);
+    color: var(--hb-text-primary-on-brand);
+  }
 }
 
 .shell__nav {
@@ -41,8 +56,14 @@
   }
 }
 
+.shell__nav a {
+  color: var(--hb-text-secondary);
+  font-weight: 500;
+}
+
 .shell__nav-active {
-  background: rgba(255, 255, 255, 0.16);
+  background: var(--hb-bg-brand-primary);
+  color: var(--hb-text-brand-secondary) !important;
 }
 
 .shell__spacer {
@@ -87,8 +108,8 @@
   z-index: 10;
   display: flex;
   justify-content: space-around;
-  background: #fff;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  background: var(--hb-bg-primary);
+  border-top: 1px solid var(--hb-border-secondary);
   padding-bottom: env(safe-area-inset-bottom);
 
   @media (min-width: 720px) {
@@ -108,11 +129,21 @@
     gap: 0.125rem;
     padding: 0.5rem 0 0.375rem;
     font-size: 0.6875rem;
-    color: rgba(0, 0, 0, 0.6);
+    font-weight: 500;
+    color: var(--hb-text-tertiary);
     text-decoration: none;
+
+    mat-icon {
+      padding: 2px 14px;
+    }
   }
 }
 
 .shell__bottom-active {
-  color: #005cbb !important;
+  color: var(--hb-text-brand-secondary) !important;
+
+  mat-icon {
+    background: var(--hb-bg-brand-primary);
+    border-radius: var(--hb-radius-full);
+  }
 }

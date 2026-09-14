@@ -110,7 +110,7 @@ export interface SettleDialogData {
     }
     .hint {
       margin: 0 0 0.75rem;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
       font-size: 0.875rem;
     }
     .row {

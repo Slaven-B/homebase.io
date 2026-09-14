@@ -149,13 +149,13 @@ import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialo
       font-size: 1.125rem;
     }
     .pinned {
-      color: #7a4b00;
+      color: var(--hb-text-warning-primary);
       mat-icon {
         transform: rotate(45deg);
       }
     }
     .card {
-      background: #fff;
+      background: var(--hb-bg-primary);
       max-width: 880px;
       &--empty {
         text-align: center;
@@ -165,14 +165,14 @@ import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialo
           margin: 0.5rem 0 0.25rem;
         }
         p {
-          color: rgba(0, 0, 0, 0.6);
+          color: var(--hb-text-tertiary);
           margin: 0 0 1rem;
         }
         mat-icon {
           font-size: 40px;
           width: 40px;
           height: 40px;
-          color: rgba(0, 0, 0, 0.4);
+          color: var(--hb-fg-quaternary);
         }
       }
     }
@@ -192,7 +192,7 @@ import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialo
     }
     .meta {
       font-size: 0.75rem;
-      color: rgba(0, 0, 0, 0.55);
+      color: var(--hb-text-quaternary);
       padding-left: 0.5rem;
     }
     .spacer {

@@ -14,7 +14,7 @@
 
     &.done {
       text-decoration: line-through;
-      color: rgba(0, 0, 0, 0.5);
+      color: var(--hb-text-quaternary);
     }
   }
 }
@@ -34,7 +34,7 @@
 }
 
 .card {
-  background: #fff;
+  background: var(--hb-bg-primary);
 
   &--empty {
     text-align: center;
@@ -44,14 +44,14 @@
       font-size: 1.125rem;
     }
     p {
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
       margin: 0 0 1rem;
     }
     mat-icon {
       font-size: 40px;
       width: 40px;
       height: 40px;
-      color: rgba(0, 0, 0, 0.4);
+      color: var(--hb-fg-quaternary);
     }
   }
 }
@@ -75,7 +75,7 @@
   font-size: 0.9375rem;
 
   dt {
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--hb-text-tertiary);
   }
   dd {
     margin: 0;
@@ -88,13 +88,13 @@
 }
 
 .muted {
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--hb-text-quaternary);
   font-size: 0.8125rem;
 }
 
 .comment {
   padding: 0.5rem 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid var(--hb-border-secondary);
 
   &:first-of-type {
     border-top: 0;

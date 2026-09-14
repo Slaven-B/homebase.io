@@ -25,7 +25,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: rgba(0, 0, 0, 0.55);
+  color: var(--hb-text-quaternary);
   margin: 1rem 0 0.5rem;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .card {
-  background: #fff;
+  background: var(--hb-bg-primary);
 
   &--empty {
     text-align: center;
@@ -49,32 +49,32 @@
     p {
       margin: 0 auto 1rem;
       max-width: 420px;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--hb-text-tertiary);
     }
     mat-icon {
       font-size: 40px;
       width: 40px;
       height: 40px;
-      color: #005cbb;
+      color: var(--hb-fg-brand-primary);
     }
   }
 }
 
 .chore {
-  background: #fff;
-  border-left: 4px solid #005cbb;
+  background: var(--hb-bg-primary);
+  border-left: 4px solid var(--hb-fg-brand-primary);
 
   &--overdue {
-    border-left-color: #b3261e;
+    border-left-color: var(--hb-text-error-primary);
 
     .chore__due {
-      color: #b3261e;
+      color: var(--hb-text-error-primary);
       font-weight: 500;
     }
   }
 
   &--archived {
-    border-left-color: rgba(0, 0, 0, 0.2);
+    border-left-color: var(--hb-border-primary);
     opacity: 0.75;
   }
 }
@@ -104,7 +104,7 @@
 
 .chore__due {
   font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--hb-text-tertiary);
 }
 
 .chore__meta {
@@ -116,7 +116,7 @@
 .chore__description {
   margin: 0;
   font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.7);
+  color: var(--hb-text-secondary);
   white-space: pre-wrap;
 }
 
@@ -127,8 +127,8 @@
   font-size: 0.75rem;
   padding: 0.0625rem 0.5rem;
   border-radius: 999px;
-  background: #eceff3;
-  color: rgba(0, 0, 0, 0.7);
+  background: var(--hb-bg-tertiary);
+  color: var(--hb-text-secondary);
 
   mat-icon {
     font-size: 14px;
@@ -137,19 +137,19 @@
   }
 
   &--muted {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--hb-text-quaternary);
   }
   &--high {
-    background: #fde7e9;
-    color: #b3261e;
+    background: var(--hb-badge-error-bg);
+    color: var(--hb-text-error-primary);
   }
   &--medium {
-    background: #fff1d6;
-    color: #7a4b00;
+    background: var(--hb-badge-warning-bg);
+    color: var(--hb-text-warning-primary);
   }
   &--low {
-    background: #e6f4ea;
-    color: #1b7f3b;
+    background: var(--hb-badge-success-bg);
+    color: var(--hb-text-success-primary);
   }
 }
 
@@ -160,5 +160,5 @@
 }
 
 .error {
-  color: #b3261e;
+  color: var(--hb-text-error-primary);
 }
