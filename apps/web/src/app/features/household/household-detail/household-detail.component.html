@@ -1,45 +1,43 @@
 @if (notFound()) {
-  <mat-card appearance="outlined" class="card card--center">
-    <mat-card-content>
-      <mat-icon class="big-icon" aria-hidden="true">search_off</mat-icon>
-      <h2>Household not found</h2>
-      <p>It may have been deleted, or you are no longer a member.</p>
-      <a mat-flat-button color="primary" routerLink="/households">Back to households</a>
-    </mat-card-content>
-  </mat-card>
+  <div class="hb-card">
+    <app-empty-state
+      icon="search_off"
+      tone="muted"
+      title="Household not found"
+      message="It may have been deleted, or you are no longer a member."
+    >
+      <a mat-flat-button routerLink="/households">Back to households</a>
+    </app-empty-state>
+  </div>
 } @else {
   @if (household(); as h) {
-    <div class="page-header">
-      <a mat-icon-button routerLink="/households" aria-label="Back to households">
-        <mat-icon>arrow_back</mat-icon>
-      </a>
-
-      @if (editingName()) {
-        <form [formGroup]="nameForm" (ngSubmit)="saveName()" class="name-form" novalidate>
-          <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <input matInput formControlName="name" aria-label="Household name" required />
-          </mat-form-field>
-          <button mat-flat-button color="primary" type="submit" [disabled]="renaming()">
-            Save
-          </button>
-          <button mat-button type="button" (click)="editingName.set(false)">Cancel</button>
-        </form>
-      } @else {
-        <h1 class="page-header__title">{{ h.name }}</h1>
-        @if (isAdmin()) {
-          <button
-            mat-icon-button
-            type="button"
-            (click)="editingName.set(true)"
-            aria-label="Rename household"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
+    <header class="hb-page-header">
+      <div class="lead">
+        <a mat-icon-button routerLink="/households" aria-label="Back to households">
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+        @if (editingName()) {
+          <form [formGroup]="nameForm" (ngSubmit)="saveName()" class="name-form" novalidate>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <input matInput formControlName="name" aria-label="Household name" required />
+            </mat-form-field>
+            <button mat-flat-button type="submit" [disabled]="renaming()">Save</button>
+            <button mat-button type="button" (click)="editingName.set(false)">Cancel</button>
+          </form>
+        } @else {
+          <h1>{{ h.name }}</h1>
+          @if (isAdmin()) {
+            <button
+              mat-icon-button
+              type="button"
+              (click)="editingName.set(true)"
+              aria-label="Rename household"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          }
         }
-      }
-
-      <span class="page-header__spacer"></span>
-
+      </div>
       <button
         mat-icon-button
         type="button"
@@ -61,47 +59,47 @@
           </button>
         }
       </mat-menu>
-    </div>
+    </header>
 
-    <div class="columns">
-      <section class="column">
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title>Members ({{ h.members.length }})</mat-card-title>
-          </mat-card-header>
-          <mat-list>
-            @for (m of h.members; track m.id) {
-              <mat-list-item class="member">
-                <mat-icon matListItemIcon aria-hidden="true">
-                  {{ m.role === 'OWNER' ? 'star' : 'person' }}
-                </mat-icon>
-                <span matListItemTitle>
+    <div class="hb-columns">
+      <section class="stack">
+        <div class="hb-card">
+          <h2 class="hb-card__title">Members ({{ h.members.length }})</h2>
+          @for (m of h.members; track m.id) {
+            <div class="hb-row">
+              <mat-icon class="row-icon" aria-hidden="true">
+                {{ m.role === 'OWNER' ? 'star' : 'person' }}
+              </mat-icon>
+              <div class="hb-row__body">
+                <span class="hb-row__title">
                   {{ m.displayName }}
                   @if (m.userId === myUserId()) {
-                    <span class="muted">(you)</span>
+                    <span class="hb-muted">(you)</span>
                   }
                 </span>
-                <span matListItemLine class="muted">{{ m.email }}</span>
-                <span matListItemMeta class="member__meta">
-                  <span class="role-chip role-chip--{{ m.role.toLowerCase() }}">
-                    {{ roleLabels[m.role] }}
-                  </span>
-                  @if (isAdmin() && m.userId !== myUserId() && m.role !== 'OWNER') {
-                    <button
-                      mat-icon-button
-                      type="button"
-                      [matMenuTriggerFor]="memberMenu"
-                      [matMenuTriggerData]="{ member: m }"
-                      aria-label="Member actions"
-                    >
-                      <mat-icon>more_horiz</mat-icon>
-                    </button>
-                  }
-                </span>
-              </mat-list-item>
-            }
-          </mat-list>
-        </mat-card>
+                <span class="hb-row__meta">{{ m.email }}</span>
+              </div>
+              <span
+                class="hb-chip"
+                [class.hb-chip--warning]="m.role === 'OWNER'"
+                [class.hb-chip--brand]="m.role === 'ADMIN'"
+              >
+                {{ roleLabels[m.role] }}
+              </span>
+              @if (isAdmin() && m.userId !== myUserId() && m.role !== 'OWNER') {
+                <button
+                  mat-icon-button
+                  type="button"
+                  [matMenuTriggerFor]="memberMenu"
+                  [matMenuTriggerData]="{ member: m }"
+                  aria-label="Member actions"
+                >
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+              }
+            </div>
+          }
+        </div>
 
         <mat-menu #memberMenu="matMenu">
           <ng-template matMenuContent let-member="member">
@@ -129,49 +127,42 @@
       </section>
 
       @if (isAdmin()) {
-        <section class="column">
-          <mat-card appearance="outlined" class="card">
-            <mat-card-header>
-              <mat-card-title>Invite someone</mat-card-title>
-              <mat-card-subtitle
-                >They sign in with this email and accept the invitation.</mat-card-subtitle
+        <section class="stack">
+          <div class="hb-card panel">
+            <h2 class="hb-card__title">Invite someone</h2>
+            <p class="hb-muted panel__hint">
+              They sign in with this email and accept the invitation.
+            </p>
+            <form [formGroup]="inviteForm" (ngSubmit)="invite()" novalidate class="invite-form">
+              <mat-form-field appearance="outline" class="invite-form__email">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" autocomplete="off" required />
+                @if (inviteForm.controls.email.hasError('required')) {
+                  <mat-error>Email is required.</mat-error>
+                } @else if (inviteForm.controls.email.hasError('email')) {
+                  <mat-error>Enter a valid email address.</mat-error>
+                }
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="invite-form__role">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="role">
+                  <mat-option value="MEMBER">Member</mat-option>
+                  <mat-option value="ADMIN">Admin</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button
+                mat-flat-button
+                type="submit"
+                [disabled]="inviting()"
+                class="invite-form__submit"
               >
-            </mat-card-header>
-            <form [formGroup]="inviteForm" (ngSubmit)="invite()" novalidate>
-              <mat-card-content class="invite-form">
-                <mat-form-field appearance="outline" class="invite-form__email">
-                  <mat-label>Email</mat-label>
-                  <input
-                    matInput
-                    type="email"
-                    formControlName="email"
-                    autocomplete="off"
-                    required
-                  />
-                  @if (inviteForm.controls.email.hasError('required')) {
-                    <mat-error>Email is required.</mat-error>
-                  } @else if (inviteForm.controls.email.hasError('email')) {
-                    <mat-error>Enter a valid email address.</mat-error>
-                  }
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="invite-form__role">
-                  <mat-label>Role</mat-label>
-                  <mat-select formControlName="role">
-                    <mat-option value="MEMBER">Member</mat-option>
-                    <mat-option value="ADMIN">Admin</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </mat-card-content>
-              <mat-card-actions align="end">
-                <button mat-flat-button color="primary" type="submit" [disabled]="inviting()">
-                  <mat-icon>send</mat-icon>
-                  {{ inviting() ? 'Inviting…' : 'Invite' }}
-                </button>
-              </mat-card-actions>
+                <mat-icon>send</mat-icon>
+                {{ inviting() ? 'Inviting…' : 'Invite' }}
+              </button>
             </form>
 
             @if (lastInvite(); as inv) {
-              <div class="invite-link">
+              <div class="hb-alert hb-alert--brand invite-link">
                 <mat-icon aria-hidden="true">link</mat-icon>
                 <div class="invite-link__text">
                   <strong>Invitation created for {{ inv.email }}</strong>
@@ -183,56 +174,49 @@
                 </button>
               </div>
             }
-          </mat-card>
-
-          <mat-card appearance="outlined" class="card">
-            <mat-card-header>
-              <mat-card-title>Settings</mat-card-title>
-              <mat-card-subtitle>Defaults for new expenses and bills</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content class="settings">
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-label>Currency</mat-label>
-                <mat-select [value]="h.currency" (selectionChange)="setCurrency($event.value)">
-                  @for (c of currencies; track c) {
-                    <mat-option [value]="c">{{ c }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </mat-card-content>
-          </mat-card>
+          </div>
 
           @if (invitations().length) {
-            <mat-card appearance="outlined" class="card">
-              <mat-card-header>
-                <mat-card-title>Pending invitations</mat-card-title>
-              </mat-card-header>
-              <mat-list>
-                @for (inv of invitations(); track inv.id) {
-                  <mat-list-item>
-                    <mat-icon matListItemIcon aria-hidden="true">schedule</mat-icon>
-                    <span matListItemTitle>{{ inv.email }}</span>
-                    <span matListItemLine class="muted">
+            <div class="hb-card">
+              <h2 class="hb-card__title">Pending invitations</h2>
+              @for (inv of invitations(); track inv.id) {
+                <div class="hb-row">
+                  <mat-icon class="row-icon hb-muted" aria-hidden="true">schedule</mat-icon>
+                  <div class="hb-row__body">
+                    <span class="hb-row__title">{{ inv.email }}</span>
+                    <span class="hb-row__meta">
                       {{ roleLabels[inv.role] }} · invited by {{ inv.invitedBy.displayName }}
                     </span>
-                    <button
-                      matListItemMeta
-                      mat-icon-button
-                      type="button"
-                      (click)="revoke(inv)"
-                      aria-label="Revoke invitation"
-                    >
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  </mat-list-item>
-                }
-              </mat-list>
-            </mat-card>
+                  </div>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    (click)="revoke(inv)"
+                    aria-label="Revoke invitation"
+                  >
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
           }
+
+          <div class="hb-card panel">
+            <h2 class="hb-card__title">Settings</h2>
+            <p class="hb-muted panel__hint">Defaults for new expenses and bills.</p>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="settings__field">
+              <mat-label>Currency</mat-label>
+              <mat-select [value]="h.currency" (selectionChange)="setCurrency($event.value)">
+                @for (c of currencies; track c) {
+                  <mat-option [value]="c">{{ c }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
         </section>
       }
     </div>
   } @else {
-    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+    <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
   }
 }

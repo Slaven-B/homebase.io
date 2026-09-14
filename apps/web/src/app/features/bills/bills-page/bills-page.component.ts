@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -37,13 +36,16 @@ import {
   BillDialogResult,
 } from '../bill-dialog/bill-dialog.component';
 import { PayDialogComponent, PayDialogData } from '../pay-dialog/pay-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-bills-page',
   imports: [
+    PageHeaderComponent,
+    EmptyStateComponent,
     CurrencyPipe,
     RouterLink,
-    MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,

@@ -22,11 +22,13 @@ Adopt the Claude Design system as the single visual source of truth across the A
 
 | Status      | Priority | Request                                                                                                                                                                                                                    |
 | ----------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| In progress | now      | **Adopt the chosen design system (Untitled UI) across the Angular application** — Material theme + tokens landed; page-by-page migration under way                                                                         |
-| In progress | now      | **Keep the design system as the visual source of truth** _(principle)_ — rules in docs/DESIGN.md; no one-off page styling                                                                                                  |
-| Planned     | now      | **Make all screens responsive and consistent**                                                                                                                                                                             |
-| In progress | now      | **Establish reusable components and tokens rather than page-specific styling** — tokens (`_tokens.scss`), utilities (`_utilities.scss`), `app-page-header`, `app-empty-state` in place; pages migrating                    |
-| Planned     | now      | **UI template: Untitled UI – Free Figma UI kit & design system v2.0** _(research)_ — https://www.figma.com/design/c2BAK2bcFtnjCwigKgJnxE/ ; 2k+ components, 350+ styles, 4px grid, Inter; dark-mode variables are PRO-only |
+| Done        | now      | **Adopt the chosen design system (Untitled UI) across the Angular application** — Material M3 theme + `--hb-*` tokens; every page, dialog and the shell migrated (2026-09-14)                                              |
+| Done        | now      | **Keep the design system as the visual source of truth** _(principle)_ — standing rule, see docs/DESIGN.md; applies to all future UI work                                                                                  |
+| Done        | now      | **Make all screens responsive and consistent** — shared `.hb-*` layout classes stack at 720/900 px; checked at 400 px                                                                                                      |
+| Done        | now      | **Establish reusable components and tokens rather than page-specific styling** — `_tokens.scss`, `_utilities.scss`, `app-page-header`, `app-empty-state`, `app-activity-feed`; no `mat-card` or page-level chrome left    |
+| Done        | now      | **UI template: Untitled UI – Free Figma UI kit & design system v2.0** _(research)_ — https://www.figma.com/design/c2BAK2bcFtnjCwigKgJnxE/ ; adopted; tokens sourced from the MIT `untitleduico/react` theme                |
+| Idea        | later    | **Dark mode** — the free kit has no dark variables; add a `prefers-color-scheme` block redefining the semantic token layer (Untitled UI mapping noted in docs/DESIGN.md)                                                    |
+| Idea        | later    | **Review screens against the Figma kit's example layouts** — needs the Figma connector authorized in claude.ai; compare dashboard, lists and detail pages to the kit's patterns                                             |
 
 ## Dashboard
 

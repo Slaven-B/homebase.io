@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
@@ -13,7 +12,7 @@ type State = 'loading' | 'ready' | 'accepting' | 'declined' | 'invalid' | 'wrong
 /** Landing page for shared invite links: /invite/:token */
 @Component({
   selector: 'app-invitation-accept',
-  imports: [RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [RouterLink, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './invitation-accept.component.html',
   styleUrl: './invitation-accept.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,14 +1,14 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding-top: 0.5rem !important;
+  gap: var(--hb-space-1);
+  padding-top: var(--hb-space-2) !important;
   min-width: min(560px, calc(100vw - 64px));
 }
 
 .row {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--hb-space-2);
   flex-wrap: wrap;
 
   mat-form-field {
@@ -28,9 +28,9 @@
 .split-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--hb-space-3);
   flex-wrap: wrap;
-  margin: 0.25rem 0 0.5rem;
+  margin: var(--hb-space-1) 0 var(--hb-space-2);
 }
 
 .split-header__label {
@@ -42,14 +42,14 @@
   flex-direction: column;
   border: 1px solid var(--hb-border-secondary);
   border-radius: 8px;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--hb-space-3);
 }
 
 .participant {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  gap: var(--hb-space-2);
+  padding: var(--hb-space-1) var(--hb-space-2) var(--hb-space-1) var(--hb-space-1);
   border-top: 1px solid var(--hb-border-secondary);
   min-height: 48px;
 
@@ -78,7 +78,7 @@
 }
 
 .split-error {
-  margin: -0.25rem 0 0.75rem;
+  margin: -var(--hb-space-1) 0 var(--hb-space-3);
   color: var(--hb-text-error-primary);
-  font-size: 0.875rem;
+  font-size: var(--hb-text-sm);
 }

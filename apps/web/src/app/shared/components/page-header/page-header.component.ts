@@ -32,11 +32,18 @@ import { RouterLink } from '@angular/router';
     </header>
   `,
   styles: `
+    // Grows to take the remaining width so long titles wrap instead of pushing the
+    // actions onto their own line; actions still wrap below when there is no room.
     .lead {
       display: flex;
       align-items: center;
       gap: var(--hb-space-1);
+      flex: 1 1 200px;
       min-width: 0;
+    }
+    .hb-page-header__actions {
+      flex-shrink: 0;
+      margin-left: auto;
     }
     .text {
       min-width: 0;

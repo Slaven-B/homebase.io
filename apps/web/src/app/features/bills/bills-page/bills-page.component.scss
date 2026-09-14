@@ -1,138 +1,44 @@
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin: 0;
-  }
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-  max-width: 880px;
-}
-
-.toolbar__spacer {
-  flex: 1;
-}
-
-.toolbar__total {
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.group-title {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hb-text-quaternary);
-  margin: 1rem 0 0.375rem;
-
-  &--overdue {
-    color: var(--hb-text-error-primary);
-  }
-  &--due_soon {
-    color: var(--hb-text-warning-primary);
-  }
-}
-
-.card {
-  background: var(--hb-bg-primary);
-  max-width: 880px;
-
-  &--empty {
-    text-align: center;
-    padding: 1.5rem 1rem;
-
-    h2 {
-      font-size: 1.125rem;
-      margin: 0.5rem 0 0.25rem;
-    }
-    p {
-      margin: 0 auto 1rem;
-      max-width: 420px;
-      color: var(--hb-text-tertiary);
-    }
-    mat-icon {
-      font-size: 40px;
-      width: 40px;
-      height: 40px;
-      color: var(--hb-fg-brand-primary);
-    }
-  }
-}
-
 .bill {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
-  border-top: 1px solid var(--hb-border-secondary);
-
-  &:first-child {
-    border-top: 0;
-  }
+  padding-right: var(--hb-space-2);
 
   &--inactive {
     opacity: 0.7;
   }
+
+  // On phones the date belongs above the name, not in a narrow left column that
+  // squeezes the title and chips.
+  @media (max-width: 599px) {
+    flex-wrap: wrap;
+    row-gap: var(--hb-space-1);
+
+    .bill__date {
+      order: -1;
+      flex-direction: row;
+      align-items: baseline;
+      gap: var(--hb-space-2);
+      width: 100%;
+    }
+    .hb-row__body {
+      flex-basis: 45%;
+    }
+  }
 }
 
 .bill__date {
-  width: 88px;
+  width: 108px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .bill__day {
   font-weight: 500;
-}
-
-.bill__due {
-  font-size: 0.75rem;
-  color: var(--hb-text-tertiary);
-
-  &--overdue {
-    color: var(--hb-text-error-primary);
-    font-weight: 500;
-  }
-  &--due_soon {
-    color: var(--hb-text-warning-primary);
-  }
-}
-
-.bill__body {
-  flex: 1;
-  min-width: 0;
-}
-
-.bill__title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  overflow-wrap: anywhere;
-}
-
-.bill__meta {
-  font-size: 0.8125rem;
-  color: var(--hb-text-tertiary);
+  color: var(--hb-text-primary);
 }
 
 .bill__amount {
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -140,22 +46,4 @@
   @media (max-width: 599px) {
     display: none;
   }
-}
-
-.chip {
-  font-size: 0.75rem;
-  padding: 0.0625rem 0.5rem;
-  border-radius: 999px;
-  background: var(--hb-bg-tertiary);
-  color: var(--hb-text-secondary);
-}
-
-.loading {
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-}
-
-.error {
-  color: var(--hb-text-error-primary);
 }

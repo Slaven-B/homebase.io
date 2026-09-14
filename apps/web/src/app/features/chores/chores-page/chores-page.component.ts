@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,14 +33,17 @@ import {
   ChoreDialogData,
   ChoreDialogResult,
 } from '../chore-dialog/chore-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 type Filter = 'all' | 'mine';
 
 @Component({
   selector: 'app-chores-page',
   imports: [
+    PageHeaderComponent,
+    EmptyStateComponent,
     RouterLink,
-    MatCardModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,

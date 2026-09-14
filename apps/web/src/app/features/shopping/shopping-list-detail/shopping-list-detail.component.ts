@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,6 +30,7 @@ import {
 } from '../../../core/shopping/shopping.models';
 import { ShoppingService } from '../../../core/shopping/shopping.service';
 import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { ItemDialogComponent, ItemDialogData } from '../item-dialog/item-dialog.component';
 
 /**
@@ -42,7 +42,7 @@ import { ItemDialogComponent, ItemDialogData } from '../item-dialog/item-dialog.
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatCardModule,
+    EmptyStateComponent,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,

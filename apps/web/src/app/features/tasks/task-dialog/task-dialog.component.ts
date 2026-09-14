@@ -50,13 +50,13 @@ export function fromIsoDate(value: string | null): Date | null {
     .content {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-      padding-top: 0.5rem !important;
+      gap: var(--hb-space-1);
+      padding-top: var(--hb-space-2) !important;
       min-width: min(460px, calc(100vw - 64px));
     }
     .row {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--hb-space-2);
       flex-wrap: wrap;
       mat-form-field {
         flex: 1;

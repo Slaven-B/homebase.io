@@ -1,121 +1,110 @@
-<div class="page-header">
-  <a mat-icon-button routerLink="/expenses" aria-label="Back to expenses">
-    <mat-icon>arrow_back</mat-icon>
-  </a>
-  <h1>Balances</h1>
-  <span class="page-header__spacer"></span>
+<app-page-header title="Balances" backLink="/expenses" backLabel="Back to expenses">
   @if (current()) {
-    <button mat-flat-button color="primary" type="button" (click)="settle()">
+    <button mat-flat-button type="button" (click)="settle()">
       <mat-icon>handshake</mat-icon>
       Settle up
     </button>
   }
-</div>
+</app-page-header>
 
 @if (!current()) {
-  <mat-card appearance="outlined" class="card card--empty">
-    <mat-card-content>
-      <p>Pick or create a household to see balances.</p>
-      <a mat-flat-button color="primary" routerLink="/households">Households</a>
-    </mat-card-content>
-  </mat-card>
+  <div class="hb-card">
+    <app-empty-state
+      icon="holiday_village"
+      title="No household yet"
+      message="Pick or create a household to see balances."
+    >
+      <a mat-flat-button routerLink="/households">Households</a>
+    </app-empty-state>
+  </div>
 } @else if (error()) {
-  <p class="error" role="alert">{{ error() }}</p>
+  <div class="hb-alert hb-alert--error" role="alert">{{ error() }}</div>
 } @else if (balances() === null) {
-  <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
 } @else if (balances()!.length === 0) {
-  <mat-card appearance="outlined" class="card card--empty">
-    <mat-card-content>
-      <mat-icon aria-hidden="true">balance</mat-icon>
-      <h2>Nothing to settle</h2>
-      <p>Balances appear once someone pays for a shared expense.</p>
-      <a mat-flat-button color="primary" routerLink="/expenses">Add an expense</a>
-    </mat-card-content>
-  </mat-card>
+  <div class="hb-card">
+    <app-empty-state
+      icon="balance"
+      title="Nothing to settle"
+      message="Balances appear once someone pays for a shared expense."
+    >
+      <a mat-flat-button routerLink="/expenses">Add an expense</a>
+    </app-empty-state>
+  </div>
 } @else {
   @for (b of balances(); track b.currency) {
-    <div class="columns">
-      <section class="column">
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title>Who owes whom ({{ b.currency }})</mat-card-title>
-            <mat-card-subtitle>
-              Fewest payments to settle everything ·
-              {{ b.outstandingCents / 100 | currency: b.currency }} outstanding
-            </mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            @if (b.transfers.length === 0) {
-              <p class="muted">Everyone is settled up. 🎉</p>
+    <div class="hb-columns hb-columns--wide-left balances">
+      <section class="hb-card">
+        <h2 class="hb-card__title">Who owes whom ({{ b.currency }})</h2>
+        <p class="hb-card__subtitle">
+          Fewest payments to settle everything ·
+          {{ b.outstandingCents / 100 | currency: b.currency }} outstanding
+        </p>
+        @if (b.transfers.length === 0) {
+          <p class="hb-card__body hb-card__body--tight hb-muted">Everyone is settled up. 🎉</p>
+        }
+        @for (t of b.transfers; track t.from.id + t.to.id) {
+          <div class="hb-row transfer" [class.transfer--mine]="t.from.id === myId()">
+            <mat-icon class="hb-muted" aria-hidden="true">arrow_forward</mat-icon>
+            <span class="hb-row__body transfer__text">
+              <strong>{{ t.from.id === myId() ? 'You' : t.from.displayName }}</strong>
+              {{ t.from.id === myId() ? 'owe' : 'owes' }}
+              <strong>{{ t.to.id === myId() ? 'you' : t.to.displayName }}</strong>
+            </span>
+            <span class="transfer__amount hb-num">{{
+              t.amountCents / 100 | currency: b.currency
+            }}</span>
+            @if (t.from.id === myId() || isAdmin()) {
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="
+                  settle({
+                    toUserId: t.to.id,
+                    amountCents: t.amountCents,
+                    currency: b.currency,
+                  })
+                "
+              >
+                Settle
+              </button>
             }
-            @for (t of b.transfers; track t.from.id + t.to.id) {
-              <div class="transfer" [class.transfer--mine]="t.from.id === myId()">
-                <mat-icon aria-hidden="true">arrow_forward</mat-icon>
-                <span class="transfer__text">
-                  <strong>{{ t.from.id === myId() ? 'You' : t.from.displayName }}</strong>
-                  {{ t.from.id === myId() ? 'owe' : 'owes' }}
-                  <strong>{{ t.to.id === myId() ? 'you' : t.to.displayName }}</strong>
-                </span>
-                <span class="transfer__amount">{{
-                  t.amountCents / 100 | currency: b.currency
-                }}</span>
-                @if (t.from.id === myId() || isAdmin()) {
-                  <button
-                    mat-stroked-button
-                    type="button"
-                    (click)="
-                      settle({
-                        toUserId: t.to.id,
-                        amountCents: t.amountCents,
-                        currency: b.currency,
-                      })
-                    "
-                  >
-                    Settle
-                  </button>
-                }
-              </div>
-            }
-          </mat-card-content>
-        </mat-card>
+          </div>
+        }
       </section>
 
-      <section class="column">
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title>Net positions</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            @for (m of b.members; track m.user.id) {
-              <div class="net">
-                <span>{{ m.user.id === myId() ? 'You' : m.user.displayName }}</span>
-                <span
-                  class="net__value"
-                  [class.net__value--positive]="m.netCents > 0"
-                  [class.net__value--negative]="m.netCents < 0"
-                >
-                  {{ (m.netCents > 0 ? '+' : '') + (m.netCents / 100 | currency: b.currency) }}
-                </span>
-              </div>
-            }
-          </mat-card-content>
-        </mat-card>
+      <section class="hb-card">
+        <h2 class="hb-card__title">Net positions</h2>
+        @for (m of b.members; track m.user.id) {
+          <div class="hb-row net">
+            <span class="hb-row__body">{{
+              m.user.id === myId() ? 'You' : m.user.displayName
+            }}</span>
+            <span
+              class="net__value hb-num"
+              [class.hb-success-text]="m.netCents > 0"
+              [class.hb-error-text]="m.netCents < 0"
+            >
+              {{ (m.netCents > 0 ? '+' : '') + (m.netCents / 100 | currency: b.currency) }}
+            </span>
+          </div>
+        }
       </section>
     </div>
   }
 
   @if (settlements().length > 0) {
-    <h2 class="section-title">Recent settlements</h2>
-    <mat-card appearance="outlined" class="card">
+    <h2 class="hb-section-title">Recent settlements</h2>
+    <div class="hb-card hb-readable">
       @for (s of settlements(); track s.id) {
-        <div class="settlement">
-          <mat-icon aria-hidden="true">handshake</mat-icon>
-          <span class="settlement__text">
+        <div class="hb-row">
+          <mat-icon class="hb-muted" aria-hidden="true">handshake</mat-icon>
+          <span class="hb-row__body settlement__text">
             <strong>{{ s.from.displayName }}</strong> paid <strong>{{ s.to.displayName }}</strong>
             {{ s.amountCents / 100 | currency: s.currency }}
-            <span class="muted">· {{ s.date | date: 'mediumDate' }}</span>
+            <span class="hb-muted">· {{ s.date | date: 'mediumDate' }}</span>
             @if (s.note) {
-              <span class="muted">· {{ s.note }}</span>
+              <span class="hb-muted">· {{ s.note }}</span>
             }
           </span>
           @if (canRemoveSettlement(s)) {
@@ -130,6 +119,6 @@
           }
         </div>
       }
-    </mat-card>
+    </div>
   }
 }

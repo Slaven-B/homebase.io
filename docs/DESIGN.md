@@ -12,8 +12,34 @@ them as CSS custom properties and an Angular Material (M3) theme.
 | `apps/web/src/styles/_tokens.scss`       | All tokens as `--hb-*` custom properties: scales, semantic colors, type, radius, shadow, spacing                                                   |
 | `apps/web/src/styles/_theme-colors.scss` | Material palettes generated from the seed colors (`ng generate @angular/material:theme-color`)                                                     |
 | `apps/web/src/styles.scss`               | `mat.theme(...)` + `mat.theme-overrides(...)` pinning Material to the exact Untitled UI values, component shape overrides, base styles             |
-| `apps/web/src/styles/_utilities.scss`    | Shared layout/surface classes: `.hb-page-header`, `.hb-card`, `.hb-row`, `.hb-chip`, `.hb-alert`, `.hb-columns`, `.hb-section-title`, text helpers |
+| `apps/web/src/styles/_utilities.scss`    | Shared layout/surface classes (see "Utility classes" below)                                                                                        |
 | `apps/web/src/app/shared/components/`    | Shared components: `app-page-header`, `app-empty-state`, `app-confirm-dialog`, `app-activity-feed`                                                 |
+
+## Utility classes
+
+All global, all built on tokens. Pages compose these instead of declaring their own.
+
+| Class                                                                              | Use                                                                                          |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `.hb-page-header`, `.hb-page-header__actions`                                      | Page title row (prefer `<app-page-header>`; use the class directly only for inline editing)  |
+| `.hb-toolbar`, `.hb-toolbar__spacer`                                               | Filter/toggle row under the header                                                           |
+| `.hb-section-title`, `--danger`, `--warning`                                       | Small heading above a group of cards/rows                                                    |
+| `.hb-card`                                                                         | White surface, 12 px radius, 1 px border, xs shadow                                          |
+| `.hb-card__title`, `.hb-card__subtitle`, `.hb-card__body`, `.hb-card__actions`     | Card sections; `__actions` is the bordered footer for buttons / "Load more"                  |
+| `.hb-row`, `.hb-row--link`, `.hb-row__body`, `.hb-row__title`, `.hb-row__meta`     | One list row inside a card: leading icon/checkbox, body, trailing amount/actions             |
+| `.hb-grid`                                                                         | Responsive card grid (auto-fill, min 280 px)                                                 |
+| `.hb-columns`, `.hb-columns--wide-left`                                            | Two-column detail layout, stacks under 900 px                                                |
+| `.hb-chip`, `--brand`, `--error`, `--warning`, `--success`, `--outline`            | Badges                                                                                       |
+| `.hb-alert`, `--error`, `--brand`                                                  | Page-level messages                                                                          |
+| `.hb-loading`                                                                      | Centered spinner slot                                                                        |
+| `.hb-facts`                                                                        | `<dl>` label/value grid                                                                      |
+| `.hb-form`                                                                         | Stacked full-width form fields                                                               |
+| `.hb-inline`                                                                       | Text with inline chips                                                                       |
+| `.hb-prose`                                                                        | Long free text (pre-wrap)                                                                    |
+| `.hb-readable`                                                                     | Max width 880 px for single-column lists                                                     |
+| `.hb-muted`, `.hb-subtle`, `.hb-error-text`, `.hb-warning-text`, `.hb-success-text` | Text color helpers                                                                           |
+| `.hb-num`, `.hb-strike`                                                            | Tabular numerals; completed items                                                            |
+| `.hb-btn-danger`                                                                   | Destructive filled button (M3 ignores `color="warn"`)                                        |
 
 ## Rules
 
@@ -78,8 +104,12 @@ chips full. Shadows `--hb-shadow-xs` on cards, `--hb-shadow-lg` on floating surf
 
 ## Adding a page
 
-1. Start with `<app-page-header title="…">` (actions projected).
+1. Start with `<app-page-header title="…">` (actions projected; `backLink` for detail pages).
 2. Content in `.hb-card`s; lists as `.hb-row` children; two-column detail with `.hb-columns`.
 3. Loading: `<div class="hb-loading"><mat-spinner diameter="32"/></div>`.
-4. Empty: `<app-empty-state icon="…" title="…" message="…">` with a projected primary action.
+4. Empty: `<app-empty-state icon="…" title="…" message="…">` with a projected primary action;
+   `tone="muted"` for not-found states.
 5. Errors: `.hb-alert.hb-alert--error` for page-level, snack bar for action-level.
+6. Buttons: `mat-flat-button` is the primary action (no `color` attribute; M3 themes it),
+   `mat-stroked-button` secondary, `mat-button` tertiary, `.hb-btn-danger` destructive.
+7. The page's own SCSS should be short: a specific widget, a column width, a highlight state.

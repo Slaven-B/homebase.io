@@ -1,30 +1,34 @@
 @if (notFound()) {
-  <mat-card appearance="outlined" class="card">
-    <mat-card-content class="empty">
-      <mat-icon aria-hidden="true">search_off</mat-icon>
-      <h2>List not found</h2>
-      <p>It may have been deleted or belongs to another household.</p>
-      <a mat-flat-button color="primary" routerLink="/shopping">Back to shopping</a>
-    </mat-card-content>
-  </mat-card>
+  <div class="hb-card">
+    <app-empty-state
+      icon="search_off"
+      tone="muted"
+      title="List not found"
+      message="It may have been deleted or belongs to another household."
+    >
+      <a mat-flat-button routerLink="/shopping">Back to shopping</a>
+    </app-empty-state>
+  </div>
 } @else {
   @if (list(); as l) {
-    <div class="page-header">
-      <a mat-icon-button routerLink="/shopping" aria-label="Back to shopping lists">
-        <mat-icon>arrow_back</mat-icon>
-      </a>
-      @if (editingName()) {
-        <form class="name-form" (ngSubmit)="saveName()" novalidate>
-          <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <input matInput [formControl]="nameControl" aria-label="List name" maxlength="80" />
-          </mat-form-field>
-          <button mat-flat-button color="primary" type="submit" [disabled]="nameControl.invalid">
-            Save
-          </button>
-          <button mat-button type="button" (click)="editingName.set(false)">Cancel</button>
-        </form>
-      } @else {
-        <h1>{{ l.name }}</h1>
+    <header class="hb-page-header">
+      <div class="lead">
+        <a mat-icon-button routerLink="/shopping" aria-label="Back to shopping lists">
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+        @if (editingName()) {
+          <form class="name-form" (ngSubmit)="saveName()" novalidate>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <input matInput [formControl]="nameControl" aria-label="List name" maxlength="80" />
+            </mat-form-field>
+            <button mat-flat-button type="submit" [disabled]="nameControl.invalid">Save</button>
+            <button mat-button type="button" (click)="editingName.set(false)">Cancel</button>
+          </form>
+        } @else {
+          <h1>{{ l.name }}</h1>
+        }
+      </div>
+      @if (!editingName()) {
         <button
           mat-icon-button
           type="button"
@@ -59,7 +63,7 @@
           }
         </mat-menu>
       }
-    </div>
+    </header>
 
     <form class="quick-add" (ngSubmit)="add()" novalidate>
       <mat-form-field appearance="outline" class="quick-add__field" subscriptSizing="dynamic">
@@ -76,7 +80,6 @@
       </mat-form-field>
       <button
         mat-flat-button
-        color="primary"
         type="submit"
         [disabled]="adding() || quickAdd.invalid"
         aria-label="Add item"
@@ -85,49 +88,50 @@
       </button>
     </form>
 
-    <mat-card appearance="outlined" class="card">
+    <div class="hb-card">
       @if (l.items.length === 0) {
-        <div class="empty">
-          <mat-icon aria-hidden="true">shopping_basket</mat-icon>
-          <p>Nothing on this list yet. Add the first item above.</p>
-        </div>
+        <app-empty-state
+          icon="shopping_basket"
+          title="Nothing on this list yet"
+          message="Add the first item above."
+        />
       } @else {
-        <h2 class="section-title">
+        <h2 class="hb-section-title inset">
           <span>To buy · {{ openItems().length }}</span>
         </h2>
         @if (openItems().length === 0) {
-          <div class="empty">
+          <p class="all-done">
             <mat-icon aria-hidden="true">check_circle</mat-icon>
-            <p>All done! 🎉</p>
-          </div>
+            All done!
+          </p>
         }
         @for (item of openItems(); track item.id) {
-          <div class="item">
+          <div class="hb-row item">
             <mat-checkbox
               [checked]="false"
               (change)="toggle(item, true)"
               [aria-label]="'Mark ' + item.name + ' as bought'"
             />
             <div
-              class="item__label"
+              class="hb-row__body item__label"
               (click)="toggle(item, true)"
               (keydown.enter)="toggle(item, true)"
               tabindex="0"
               role="button"
             >
-              <span class="item__name">{{ item.name }}</span>
-              <span class="item__meta">
+              <span class="hb-row__title">{{ item.name }}</span>
+              <span class="hb-row__meta">
                 @if (item.quantity) {
                   <span>{{ item.quantity }}</span>
                 }
                 @if (item.category) {
-                  <span>· {{ item.category }}</span>
+                  <span class="hb-chip">{{ item.category }}</span>
                 }
                 @if (item.notes) {
-                  <span>· {{ item.notes }}</span>
+                  <span>{{ item.notes }}</span>
                 }
                 @if (item.addedBy) {
-                  <span>· added by {{ item.addedBy.displayName }}</span>
+                  <span>added by {{ item.addedBy.displayName }}</span>
                 }
               </span>
             </div>
@@ -144,31 +148,31 @@
         }
 
         @if (doneItems().length > 0) {
-          <h2 class="section-title">
+          <h2 class="hb-section-title inset">
             <span>Done · {{ doneItems().length }}</span>
             <button mat-button type="button" (click)="clearCompleted()">Clear</button>
           </h2>
           @for (item of doneItems(); track item.id) {
-            <div class="item item--done">
+            <div class="hb-row item item--done">
               <mat-checkbox
                 [checked]="true"
                 (change)="toggle(item, false)"
                 [aria-label]="'Mark ' + item.name + ' as not bought'"
               />
               <div
-                class="item__label"
+                class="hb-row__body item__label"
                 (click)="toggle(item, false)"
                 (keydown.enter)="toggle(item, false)"
                 tabindex="0"
                 role="button"
               >
-                <span class="item__name">{{ item.name }}</span>
-                <span class="item__meta">
+                <span class="hb-row__title hb-strike">{{ item.name }}</span>
+                <span class="hb-row__meta">
                   @if (item.quantity) {
                     <span>{{ item.quantity }}</span>
                   }
                   @if (item.completedBy) {
-                    <span>· by {{ item.completedBy.displayName }}</span>
+                    <span>by {{ item.completedBy.displayName }}</span>
                   }
                 </span>
               </div>
@@ -185,7 +189,7 @@
           }
         }
       }
-    </mat-card>
+    </div>
 
     <mat-menu #itemMenu="matMenu">
       <ng-template matMenuContent let-item="item">
@@ -200,6 +204,6 @@
       </ng-template>
     </mat-menu>
   } @else {
-    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+    <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
   }
 }

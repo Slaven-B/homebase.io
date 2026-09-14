@@ -82,7 +82,7 @@ export interface PayDialogData {
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <button mat-button type="button" (click)="ref.close()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+        <button mat-flat-button type="submit" [disabled]="form.invalid">
           Mark paid · {{ form.controls.amount.value | currency: data.bill.currency }}
         </button>
       </mat-dialog-actions>
@@ -92,13 +92,13 @@ export interface PayDialogData {
     .content {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      padding-top: 0.5rem !important;
+      gap: var(--hb-space-2);
+      padding-top: var(--hb-space-2) !important;
       min-width: min(440px, calc(100vw - 64px));
     }
     .row {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--hb-space-2);
       flex-wrap: wrap;
       mat-form-field {
         flex: 1;
@@ -107,11 +107,11 @@ export interface PayDialogData {
     }
     .hint {
       display: block;
-      font-size: 0.8125rem;
+      font-size: var(--hb-text-sm);
       color: var(--hb-text-tertiary);
     }
     .hint--block {
-      margin: 0.5rem 0 0;
+      margin: var(--hb-space-2) 0 0;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

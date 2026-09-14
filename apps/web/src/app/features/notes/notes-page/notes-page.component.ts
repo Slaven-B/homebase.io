@@ -10,7 +10,6 @@ import {
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -19,6 +18,8 @@ import { RouterLink } from '@angular/router';
 import { HouseholdService } from '../../../core/households/household.service';
 import { NoteSummary } from '../../../core/notes/note.models';
 import { NotesService } from '../../../core/notes/notes.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-notes-page',
@@ -26,7 +27,8 @@ import { NotesService } from '../../../core/notes/notes.service';
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
-    MatCardModule,
+    PageHeaderComponent,
+    EmptyStateComponent,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
@@ -34,25 +36,25 @@ import { NotesService } from '../../../core/notes/notes.service';
     MatProgressSpinnerModule,
   ],
   template: `
-    <div class="page-header">
-      <h1>Notes</h1>
+    <app-page-header title="Notes">
       @if (current()) {
-        <a mat-flat-button color="primary" routerLink="/notes/new">
+        <a mat-flat-button routerLink="/notes/new">
           <mat-icon>add</mat-icon>
           New note
         </a>
       }
-    </div>
+    </app-page-header>
 
     @if (!current()) {
-      <mat-card appearance="outlined" class="card card--empty">
-        <mat-card-content>
-          <mat-icon aria-hidden="true">holiday_village</mat-icon>
-          <h2>No household yet</h2>
-          <p>Notes belong to a household. Create or join one first.</p>
-          <a mat-flat-button color="primary" routerLink="/households">Households</a>
-        </mat-card-content>
-      </mat-card>
+      <div class="hb-card">
+        <app-empty-state
+          icon="holiday_village"
+          title="No household yet"
+          message="Notes belong to a household. Create or join one first."
+        >
+          <a mat-flat-button routerLink="/households">Households</a>
+        </app-empty-state>
+      </div>
     } @else {
       @if ((notes()?.length ?? 0) > 3) {
         <mat-form-field appearance="outline" class="search" subscriptSizing="dynamic">
@@ -62,47 +64,45 @@ import { NotesService } from '../../../core/notes/notes.service';
       }
 
       @if (error(); as message) {
-        <p class="error" role="alert">{{ message }}</p>
+        <div class="hb-alert hb-alert--error" role="alert">{{ message }}</div>
       }
 
       @if (notes() === null) {
-        <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+        <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
       } @else if (notes()!.length === 0) {
-        <mat-card appearance="outlined" class="card card--empty">
-          <mat-card-content>
-            <mat-icon aria-hidden="true">sticky_note_2</mat-icon>
-            <h2>Nothing here yet</h2>
-            <p>
-              Keep the WiFi password, emergency contacts or landlord details where everyone finds
-              them.
-            </p>
-            <a mat-flat-button color="primary" routerLink="/notes/new">
+        <div class="hb-card">
+          <app-empty-state
+            icon="sticky_note_2"
+            title="Nothing here yet"
+            message="Keep the WiFi password, emergency contacts or landlord details where everyone finds them."
+          >
+            <a mat-flat-button routerLink="/notes/new">
               <mat-icon>add</mat-icon>
               New note
             </a>
-          </mat-card-content>
-        </mat-card>
+          </app-empty-state>
+        </div>
       } @else if (visible().length === 0) {
-        <p class="muted">No notes match "{{ search.value }}".</p>
+        <p class="hb-muted">No notes match "{{ search.value }}".</p>
       } @else {
-        <div class="grid">
+        <div class="hb-grid">
           @for (n of visible(); track n.id) {
-            <a class="note-link" [routerLink]="['/notes', n.id]">
-              <mat-card appearance="outlined" class="note" [class.note--pinned]="n.isPinned">
-                <mat-card-content>
-                  <div class="note__head">
-                    <strong class="note__title">{{ n.title }}</strong>
-                    @if (n.isPinned) {
-                      <mat-icon class="note__pin" aria-label="Pinned">push_pin</mat-icon>
-                    }
-                  </div>
-                  <p class="note__preview">{{ n.preview || 'Empty note' }}</p>
-                  <span class="note__meta">
-                    {{ n.lastEditedBy?.displayName ?? n.author?.displayName ?? 'Someone' }} ·
-                    {{ n.updatedAt | date: 'mediumDate' }}
-                  </span>
-                </mat-card-content>
-              </mat-card>
+            <a
+              class="hb-card note"
+              [class.note--pinned]="n.isPinned"
+              [routerLink]="['/notes', n.id]"
+            >
+              <span class="note__head">
+                <span class="hb-row__title">{{ n.title }}</span>
+                @if (n.isPinned) {
+                  <mat-icon class="note__pin" aria-label="Pinned">push_pin</mat-icon>
+                }
+              </span>
+              <p class="note__preview">{{ n.preview || 'Empty note' }}</p>
+              <span class="hb-subtle">
+                {{ n.lastEditedBy?.displayName ?? n.author?.displayName ?? 'Someone' }} ·
+                {{ n.updatedAt | date: 'mediumDate' }}
+              </span>
             </a>
           }
         </div>
@@ -110,73 +110,38 @@ import { NotesService } from '../../../core/notes/notes.service';
     }
   `,
   styles: `
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-      h1 {
-        font-size: 1.5rem;
-        font-weight: 500;
-        margin: 0;
-      }
-    }
     .search {
       width: 100%;
       max-width: 420px;
-      margin-bottom: 1rem;
-    }
-    .grid {
-      display: grid;
-      gap: 0.75rem;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    }
-    .card {
-      background: var(--hb-bg-primary);
-      &--empty {
-        text-align: center;
-        padding: 1.5rem 1rem;
-        h2 {
-          font-size: 1.125rem;
-          margin: 0.5rem 0 0.25rem;
-        }
-        p {
-          margin: 0 auto 1rem;
-          max-width: 440px;
-          color: var(--hb-text-tertiary);
-        }
-        mat-icon {
-          font-size: 40px;
-          width: 40px;
-          height: 40px;
-          color: var(--hb-fg-brand-primary);
-        }
-      }
-    }
-    .note-link {
-      text-decoration: none;
-      color: inherit;
+      margin-bottom: var(--hb-space-4);
     }
     .note {
-      background: var(--hb-bg-primary);
-      height: 100%;
-      transition: box-shadow 120ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: var(--hb-space-2);
+      padding: var(--hb-space-4);
+      color: inherit;
+      text-decoration: none;
+      transition:
+        box-shadow 120ms ease,
+        border-color 120ms ease;
+
       &:hover {
         box-shadow: var(--hb-shadow-md);
+        border-color: var(--hb-border-primary);
       }
       &--pinned {
-        background: var(--hb-warning-25);
+        background: var(--hb-badge-warning-bg);
       }
     }
     .note__head {
       display: flex;
       align-items: flex-start;
-      gap: 0.5rem;
-    }
-    .note__title {
-      flex: 1;
-      overflow-wrap: anywhere;
+      gap: var(--hb-space-2);
+
+      .hb-row__title {
+        flex: 1;
+      }
     }
     .note__pin {
       font-size: 18px;
@@ -186,28 +151,15 @@ import { NotesService } from '../../../core/notes/notes.service';
       transform: rotate(45deg);
     }
     .note__preview {
-      margin: 0.375rem 0 0.5rem;
-      font-size: 0.875rem;
+      margin: 0;
+      flex: 1;
+      font-size: var(--hb-text-sm);
+      line-height: var(--hb-text-sm-lh);
       color: var(--hb-text-secondary);
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
-    }
-    .note__meta {
-      font-size: 0.75rem;
-      color: var(--hb-text-quaternary);
-    }
-    .muted {
-      color: var(--hb-text-tertiary);
-    }
-    .loading {
-      display: grid;
-      place-items: center;
-      padding: 2rem;
-    }
-    .error {
-      color: var(--hb-text-error-primary);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

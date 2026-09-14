@@ -27,7 +27,7 @@ export interface ConfirmDialogData {
       <button
         mat-flat-button
         type="button"
-        [color]="data.destructive ? 'warn' : 'primary'"
+        [class.hb-btn-danger]="data.destructive"
         (click)="ref.close(true)"
         cdkFocusInitial
       >

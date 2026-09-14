@@ -1,24 +1,24 @@
-<div class="page-header">
-  <h1>Tasks</h1>
+<app-page-header title="Tasks">
   @if (current()) {
-    <button mat-flat-button color="primary" type="button" (click)="create()">
+    <button mat-flat-button type="button" (click)="create()">
       <mat-icon>add</mat-icon>
       New task
     </button>
   }
-</div>
+</app-page-header>
 
 @if (!current()) {
-  <mat-card appearance="outlined" class="card card--empty">
-    <mat-card-content>
-      <mat-icon aria-hidden="true">holiday_village</mat-icon>
-      <h2>No household yet</h2>
-      <p>Tasks belong to a household. Create or join one first.</p>
-      <a mat-flat-button color="primary" routerLink="/households">Households</a>
-    </mat-card-content>
-  </mat-card>
+  <div class="hb-card">
+    <app-empty-state
+      icon="holiday_village"
+      title="No household yet"
+      message="Tasks belong to a household. Create or join one first."
+    >
+      <a mat-flat-button routerLink="/households">Households</a>
+    </app-empty-state>
+  </div>
 } @else {
-  <div class="toolbar">
+  <div class="hb-toolbar">
     <mat-button-toggle-group
       [value]="filter()"
       (change)="filter.set($event.value)"
@@ -34,30 +34,33 @@
   </div>
 
   @if (error(); as message) {
-    <p class="error" role="alert">{{ message }}</p>
+    <div class="hb-alert hb-alert--error" role="alert">{{ message }}</div>
   }
 
   @if (tasks() === null) {
-    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+    <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
   } @else if (visible().length === 0) {
-    <mat-card appearance="outlined" class="card card--empty">
-      <mat-card-content>
-        <mat-icon aria-hidden="true">task_alt</mat-icon>
-        <h2>{{ filter() === 'mine' ? 'Nothing assigned to you' : 'No open tasks' }}</h2>
-        <p>Add a one-off to-do like "Call the landlord" and assign it to someone.</p>
-        <button mat-flat-button color="primary" type="button" (click)="create()">
+    <div class="hb-card">
+      <app-empty-state
+        icon="task_alt"
+        [title]="filter() === 'mine' ? 'Nothing assigned to you' : 'No open tasks'"
+        message='Add a one-off to-do like "Call the landlord" and assign it to someone.'
+      >
+        <button mat-flat-button type="button" (click)="create()">
           <mat-icon>add</mat-icon>
           New task
         </button>
-      </mat-card-content>
-    </mat-card>
+      </app-empty-state>
+    </div>
   } @else {
     @for (group of groups(); track group.status) {
       @if (group.tasks.length > 0) {
-        <h2 class="group-title">{{ statusLabels[group.status] }} · {{ group.tasks.length }}</h2>
-        <mat-card appearance="outlined" class="card">
+        <h2 class="hb-section-title">
+          {{ statusLabels[group.status] }} · {{ group.tasks.length }}
+        </h2>
+        <div class="hb-card">
           @for (task of group.tasks; track task.id) {
-            <div class="task" [class.task--done]="task.status === 'DONE'">
+            <div class="hb-row task">
               <mat-checkbox
                 [checked]="task.status === 'DONE'"
                 (change)="setStatus(task, $event.checked ? 'DONE' : 'TODO')"
@@ -65,24 +68,31 @@
                   'Mark ' + task.title + (task.status === 'DONE' ? ' as open' : ' as done')
                 "
               />
-              <a class="task__body" [routerLink]="['/tasks', task.id]">
-                <span class="task__title">{{ task.title }}</span>
-                <span class="task__meta">
+              <a class="hb-row__body task__link" [routerLink]="['/tasks', task.id]">
+                <span class="hb-row__title" [class.hb-strike]="task.status === 'DONE'">
+                  {{ task.title }}
+                </span>
+                <span class="hb-row__meta">
                   @if (task.dueAt) {
-                    <span class="chip" [class.chip--overdue]="isOverdue(task)">
+                    <span class="hb-chip" [class.hb-chip--error]="isOverdue(task)">
                       <mat-icon aria-hidden="true">event</mat-icon>{{ dueLabel(task) }}
                     </span>
                   }
-                  <span class="chip chip--{{ task.priority.toLowerCase() }}">
+                  <span
+                    class="hb-chip"
+                    [class.hb-chip--error]="task.priority === 'HIGH'"
+                    [class.hb-chip--warning]="task.priority === 'MEDIUM'"
+                    [class.hb-chip--success]="task.priority === 'LOW'"
+                  >
                     {{ priorityLabels[task.priority] }}
                   </span>
                   @if (task.assignee) {
-                    <span class="chip">
+                    <span class="hb-chip">
                       <mat-icon aria-hidden="true">person</mat-icon>{{ task.assignee.displayName }}
                     </span>
                   }
                   @if (task.commentCount > 0) {
-                    <span class="chip">
+                    <span class="hb-chip">
                       <mat-icon aria-hidden="true">chat_bubble_outline</mat-icon
                       >{{ task.commentCount }}
                     </span>
@@ -104,7 +114,7 @@
               </button>
             </div>
           }
-        </mat-card>
+        </div>
       }
     }
   }

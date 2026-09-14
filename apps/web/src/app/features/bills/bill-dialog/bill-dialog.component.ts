@@ -107,7 +107,7 @@ export type BillDialogResult = BillInput | BillPatch;
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <button mat-button type="button" (click)="ref.close()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+        <button mat-flat-button type="submit" [disabled]="form.invalid">
           {{ isEdit ? 'Save' : 'Create bill' }}
         </button>
       </mat-dialog-actions>
@@ -117,13 +117,13 @@ export type BillDialogResult = BillInput | BillPatch;
     .content {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-      padding-top: 0.5rem !important;
+      gap: var(--hb-space-1);
+      padding-top: var(--hb-space-2) !important;
       min-width: min(520px, calc(100vw - 64px));
     }
     .row {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--hb-space-2);
       flex-wrap: wrap;
       mat-form-field {
         flex: 1;

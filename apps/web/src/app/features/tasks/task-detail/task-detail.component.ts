@@ -11,7 +11,6 @@ import {
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -34,14 +33,17 @@ import {
 import { TasksService } from '../../../core/tasks/tasks.service';
 import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { TaskDialogComponent, TaskDialogData } from '../task-dialog/task-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-task-detail',
   imports: [
+    PageHeaderComponent,
+    EmptyStateComponent,
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
-    MatCardModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,

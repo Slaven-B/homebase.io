@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
@@ -11,61 +10,66 @@ import {
   NOTIFICATION_ICONS,
 } from '../../../core/notifications/notification.models';
 import { NotificationsService } from '../../../core/notifications/notifications.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 const PAGE_SIZE = 25;
 
 @Component({
   selector: 'app-notifications-page',
   imports: [
-    MatCardModule,
+    PageHeaderComponent,
+    EmptyStateComponent,
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,
     MatProgressSpinnerModule,
   ],
   template: `
-    <div class="page-header">
-      <h1>Notifications</h1>
+    <app-page-header title="Notifications">
       @if (unread() > 0) {
         <button mat-stroked-button type="button" (click)="markAll()">
           <mat-icon>done_all</mat-icon>
           Mark all read
         </button>
       }
+    </app-page-header>
+
+    <div class="hb-toolbar">
+      <mat-button-toggle-group
+        [value]="unreadOnly() ? 'unread' : 'all'"
+        (change)="setFilter($event.value === 'unread')"
+        hideSingleSelectionIndicator
+        aria-label="Filter"
+      >
+        <mat-button-toggle value="all">All</mat-button-toggle>
+        <mat-button-toggle value="unread">Unread ({{ unread() }})</mat-button-toggle>
+      </mat-button-toggle-group>
     </div>
 
-    <mat-button-toggle-group
-      class="filter"
-      [value]="unreadOnly() ? 'unread' : 'all'"
-      (change)="setFilter($event.value === 'unread')"
-      hideSingleSelectionIndicator
-      aria-label="Filter"
-    >
-      <mat-button-toggle value="all">All</mat-button-toggle>
-      <mat-button-toggle value="unread">Unread ({{ unread() }})</mat-button-toggle>
-    </mat-button-toggle-group>
-
     @if (items() === null) {
-      <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+      <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
     } @else if (items()!.length === 0) {
-      <mat-card appearance="outlined" class="card card--empty">
-        <mat-card-content>
-          <mat-icon aria-hidden="true">notifications_none</mat-icon>
-          <h2>{{ unreadOnly() ? 'Nothing unread' : 'No notifications yet' }}</h2>
-          <p>Assignments, invitations, shared expenses and due bills will show up here.</p>
-        </mat-card-content>
-      </mat-card>
+      <div class="hb-card hb-readable">
+        <app-empty-state
+          icon="notifications_none"
+          [title]="unreadOnly() ? 'Nothing unread' : 'No notifications yet'"
+          message="Assignments, invitations, shared expenses and due bills will show up here."
+        />
+      </div>
     } @else {
-      <mat-card appearance="outlined" class="card">
+      <div class="hb-card hb-readable">
         @for (n of items(); track n.id) {
-          <div class="item" [class.item--unread]="!n.readAt">
-            <mat-icon class="item__icon" aria-hidden="true">{{ icons[n.type] }}</mat-icon>
-            <button type="button" class="item__main" (click)="open(n)">
-              <span class="item__title">{{ n.title }}</span>
+          <div class="hb-row item" [class.item--unread]="!n.readAt">
+            <span class="item__icon" aria-hidden="true">
+              <mat-icon>{{ icons[n.type] }}</mat-icon>
+            </span>
+            <button type="button" class="hb-row__body item__main" (click)="open(n)">
+              <span class="hb-row__title">{{ n.title }}</span>
               @if (n.body) {
                 <span class="item__body">{{ n.body }}</span>
               }
-              <span class="item__time">{{ when(n) }}</span>
+              <span class="hb-subtle">{{ when(n) }}</span>
             </button>
             @if (!n.readAt) {
               <button mat-icon-button type="button" (click)="markRead(n)" aria-label="Mark as read">
@@ -83,99 +87,57 @@ const PAGE_SIZE = 25;
           </div>
         }
         @if (nextCursor()) {
-          <mat-card-actions align="end">
+          <div class="hb-card__actions">
             <button mat-button type="button" (click)="loadMore()" [disabled]="loading()">
               {{ loading() ? 'Loading…' : 'Load older' }}
             </button>
-          </mat-card-actions>
+          </div>
         }
-      </mat-card>
+      </div>
     }
   `,
   styles: `
-    .page-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-      h1 {
-        font-size: 1.5rem;
-        font-weight: 500;
-        margin: 0;
-      }
-    }
-    .filter {
-      margin-bottom: 1rem;
-    }
-    .card {
-      background: var(--hb-bg-primary);
-      max-width: 760px;
-      &--empty {
-        text-align: center;
-        padding: 1.5rem 1rem;
-        h2 {
-          font-size: 1.125rem;
-          margin: 0.5rem 0 0.25rem;
-        }
-        p {
-          margin: 0 auto;
-          max-width: 420px;
-          color: var(--hb-text-tertiary);
-        }
-        mat-icon {
-          font-size: 40px;
-          width: 40px;
-          height: 40px;
-          color: var(--hb-fg-brand-primary);
-        }
-      }
-    }
     .item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.375rem 0.5rem 0.375rem 1rem;
-      border-top: 1px solid var(--hb-border-secondary);
-      &:first-child {
-        border-top: 0;
-      }
+      padding-right: var(--hb-space-2);
+
       &--unread {
         background: var(--hb-bg-brand-primary);
-        .item__title {
-          font-weight: 500;
-        }
+      }
+      &--unread .item__icon {
+        background: var(--hb-bg-brand-solid);
+        color: var(--hb-text-primary-on-brand);
       }
     }
     .item__icon {
-      color: var(--hb-fg-brand-primary);
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: var(--hb-radius-full);
+      background: var(--hb-bg-tertiary);
+      color: var(--hb-fg-quaternary);
       flex-shrink: 0;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
     }
     .item__main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
       text-align: left;
       border: 0;
       background: none;
       font: inherit;
-      padding: 0.25rem 0;
+      color: inherit;
+      padding: var(--hb-space-1) 0;
       cursor: pointer;
     }
     .item__body {
-      font-size: 0.875rem;
+      font-size: var(--hb-text-sm);
+      line-height: var(--hb-text-sm-lh);
       color: var(--hb-text-secondary);
       overflow-wrap: anywhere;
-    }
-    .item__time {
-      font-size: 0.75rem;
-      color: var(--hb-text-quaternary);
-    }
-    .loading {
-      display: grid;
-      place-items: center;
-      padding: 2rem;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

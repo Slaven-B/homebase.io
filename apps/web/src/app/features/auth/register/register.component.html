@@ -1,13 +1,13 @@
 <div class="auth-page">
-  <mat-card appearance="outlined" class="auth-card">
-    <mat-card-header>
-      <mat-icon class="auth-card__logo" aria-hidden="true">home</mat-icon>
-      <mat-card-title>Create your account</mat-card-title>
-      <mat-card-subtitle>Then create or join a household</mat-card-subtitle>
-    </mat-card-header>
+  <div class="hb-card auth-card">
+    <header class="auth-card__header">
+      <span class="auth-card__logo" aria-hidden="true"><mat-icon>home</mat-icon></span>
+      <h1>Create your account</h1>
+      <p class="hb-muted">Then create or join a household</p>
+    </header>
 
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <mat-card-content class="auth-card__content">
+      <div class="hb-form">
         <mat-form-field appearance="outline">
           <mat-label>Your name</mat-label>
           <input matInput formControlName="displayName" autocomplete="name" required />
@@ -55,12 +55,12 @@
         </mat-form-field>
 
         @if (error(); as message) {
-          <p class="auth-card__error" role="alert">{{ message }}</p>
+          <div class="hb-alert hb-alert--error" role="alert">{{ message }}</div>
         }
-      </mat-card-content>
+      </div>
 
-      <mat-card-actions class="auth-card__actions">
-        <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">
+      <div class="auth-card__actions">
+        <button mat-flat-button type="submit" [disabled]="submitting()">
           @if (submitting()) {
             <mat-spinner diameter="20"></mat-spinner>
           } @else {
@@ -70,7 +70,7 @@
         <span class="auth-card__hint">
           Already have an account? <a routerLink="/login">Sign in</a>
         </span>
-      </mat-card-actions>
+      </div>
     </form>
-  </mat-card>
+  </div>
 </div>

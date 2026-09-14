@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,6 +24,7 @@ import { HouseholdService } from '../../../core/households/household.service';
 import { Note } from '../../../core/notes/note.models';
 import { NotesService } from '../../../core/notes/notes.service';
 import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 /** Create (/notes/new) or edit (/notes/:noteId) a note. Deliberately a plain textarea. */
 @Component({
@@ -33,7 +33,7 @@ import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialo
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
-    MatCardModule,
+    EmptyStateComponent,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
@@ -43,23 +43,25 @@ import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialo
   ],
   template: `
     @if (notFound()) {
-      <mat-card appearance="outlined" class="card card--empty">
-        <mat-card-content>
-          <mat-icon aria-hidden="true">search_off</mat-icon>
-          <h2>Note not found</h2>
-          <p>It may have been deleted or belongs to another household.</p>
-          <a mat-flat-button color="primary" routerLink="/notes">Back to notes</a>
-        </mat-card-content>
-      </mat-card>
+      <div class="hb-card">
+        <app-empty-state
+          icon="search_off"
+          tone="muted"
+          title="Note not found"
+          message="It may have been deleted or belongs to another household."
+        >
+          <a mat-flat-button routerLink="/notes">Back to notes</a>
+        </app-empty-state>
+      </div>
     } @else if (loading()) {
-      <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+      <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
     } @else {
-      <form [formGroup]="form" (ngSubmit)="save()" novalidate class="editor">
-        <div class="page-header">
+      <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+        <header class="hb-page-header editor__head">
           <a mat-icon-button routerLink="/notes" aria-label="Back to notes">
             <mat-icon>arrow_back</mat-icon>
           </a>
-          <mat-form-field appearance="outline" class="title" subscriptSizing="dynamic">
+          <mat-form-field appearance="outline" class="editor__title" subscriptSizing="dynamic">
             <input
               matInput
               formControlName="title"
@@ -74,7 +76,8 @@ import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialo
             type="button"
             (click)="togglePin()"
             [attr.aria-label]="form.controls.isPinned.value ? 'Unpin' : 'Pin'"
-            [class.pinned]="form.controls.isPinned.value"
+            [class.editor__pin--on]="form.controls.isPinned.value"
+            class="editor__pin"
           >
             <mat-icon>push_pin</mat-icon>
           </button>
@@ -98,110 +101,70 @@ import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialo
               }
             </mat-menu>
           }
-        </div>
+        </header>
 
-        <mat-card appearance="outlined" class="card">
-          <mat-card-content>
+        <div class="hb-card hb-readable">
+          <div class="hb-card__body">
             <textarea
               matInput
               formControlName="content"
-              class="content"
+              class="editor__content"
               placeholder="Write anything the household should remember…"
               rows="14"
               maxlength="20000"
               aria-label="Content"
             ></textarea>
-          </mat-card-content>
-          <mat-card-actions align="end" class="actions">
+          </div>
+          <div class="hb-card__actions">
             @if (note(); as n) {
-              <span class="meta">
+              <span class="hb-subtle">
                 {{ n.lastEditedBy?.displayName ?? n.author?.displayName ?? 'Someone' }} ·
                 {{ n.updatedAt | date: 'medium' }}
               </span>
             }
-            <span class="spacer"></span>
+            <span class="hb-toolbar__spacer"></span>
             @if (form.dirty) {
               <button mat-button type="button" (click)="reset()">Discard</button>
             }
             <button
               mat-flat-button
-              color="primary"
               type="submit"
               [disabled]="form.invalid || saving() || (isEdit() && !form.dirty)"
             >
               {{ saving() ? 'Saving…' : isEdit() ? 'Save' : 'Create note' }}
             </button>
-          </mat-card-actions>
-        </mat-card>
+          </div>
+        </div>
       </form>
     }
   `,
   styles: `
-    .page-header {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      margin-bottom: 0.75rem;
+    .editor__head {
+      flex-wrap: nowrap;
+      gap: var(--hb-space-1);
     }
-    .title {
+    .editor__title {
       flex: 1;
       min-width: 0;
-      font-size: 1.125rem;
+      font-size: var(--hb-text-lg);
+      font-weight: 600;
     }
-    .pinned {
+    .editor__pin--on {
       color: var(--hb-text-warning-primary);
       mat-icon {
         transform: rotate(45deg);
       }
     }
-    .card {
-      background: var(--hb-bg-primary);
-      max-width: 880px;
-      &--empty {
-        text-align: center;
-        padding: 1.5rem 1rem;
-        h2 {
-          font-size: 1.125rem;
-          margin: 0.5rem 0 0.25rem;
-        }
-        p {
-          color: var(--hb-text-tertiary);
-          margin: 0 0 1rem;
-        }
-        mat-icon {
-          font-size: 40px;
-          width: 40px;
-          height: 40px;
-          color: var(--hb-fg-quaternary);
-        }
-      }
-    }
-    .content {
+    .editor__content {
       width: 100%;
       border: 0;
       outline: none;
       resize: vertical;
       font: inherit;
-      line-height: 1.5;
-      padding: 0.5rem 0;
+      line-height: 1.6;
+      padding: 0;
       background: transparent;
-    }
-    .actions {
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .meta {
-      font-size: 0.75rem;
-      color: var(--hb-text-quaternary);
-      padding-left: 0.5rem;
-    }
-    .spacer {
-      flex: 1;
-    }
-    .loading {
-      display: grid;
-      place-items: center;
-      padding: 2rem;
+      color: var(--hb-text-primary);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

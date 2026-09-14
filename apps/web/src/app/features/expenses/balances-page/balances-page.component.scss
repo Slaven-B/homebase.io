@@ -1,131 +1,27 @@
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
-
-  h1 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin: 0 0.25rem;
-  }
-}
-
-.page-header__spacer {
-  flex: 1;
-}
-
-.columns {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;
-  margin-bottom: 1rem;
-
-  @media (min-width: 900px) {
-    grid-template-columns: 3fr 2fr;
-  }
-}
-
-.column {
-  min-width: 0;
-}
-
-.card {
-  background: var(--hb-bg-primary);
-
-  &--empty {
-    text-align: center;
-    padding: 1.5rem 1rem;
-
-    h2 {
-      font-size: 1.125rem;
-      margin: 0.5rem 0 0.25rem;
-    }
-    p {
-      margin: 0 auto 1rem;
-      max-width: 420px;
-      color: var(--hb-text-tertiary);
-    }
-    mat-icon {
-      font-size: 40px;
-      width: 40px;
-      height: 40px;
-      color: var(--hb-fg-brand-primary);
-    }
-  }
-}
-
-.section-title {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hb-text-quaternary);
-  margin: 1rem 0 0.5rem;
-}
-
-.muted {
-  color: var(--hb-text-quaternary);
-}
-
-.transfer,
-.settlement,
-.net {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-  border-top: 1px solid var(--hb-border-secondary);
-
-  &:first-child {
-    border-top: 0;
-  }
-}
-
-.settlement {
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
+.balances {
+  margin-bottom: var(--hb-space-4);
 }
 
 .transfer--mine {
-  background: var(--hb-warning-25);
-  margin: 0 -1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  border-radius: 6px;
+  background: var(--hb-badge-warning-bg);
 }
 
 .transfer__text,
 .settlement__text {
-  flex: 1;
-  min-width: 0;
+  display: block;
   overflow-wrap: anywhere;
+
+  strong {
+    font-weight: 600;
+  }
 }
 
 .transfer__amount,
 .net__value {
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .net {
-  justify-content: space-between;
-}
-
-.net__value--positive {
-  color: var(--hb-text-success-primary);
-}
-
-.net__value--negative {
-  color: var(--hb-text-error-primary);
-}
-
-.loading {
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-}
-
-.error {
-  color: var(--hb-text-error-primary);
+  min-height: 48px;
 }

@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -33,13 +32,16 @@ import {
   ExpenseDialogComponent,
   ExpenseDialogData,
 } from '../expense-dialog/expense-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-expenses-page',
   imports: [
+    PageHeaderComponent,
+    EmptyStateComponent,
     CurrencyPipe,
     RouterLink,
-    MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,

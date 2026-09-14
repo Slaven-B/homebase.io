@@ -1,9 +1,9 @@
 .shell__skip {
   position: absolute;
-  left: 0.5rem;
+  left: var(--hb-space-2);
   top: -100px;
   z-index: 100;
-  padding: 0.5rem 0.75rem;
+  padding: var(--hb-space-2) var(--hb-space-3);
   background: var(--hb-bg-primary);
   color: var(--hb-fg-brand-primary);
   border-radius: 6px;
@@ -11,7 +11,7 @@
   text-decoration: none;
 
   &:focus {
-    top: 0.5rem;
+    top: var(--hb-space-2);
   }
 }
 
@@ -49,7 +49,7 @@
 
 .shell__nav {
   display: none;
-  gap: 0.25rem;
+  gap: var(--hb-space-1);
 
   @media (min-width: 720px) {
     display: flex;
@@ -70,8 +70,35 @@
   flex: 1;
 }
 
+.shell__user {
+  padding-inline: var(--hb-space-2);
+  white-space: nowrap;
+
+  // Material's button label is a block; make it a row so the avatar, name and caret
+  // sit on one line instead of stacking.
+  ::ng-deep .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+.shell__avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--hb-radius-full);
+  background: var(--hb-bg-brand-primary);
+  border: 1px solid var(--hb-badge-brand-border);
+  color: var(--hb-text-brand-secondary);
+  font-size: var(--hb-text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
 .shell__user-name {
-  margin: 0 0.25rem;
+  margin: 0 var(--hb-space-1) 0 var(--hb-space-2);
 
   @media (max-width: 480px) {
     display: none;
@@ -82,11 +109,11 @@
   outline: none;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
+  padding: var(--hb-space-6) var(--hb-space-4);
 }
 
 .shell__household {
-  margin-left: 0.25rem;
+  margin-left: var(--hb-space-1);
   max-width: 220px;
 }
 
@@ -126,9 +153,9 @@
     font: inherit;
     cursor: pointer;
     align-items: center;
-    gap: 0.125rem;
-    padding: 0.5rem 0 0.375rem;
-    font-size: 0.6875rem;
+    gap: 2px;
+    padding: var(--hb-space-2) 0 6px;
+    font-size: var(--hb-text-xs);
     font-weight: 500;
     color: var(--hb-text-tertiary);
     text-decoration: none;

@@ -1,8 +1,8 @@
-<h1 class="profile__title">Profile</h1>
+<app-page-header title="Profile" subtitle="How you appear to your household" />
 
-<mat-card appearance="outlined" class="profile__card">
+<div class="hb-card profile">
   <form [formGroup]="form" (ngSubmit)="save()" novalidate>
-    <mat-card-content class="profile__content">
+    <div class="hb-card__body hb-form">
       <mat-form-field appearance="outline">
         <mat-label>Email</mat-label>
         <input matInput [value]="user()?.email ?? ''" disabled />
@@ -29,14 +29,14 @@
       </mat-form-field>
 
       @if (error(); as message) {
-        <p class="profile__error" role="alert">{{ message }}</p>
+        <div class="hb-alert hb-alert--error" role="alert">{{ message }}</div>
       }
-    </mat-card-content>
+    </div>
 
-    <mat-card-actions align="end">
-      <button mat-flat-button color="primary" type="submit" [disabled]="saving() || !form.dirty">
+    <div class="hb-card__actions">
+      <button mat-flat-button type="submit" [disabled]="saving() || !form.dirty">
         {{ saving() ? 'Saving…' : 'Save changes' }}
       </button>
-    </mat-card-actions>
+    </div>
   </form>
-</mat-card>
+</div>

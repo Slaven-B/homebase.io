@@ -1,35 +1,36 @@
 @if (households() === null) {
-  <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+  <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
 } @else if (!current()) {
-  <h1 class="header">{{ greeting() }}, {{ user()?.displayName }} 👋</h1>
-  <mat-card appearance="outlined" class="empty">
-    <mat-card-content>
-      <mat-icon aria-hidden="true">holiday_village</mat-icon>
-      <h2>No household yet</h2>
-      <p>
-        Create a household for the people you live with, or accept an invitation someone sent you.
-      </p>
-      <a mat-flat-button color="primary" routerLink="/households">
+  <app-page-header [title]="greeting() + ', ' + (user()?.displayName ?? '')" />
+  <div class="hb-card">
+    <app-empty-state
+      icon="holiday_village"
+      title="No household yet"
+      message="Create a household for the people you live with, or accept an invitation someone sent you."
+    >
+      <a mat-flat-button routerLink="/households">
         <mat-icon>add</mat-icon>
         Create or join a household
       </a>
-    </mat-card-content>
-  </mat-card>
+    </app-empty-state>
+  </div>
 } @else {
-  <header class="header">
+  <header class="hb-page-header">
     <div>
-      <h1>{{ greeting() }}, {{ user()?.displayName }} 👋</h1>
+      <h1>{{ greeting() }}, {{ user()?.displayName }}</h1>
       @if (view(); as v) {
-        <p class="header__sub">
-          <a [routerLink]="['/households', v.household.id]">{{ v.household.name }}</a>
+        <p class="hb-muted sub">
+          <a class="sub__household" [routerLink]="['/households', v.household.id]">
+            {{ v.household.name }}
+          </a>
           · {{ v.household.memberCount }}
-          {{ v.household.memberCount === 1 ? 'member' : 'members' }}
-          · you are {{ roleLabels[v.household.myRole] }}
+          {{ v.household.memberCount === 1 ? 'member' : 'members' }} · you are
+          {{ roleLabels[v.household.myRole] }}
         </p>
       }
     </div>
     @if (view()?.household?.pendingInvitations; as pending) {
-      <a class="badge" [routerLink]="['/households', view()!.household.id]">
+      <a class="hb-chip hb-chip--warning" [routerLink]="['/households', view()!.household.id]">
         <mat-icon aria-hidden="true">schedule</mat-icon>
         {{ pending }} pending {{ pending === 1 ? 'invitation' : 'invitations' }}
       </a>
@@ -37,221 +38,176 @@
   </header>
 
   @if (error(); as message) {
-    <p class="error" role="alert">{{ message }}</p>
+    <div class="hb-alert hb-alert--error" role="alert">{{ message }}</div>
   } @else {
     @if (view(); as v) {
       <div class="grid">
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title class="card__title">
-              <mat-icon aria-hidden="true">shopping_cart</mat-icon>
-              Shopping
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            @if (v.today.shopping.lists.length === 0) {
-              <div class="placeholder">
-                <mat-icon aria-hidden="true">add_shopping_cart</mat-icon>
-                <p>No shopping lists yet.</p>
-              </div>
-            } @else {
-              <ul class="mini-list">
-                @for (list of v.today.shopping.lists; track list.id) {
-                  <li>
-                    <a [routerLink]="['/shopping', list.id]">{{ list.name }}</a>
-                    <span
-                      class="mini-list__count"
-                      [class.mini-list__count--zero]="list.openItems === 0"
-                    >
-                      {{ list.openItems === 0 ? 'done' : list.openItems }}
-                    </span>
-                  </li>
-                }
-              </ul>
-            }
-          </mat-card-content>
-          <mat-card-actions align="end">
-            <a mat-button routerLink="/shopping">
-              {{
-                v.today.shopping.openItems > 0
-                  ? v.today.shopping.openItems + ' to buy'
-                  : 'Open shopping'
-              }}
-            </a>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title class="card__title">
-              <mat-icon aria-hidden="true">cleaning_services</mat-icon>
-              Chores due
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            @if (v.today.choresDue.length === 0) {
-              <div class="placeholder">
-                <mat-icon aria-hidden="true">event_available</mat-icon>
-                <p>Nothing due today. Nice.</p>
-              </div>
-            } @else {
-              <ul class="mini-list">
-                @for (c of v.today.choresDue; track c.id) {
-                  <li>
-                    <a routerLink="/chores">{{ c.title }}</a>
-                    <span class="mini-list__count" [class.mini-list__count--warn]="c.dueInDays < 0">
-                      {{
-                        c.dueInDays < 0
-                          ? -c.dueInDays + 'd late'
-                          : (c.assignee?.displayName ?? 'today')
-                      }}
-                    </span>
-                  </li>
-                }
-              </ul>
-            }
-          </mat-card-content>
-          <mat-card-actions align="end">
-            <a mat-button routerLink="/chores">All chores</a>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title class="card__title">
-              <mat-icon aria-hidden="true">task_alt</mat-icon>
-              Tasks due
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            @if (v.today.tasksDue.length === 0) {
-              <div class="placeholder">
-                <mat-icon aria-hidden="true">checklist</mat-icon>
-                <p>No tasks due today or overdue.</p>
-              </div>
-            } @else {
-              <ul class="mini-list">
-                @for (t of v.today.tasksDue; track t.id) {
-                  <li>
-                    <a [routerLink]="['/tasks', t.id]">{{ t.title }}</a>
-                    <span
-                      class="mini-list__count"
-                      [class.mini-list__count--warn]="t.dueAt !== v.today.date"
-                    >
-                      {{ t.dueAt === v.today.date ? 'today' : 'overdue' }}
-                    </span>
-                  </li>
-                }
-              </ul>
-            }
-          </mat-card-content>
-          <mat-card-actions align="end">
-            <a mat-button routerLink="/tasks">All tasks</a>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title class="card__title">
-              <mat-icon aria-hidden="true">receipt</mat-icon>
-              Upcoming bills
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            @if (v.today.upcomingBills.length === 0) {
-              <div class="placeholder">
-                <mat-icon aria-hidden="true">event_available</mat-icon>
-                <p>Nothing due in the next two weeks.</p>
-              </div>
-            } @else {
-              <ul class="mini-list">
-                @for (b of v.today.upcomingBills; track b.id) {
-                  <li>
-                    <a routerLink="/bills">{{ b.name }}</a>
-                    <span class="mini-list__amount">{{
-                      b.amountCents / 100 | currency: b.currency
-                    }}</span>
-                    <span class="mini-list__count" [class.mini-list__count--warn]="b.dueInDays < 0">
-                      {{
-                        b.dueInDays < 0
-                          ? 'overdue'
-                          : b.dueInDays === 0
-                            ? 'today'
-                            : 'in ' + b.dueInDays + 'd'
-                      }}
-                    </span>
-                  </li>
-                }
-              </ul>
-            }
-          </mat-card-content>
-          <mat-card-actions align="end">
-            <a mat-button routerLink="/bills">All bills</a>
-          </mat-card-actions>
-        </mat-card>
-
-        <mat-card appearance="outlined" class="card">
-          <mat-card-header>
-            <mat-card-title class="card__title">
-              <mat-icon aria-hidden="true">payments</mat-icon>
-              {{ monthLabel(v.finances.month) }}
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <dl class="finances">
-              <dt>Shared expenses</dt>
-              <dd>{{ v.finances.sharedExpensesCents / 100 | currency: v.finances.currency }}</dd>
-              <dt>Bills</dt>
-              <dd>{{ v.finances.billsCents / 100 | currency: v.finances.currency }}</dd>
-              <dt>Outstanding</dt>
-              <dd>{{ v.finances.outstandingCents / 100 | currency: v.finances.currency }}</dd>
-            </dl>
-            <p
-              class="finances__hint"
-              [class.finances__hint--positive]="v.finances.myNetCents > 0"
-              [class.finances__hint--negative]="v.finances.myNetCents < 0"
-            >
-              @if (v.finances.myNetCents === 0) {
-                You are all settled up.
-              } @else if (v.finances.myNetCents > 0) {
-                You are owed {{ v.finances.myNetCents / 100 | currency: v.finances.currency }}.
-              } @else {
-                You owe {{ -v.finances.myNetCents / 100 | currency: v.finances.currency }}.
+        <section class="hb-card tile">
+          <h2 class="tile__title">
+            <mat-icon aria-hidden="true">shopping_cart</mat-icon>
+            Shopping
+          </h2>
+          @if (v.today.shopping.lists.length === 0) {
+            <p class="tile__empty">No shopping lists yet.</p>
+          } @else {
+            <ul class="mini-list">
+              @for (list of v.today.shopping.lists; track list.id) {
+                <li>
+                  <a [routerLink]="['/shopping', list.id]">{{ list.name }}</a>
+                  <span class="hb-chip" [class.hb-chip--success]="list.openItems === 0">
+                    {{ list.openItems === 0 ? 'done' : list.openItems }}
+                  </span>
+                </li>
               }
-            </p>
-          </mat-card-content>
-          <mat-card-actions align="end">
+            </ul>
+          }
+          <a mat-button routerLink="/shopping" class="tile__link">
+            {{
+              v.today.shopping.openItems > 0
+                ? v.today.shopping.openItems + ' to buy'
+                : 'Open shopping'
+            }}
+          </a>
+        </section>
+
+        <section class="hb-card tile">
+          <h2 class="tile__title">
+            <mat-icon aria-hidden="true">cleaning_services</mat-icon>
+            Chores due
+          </h2>
+          @if (v.today.choresDue.length === 0) {
+            <p class="tile__empty">Nothing due today. Nice.</p>
+          } @else {
+            <ul class="mini-list">
+              @for (c of v.today.choresDue; track c.id) {
+                <li>
+                  <a routerLink="/chores">{{ c.title }}</a>
+                  <span class="hb-chip" [class.hb-chip--error]="c.dueInDays < 0">
+                    {{
+                      c.dueInDays < 0
+                        ? -c.dueInDays + 'd late'
+                        : (c.assignee?.displayName ?? 'today')
+                    }}
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+          <a mat-button routerLink="/chores" class="tile__link">All chores</a>
+        </section>
+
+        <section class="hb-card tile">
+          <h2 class="tile__title">
+            <mat-icon aria-hidden="true">task_alt</mat-icon>
+            Tasks due
+          </h2>
+          @if (v.today.tasksDue.length === 0) {
+            <p class="tile__empty">No tasks due today or overdue.</p>
+          } @else {
+            <ul class="mini-list">
+              @for (t of v.today.tasksDue; track t.id) {
+                <li>
+                  <a [routerLink]="['/tasks', t.id]">{{ t.title }}</a>
+                  <span class="hb-chip" [class.hb-chip--error]="t.dueAt !== v.today.date">
+                    {{ t.dueAt === v.today.date ? 'today' : 'overdue' }}
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+          <a mat-button routerLink="/tasks" class="tile__link">All tasks</a>
+        </section>
+
+        <section class="hb-card tile">
+          <h2 class="tile__title">
+            <mat-icon aria-hidden="true">receipt</mat-icon>
+            Upcoming bills
+          </h2>
+          @if (v.today.upcomingBills.length === 0) {
+            <p class="tile__empty">Nothing due in the next two weeks.</p>
+          } @else {
+            <ul class="mini-list">
+              @for (b of v.today.upcomingBills; track b.id) {
+                <li>
+                  <a routerLink="/bills">{{ b.name }}</a>
+                  <span class="hb-num hb-muted">{{
+                    b.amountCents / 100 | currency: b.currency
+                  }}</span>
+                  <span class="hb-chip" [class.hb-chip--error]="b.dueInDays < 0">
+                    {{
+                      b.dueInDays < 0
+                        ? 'overdue'
+                        : b.dueInDays === 0
+                          ? 'today'
+                          : 'in ' + b.dueInDays + 'd'
+                    }}
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+          <a mat-button routerLink="/bills" class="tile__link">All bills</a>
+        </section>
+
+        <section class="hb-card tile">
+          <h2 class="tile__title">
+            <mat-icon aria-hidden="true">payments</mat-icon>
+            {{ monthLabel(v.finances.month) }}
+          </h2>
+          <dl class="finances">
+            <dt>Shared expenses</dt>
+            <dd class="hb-num">
+              {{ v.finances.sharedExpensesCents / 100 | currency: v.finances.currency }}
+            </dd>
+            <dt>Bills</dt>
+            <dd class="hb-num">
+              {{ v.finances.billsCents / 100 | currency: v.finances.currency }}
+            </dd>
+            <dt>Outstanding</dt>
+            <dd class="hb-num">
+              {{ v.finances.outstandingCents / 100 | currency: v.finances.currency }}
+            </dd>
+          </dl>
+          <p
+            class="finances__hint"
+            [class.hb-success-text]="v.finances.myNetCents > 0"
+            [class.hb-error-text]="v.finances.myNetCents < 0"
+          >
+            @if (v.finances.myNetCents === 0) {
+              You are all settled up.
+            } @else if (v.finances.myNetCents > 0) {
+              You are owed {{ v.finances.myNetCents / 100 | currency: v.finances.currency }}.
+            } @else {
+              You owe {{ -v.finances.myNetCents / 100 | currency: v.finances.currency }}.
+            }
+          </p>
+          <div class="tile__links">
             <a mat-button routerLink="/expenses/balances">Balances</a>
             <a mat-button routerLink="/expenses">Expenses</a>
-          </mat-card-actions>
-        </mat-card>
+          </div>
+        </section>
 
-        <mat-card appearance="outlined" class="card card--wide">
-          <mat-card-header>
-            <mat-card-title class="card__title">
-              <mat-icon aria-hidden="true">history</mat-icon>
-              Recent activity
-            </mat-card-title>
-          </mat-card-header>
+        <section class="hb-card tile tile--wide">
+          <h2 class="tile__title">
+            <mat-icon aria-hidden="true">history</mat-icon>
+            Recent activity
+          </h2>
           <app-activity-feed
             [entries]="v.recentActivity"
             emptyMessage="Nothing has happened yet. Invite someone to get started."
           />
           @if (v.recentActivity.length > 0) {
-            <mat-card-actions align="end">
-              <a mat-button routerLink="/activity">All activity</a>
-            </mat-card-actions>
+            <a mat-button routerLink="/activity" class="tile__link">All activity</a>
           }
-        </mat-card>
+        </section>
       </div>
     } @else {
-      <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+      <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
     }
   }
 
   <button
     mat-fab
-    color="primary"
     class="fab"
     type="button"
     [matMenuTriggerFor]="quickMenu"

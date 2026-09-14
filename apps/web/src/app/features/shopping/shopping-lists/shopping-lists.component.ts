@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -11,13 +10,16 @@ import { Router, RouterLink } from '@angular/router';
 import { HouseholdService } from '../../../core/households/household.service';
 import { ShoppingListSummary } from '../../../core/shopping/shopping.models';
 import { ShoppingService } from '../../../core/shopping/shopping.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-shopping-lists',
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatCardModule,
+    PageHeaderComponent,
+    EmptyStateComponent,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,

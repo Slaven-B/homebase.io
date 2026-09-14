@@ -113,6 +113,12 @@
     flex-wrap: wrap;
     gap: var(--hb-space-1) var(--hb-space-2);
     align-items: center;
+    min-width: 0;
+    overflow-wrap: anywhere;
+
+    > * {
+      min-width: 0;
+    }
   }
 }
 
@@ -251,4 +257,108 @@
       grid-template-columns: 3fr 2fr;
     }
   }
+}
+
+// --- Card sections ---------------------------------------------------------
+
+.hb-card__title {
+  display: flex;
+  align-items: center;
+  gap: var(--hb-space-2);
+  margin: 0;
+  padding: var(--hb-space-4) var(--hb-space-4) var(--hb-space-2);
+  font-size: var(--hb-text-md);
+  line-height: var(--hb-text-md-lh);
+  font-weight: 600;
+  color: var(--hb-text-primary);
+
+  mat-icon,
+  .mat-icon {
+    color: var(--hb-fg-brand-primary);
+  }
+
+  &--spread {
+    justify-content: space-between;
+  }
+}
+
+.hb-card__subtitle {
+  margin: calc(-1 * var(--hb-space-1)) 0 0;
+  padding: 0 var(--hb-space-4) var(--hb-space-2);
+  font-size: var(--hb-text-sm);
+  line-height: var(--hb-text-sm-lh);
+  color: var(--hb-text-tertiary);
+}
+
+.hb-card__body {
+  padding: var(--hb-space-4);
+
+  &--tight {
+    padding-top: 0;
+  }
+}
+
+.hb-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--hb-space-2);
+  flex-wrap: wrap;
+  padding: var(--hb-space-3) var(--hb-space-4);
+  border-top: 1px solid var(--hb-border-secondary);
+
+  &--plain {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+// Label/value pairs (task facts, settings summaries).
+.hb-facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--hb-space-2) var(--hb-space-4);
+  margin: 0;
+  font-size: var(--hb-text-sm);
+  line-height: var(--hb-text-sm-lh);
+
+  dt {
+    color: var(--hb-text-tertiary);
+  }
+  dd {
+    margin: 0;
+    color: var(--hb-text-primary);
+  }
+}
+
+// Stacked form fields.
+.hb-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--hb-space-2);
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+// Inline run of text + chips.
+.hb-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--hb-space-2);
+  flex-wrap: wrap;
+}
+
+// Long free text (descriptions, comments, notes).
+.hb-prose {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--hb-text-secondary);
+}
+
+// Comfortable reading width for single-column lists.
+.hb-readable {
+  max-width: 880px;
 }

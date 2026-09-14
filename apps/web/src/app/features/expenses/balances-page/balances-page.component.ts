@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -21,14 +20,17 @@ import { ExpensesService } from '../../../core/expenses/expenses.service';
 import { canAdminister } from '../../../core/households/household.models';
 import { HouseholdService } from '../../../core/households/household.service';
 import { SettleDialogComponent, SettleDialogData } from '../settle-dialog/settle-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-balances-page',
   imports: [
+    PageHeaderComponent,
+    EmptyStateComponent,
     CurrencyPipe,
     DatePipe,
     RouterLink,
-    MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatListModule,

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterLink } from '@angular/router';
@@ -8,6 +7,8 @@ import { ActivityEntry } from '../../core/activity/activity.models';
 import { ActivityService } from '../../core/activity/activity.service';
 import { HouseholdService } from '../../core/households/household.service';
 import { ActivityFeedComponent } from '../../shared/components/activity-feed/activity-feed.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 
 const PAGE_SIZE = 25;
 
@@ -16,71 +17,49 @@ const PAGE_SIZE = 25;
   selector: 'app-activity-page',
   imports: [
     RouterLink,
-    MatCardModule,
+    PageHeaderComponent,
+    EmptyStateComponent,
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
     ActivityFeedComponent,
   ],
   template: `
-    <h1 class="title">Activity</h1>
+    <app-page-header title="Activity" [subtitle]="current()?.name ?? null" />
 
     @if (!current()) {
-      <mat-card appearance="outlined" class="card card--empty">
-        <mat-card-content>
-          <p>Pick or create a household to see its activity.</p>
-          <a mat-flat-button color="primary" routerLink="/households">Households</a>
-        </mat-card-content>
-      </mat-card>
+      <div class="hb-card">
+        <app-empty-state
+          icon="holiday_village"
+          title="No household yet"
+          message="Pick or create a household to see its activity."
+        >
+          <a mat-flat-button routerLink="/households">Households</a>
+        </app-empty-state>
+      </div>
     } @else {
-      <mat-card appearance="outlined" class="card">
-        <mat-card-header>
-          <mat-card-title>{{ current()?.name }}</mat-card-title>
-        </mat-card-header>
+      <div class="hb-card hb-readable">
         @if (entries(); as list) {
           <app-activity-feed [entries]="list" />
           @if (error(); as message) {
-            <p class="error" role="alert">{{ message }}</p>
+            <div class="hb-alert hb-alert--error activity__error" role="alert">{{ message }}</div>
           }
           @if (nextCursor()) {
-            <mat-card-actions align="end">
+            <div class="hb-card__actions">
               <button mat-button type="button" (click)="loadMore()" [disabled]="loading()">
                 {{ loading() ? 'Loading…' : 'Load older' }}
               </button>
-            </mat-card-actions>
+            </div>
           }
         } @else {
-          <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+          <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
         }
-      </mat-card>
+      </div>
     }
   `,
   styles: `
-    .title {
-      font-size: 1.5rem;
-      font-weight: 500;
-      margin: 0 0 1rem;
-    }
-    .card {
-      background: var(--hb-bg-primary);
-      max-width: 760px;
-    }
-    .card--empty {
-      text-align: center;
-      padding: 1rem;
-      p {
-        color: var(--hb-text-tertiary);
-      }
-    }
-    .loading {
-      display: grid;
-      place-items: center;
-      padding: 2rem;
-    }
-    .error {
-      margin: 0 1rem 1rem;
-      color: var(--hb-text-error-primary);
-      font-size: 0.875rem;
+    .activity__error {
+      margin: var(--hb-space-3) var(--hb-space-4);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

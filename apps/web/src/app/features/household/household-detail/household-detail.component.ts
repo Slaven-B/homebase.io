@@ -10,12 +10,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -34,14 +32,14 @@ import {
 } from '../../../core/households/household.models';
 import { HouseholdService } from '../../../core/households/household.service';
 import { confirm } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-household-detail',
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    MatCardModule,
-    MatListModule,
+    EmptyStateComponent,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,

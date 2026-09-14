@@ -1,18 +1,17 @@
-<div class="page-header">
-  <h1>Shopping</h1>
-</div>
+<app-page-header title="Shopping" />
 
 @if (!current()) {
-  <mat-card appearance="outlined" class="card card--empty">
-    <mat-card-content>
-      <mat-icon aria-hidden="true">holiday_village</mat-icon>
-      <h2>No household yet</h2>
-      <p>Shopping lists belong to a household. Create or join one first.</p>
-      <a mat-flat-button color="primary" routerLink="/households">Households</a>
-    </mat-card-content>
-  </mat-card>
+  <div class="hb-card">
+    <app-empty-state
+      icon="holiday_village"
+      title="No household yet"
+      message="Shopping lists belong to a household. Create or join one first."
+    >
+      <a mat-flat-button routerLink="/households">Households</a>
+    </app-empty-state>
+  </div>
 } @else {
-  <form class="create" (ngSubmit)="create()" novalidate>
+  <form class="hb-toolbar create" (ngSubmit)="create()" novalidate>
     <mat-form-field appearance="outline" class="create__field" subscriptSizing="dynamic">
       <mat-label>New list</mat-label>
       <input
@@ -23,60 +22,55 @@
         maxlength="80"
       />
     </mat-form-field>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="creating() || nameControl.invalid"
-    >
+    <button mat-flat-button type="submit" [disabled]="creating() || nameControl.invalid">
       <mat-icon>add</mat-icon>
       Create
     </button>
   </form>
 
   @if (error(); as message) {
-    <p class="error" role="alert">{{ message }}</p>
+    <div class="hb-alert hb-alert--error" role="alert">{{ message }}</div>
   }
 
   @if (lists(); as list) {
     @if (list.length === 0) {
-      <mat-card appearance="outlined" class="card card--empty">
-        <mat-card-content>
-          <mat-icon aria-hidden="true">shopping_basket</mat-icon>
-          <h2>Nothing here yet</h2>
-          <p>Create your first list above. "Groceries" is a good start.</p>
-        </mat-card-content>
-      </mat-card>
+      <div class="hb-card">
+        <app-empty-state
+          icon="shopping_basket"
+          title="Nothing here yet"
+          message='Create your first list above. "Groceries" is a good start.'
+        />
+      </div>
     } @else {
-      <div class="grid">
+      <div class="hb-grid">
         @for (l of list; track l.id) {
-          <a class="list-card" [routerLink]="['/shopping', l.id]">
-            <mat-card appearance="outlined" class="card">
-              <mat-card-content class="list-card__body">
-                <mat-icon class="list-card__icon" aria-hidden="true">
-                  {{ l.openItems === 0 ? 'check_circle' : 'shopping_cart' }}
-                </mat-icon>
-                <div class="list-card__text">
-                  <strong>{{ l.name }}</strong>
-                  <span>
-                    @if (l.openItems === 0) {
-                      All done
-                    } @else {
-                      {{ l.openItems }} {{ l.openItems === 1 ? 'item' : 'items' }} to buy
-                    }
-                    @if (l.totalItems > l.openItems) {
-                      · {{ l.totalItems - l.openItems }} done
-                    }
-                  </span>
-                </div>
-                <mat-icon aria-hidden="true">chevron_right</mat-icon>
-              </mat-card-content>
-            </mat-card>
+          <a class="hb-card hb-row hb-row--link" [routerLink]="['/shopping', l.id]">
+            <mat-icon
+              class="list-icon"
+              [class.list-icon--done]="l.openItems === 0"
+              aria-hidden="true"
+            >
+              {{ l.openItems === 0 ? 'check_circle' : 'shopping_cart' }}
+            </mat-icon>
+            <span class="hb-row__body">
+              <span class="hb-row__title">{{ l.name }}</span>
+              <span class="hb-row__meta">
+                @if (l.openItems === 0) {
+                  All done
+                } @else {
+                  {{ l.openItems }} {{ l.openItems === 1 ? 'item' : 'items' }} to buy
+                }
+                @if (l.totalItems > l.openItems) {
+                  · {{ l.totalItems - l.openItems }} done
+                }
+              </span>
+            </span>
+            <mat-icon class="hb-muted" aria-hidden="true">chevron_right</mat-icon>
           </a>
         }
       </div>
     }
   } @else if (!error()) {
-    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+    <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
   }
 }

@@ -116,6 +116,17 @@ html {
   );
 }
 
+// Destructive filled button (confirm dialogs, delete actions). M3 ignores color="warn".
+.hb-btn-danger {
+  @include mat.button-overrides(
+    (
+      filled-container-color: var(--hb-error-600),
+      filled-label-text-color: #ffffff,
+      filled-state-layer-color: #ffffff,
+    )
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Base
 // ---------------------------------------------------------------------------

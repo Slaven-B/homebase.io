@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,6 +24,8 @@ import {
   TaskStatus,
 } from '../../../core/tasks/task.models';
 import { TasksService } from '../../../core/tasks/tasks.service';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { TaskDialogComponent, TaskDialogData } from '../task-dialog/task-dialog.component';
 
 type Filter = 'all' | 'mine';
@@ -33,7 +34,8 @@ type Filter = 'all' | 'mine';
   selector: 'app-tasks-page',
   imports: [
     RouterLink,
-    MatCardModule,
+    PageHeaderComponent,
+    EmptyStateComponent,
     MatButtonModule,
     MatButtonToggleModule,
     MatIconModule,

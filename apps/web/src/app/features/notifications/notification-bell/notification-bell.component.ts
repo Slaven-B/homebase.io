@@ -80,40 +80,40 @@ import { NotificationsService } from '../../../core/notifications/notifications.
   styles: `
     .bell {
       width: min(380px, calc(100vw - 32px));
-      padding: 0.25rem 0 0.25rem;
+      padding: var(--hb-space-1) 0 var(--hb-space-1);
       outline: none;
     }
     .bell__head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.25rem 0.5rem 0.25rem 1rem;
+      padding: var(--hb-space-1) var(--hb-space-2) var(--hb-space-1) var(--hb-space-4);
     }
     .bell__loading {
       display: grid;
       place-items: center;
-      padding: 1rem;
+      padding: var(--hb-space-4);
     }
     .bell__empty {
       margin: 0;
-      padding: 1rem;
+      padding: var(--hb-space-4);
       color: var(--hb-text-tertiary);
-      font-size: 0.875rem;
+      font-size: var(--hb-text-sm);
     }
     .bell__all {
       display: block;
-      margin: 0.25rem 0.5rem 0;
+      margin: var(--hb-space-1) var(--hb-space-2) 0;
       text-align: center;
     }
     .item {
       display: flex;
-      gap: 0.75rem;
+      gap: var(--hb-space-3);
       width: 100%;
       text-align: left;
       border: 0;
       background: none;
       font: inherit;
-      padding: 0.5rem 1rem;
+      padding: var(--hb-space-2) var(--hb-space-4);
       cursor: pointer;
       border-top: 1px solid var(--hb-border-secondary);
       &:hover {
@@ -134,7 +134,7 @@ import { NotificationsService } from '../../../core/notifications/notifications.
       display: flex;
       flex-direction: column;
       min-width: 0;
-      font-size: 0.875rem;
+      font-size: var(--hb-text-sm);
     }
     .item__body {
       color: var(--hb-text-secondary);
@@ -143,7 +143,7 @@ import { NotificationsService } from '../../../core/notifications/notifications.
       white-space: nowrap;
     }
     .item__time {
-      font-size: 0.75rem;
+      font-size: var(--hb-space-3);
       color: var(--hb-text-quaternary);
     }
   `,

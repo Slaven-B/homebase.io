@@ -1,7 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -12,6 +11,8 @@ import { DashboardService } from '../../core/dashboard/dashboard.service';
 import { ROLE_LABELS, canAdminister } from '../../core/households/household.models';
 import { HouseholdService } from '../../core/households/household.service';
 import { ActivityFeedComponent } from '../../shared/components/activity-feed/activity-feed.component';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 
 /**
  * Home base: "what's going on in my household right now?"
@@ -22,12 +23,13 @@ import { ActivityFeedComponent } from '../../shared/components/activity-feed/act
   imports: [
     RouterLink,
     CurrencyPipe,
-    MatCardModule,
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
     MatProgressSpinnerModule,
     ActivityFeedComponent,
+    EmptyStateComponent,
+    PageHeaderComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

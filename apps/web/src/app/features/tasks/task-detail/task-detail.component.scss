@@ -1,110 +1,38 @@
-.page-header {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
-
-  h1 {
-    flex: 1;
-    min-width: 0;
-    font-size: 1.5rem;
-    font-weight: 500;
-    margin: 0 0.25rem;
-    overflow-wrap: anywhere;
-
-    &.done {
-      text-decoration: line-through;
-      color: var(--hb-text-quaternary);
-    }
-  }
-}
-
-.columns {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;
-
-  @media (min-width: 900px) {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.column {
-  min-width: 0;
-}
-
-.card {
-  background: var(--hb-bg-primary);
-
-  &--empty {
-    text-align: center;
-    padding: 1.5rem 1rem;
-    h2 {
-      margin: 0.5rem 0 0.25rem;
-      font-size: 1.125rem;
-    }
-    p {
-      color: var(--hb-text-tertiary);
-      margin: 0 0 1rem;
-    }
-    mat-icon {
-      font-size: 40px;
-      width: 40px;
-      height: 40px;
-      color: var(--hb-fg-quaternary);
-    }
-  }
-}
-
 .details {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding-top: 1rem;
+  gap: var(--hb-space-4);
 }
 
-.status {
+.details__status {
   align-self: flex-start;
 }
 
-.facts {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 0.375rem 1rem;
+.comment-empty {
   margin: 0;
-  font-size: 0.9375rem;
-
-  dt {
-    color: var(--hb-text-tertiary);
-  }
-  dd {
-    margin: 0;
-  }
-}
-
-.description {
-  margin: 0;
-  white-space: pre-wrap;
-}
-
-.muted {
-  color: var(--hb-text-quaternary);
-  font-size: 0.8125rem;
+  font-size: var(--hb-text-sm);
+  line-height: var(--hb-text-sm-lh);
 }
 
 .comment {
-  padding: 0.5rem 0;
+  padding: var(--hb-space-3) 0;
   border-top: 1px solid var(--hb-border-secondary);
 
   &:first-of-type {
     border-top: 0;
+    padding-top: 0;
   }
 }
 
 .comment__head {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--hb-space-2);
+  min-height: 32px;
+
+  strong {
+    font-weight: 500;
+  }
 }
 
 .comment__delete {
@@ -115,23 +43,18 @@
 }
 
 .comment__body {
-  margin: 0.125rem 0 0;
-  white-space: pre-wrap;
+  margin-top: 2px;
+  font-size: var(--hb-text-sm);
+  line-height: var(--hb-text-sm-lh);
 }
 
 .comment-form {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--hb-space-2);
   align-items: flex-end;
-  margin-top: 0.75rem;
+  margin-top: var(--hb-space-4);
 }
 
 .comment-form__field {
   flex: 1;
-}
-
-.loading {
-  display: grid;
-  place-items: center;
-  padding: 2rem;
 }

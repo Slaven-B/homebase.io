@@ -94,9 +94,7 @@ export interface SettleDialogData {
       </mat-dialog-content>
       <mat-dialog-actions align="end">
         <button mat-button type="button" (click)="ref.close()">Cancel</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
-          Record
-        </button>
+        <button mat-flat-button type="submit" [disabled]="form.invalid">Record</button>
       </mat-dialog-actions>
     </form>
   `,
@@ -104,18 +102,18 @@ export interface SettleDialogData {
     .content {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
-      padding-top: 0.5rem !important;
+      gap: var(--hb-space-1);
+      padding-top: var(--hb-space-2) !important;
       min-width: min(420px, calc(100vw - 64px));
     }
     .hint {
-      margin: 0 0 0.75rem;
+      margin: 0 0 var(--hb-space-3);
       color: var(--hb-text-tertiary);
-      font-size: 0.875rem;
+      font-size: var(--hb-text-sm);
     }
     .row {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--hb-space-2);
       flex-wrap: wrap;
       mat-form-field {
         flex: 1;

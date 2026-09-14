@@ -1,24 +1,24 @@
-<div class="page-header">
-  <h1>Chores</h1>
+<app-page-header title="Chores">
   @if (current()) {
-    <button mat-flat-button color="primary" type="button" (click)="create()">
+    <button mat-flat-button type="button" (click)="create()">
       <mat-icon>add</mat-icon>
       New chore
     </button>
   }
-</div>
+</app-page-header>
 
 @if (!current()) {
-  <mat-card appearance="outlined" class="card card--empty">
-    <mat-card-content>
-      <mat-icon aria-hidden="true">holiday_village</mat-icon>
-      <h2>No household yet</h2>
-      <p>Chores belong to a household. Create or join one first.</p>
-      <a mat-flat-button color="primary" routerLink="/households">Households</a>
-    </mat-card-content>
-  </mat-card>
+  <div class="hb-card">
+    <app-empty-state
+      icon="holiday_village"
+      title="No household yet"
+      message="Chores belong to a household. Create or join one first."
+    >
+      <a mat-flat-button routerLink="/households">Households</a>
+    </app-empty-state>
+  </div>
 } @else {
-  <div class="toolbar">
+  <div class="hb-toolbar">
     <mat-button-toggle-group
       [value]="filter()"
       (change)="filter.set($event.value)"
@@ -34,38 +34,38 @@
   </div>
 
   @if (error(); as message) {
-    <p class="error" role="alert">{{ message }}</p>
+    <div class="hb-alert hb-alert--error" role="alert">{{ message }}</div>
   }
 
   @if (chores() === null) {
-    <div class="loading"><mat-spinner diameter="32"></mat-spinner></div>
+    <div class="hb-loading"><mat-spinner diameter="32"></mat-spinner></div>
   } @else if (visible().length === 0) {
-    <mat-card appearance="outlined" class="card card--empty">
-      <mat-card-content>
-        <mat-icon aria-hidden="true">cleaning_services</mat-icon>
-        <h2>{{ filter() === 'mine' ? 'Nothing assigned to you' : 'No chores yet' }}</h2>
-        <p>Add recurring jobs like "Take out trash, every 2 days" and share the load.</p>
-        <button mat-flat-button color="primary" type="button" (click)="create()">
+    <div class="hb-card">
+      <app-empty-state
+        icon="cleaning_services"
+        [title]="filter() === 'mine' ? 'Nothing assigned to you' : 'No chores yet'"
+        message='Add recurring jobs like "Take out trash, every 2 days" and share the load.'
+      >
+        <button mat-flat-button type="button" (click)="create()">
           <mat-icon>add</mat-icon>
           New chore
         </button>
-      </mat-card-content>
-    </mat-card>
+      </app-empty-state>
+    </div>
   } @else {
     @for (section of sections(); track section.key) {
-      <h2 class="group-title">{{ section.title }} · {{ section.chores.length }}</h2>
-      <div class="grid">
+      <h2 class="hb-section-title">{{ section.title }} · {{ section.chores.length }}</h2>
+      <div class="hb-grid">
         @for (chore of section.chores; track chore.id) {
-          <mat-card
-            appearance="outlined"
-            class="chore"
+          <article
+            class="hb-card chore"
             [class.chore--overdue]="chore.isActive && chore.dueInDays < 0"
             [class.chore--archived]="!chore.isActive"
           >
-            <mat-card-content class="chore__body">
+            <div class="chore__body">
               <div class="chore__head">
-                <div class="chore__text">
-                  <strong class="chore__title">{{ chore.title }}</strong>
+                <div class="hb-row__body">
+                  <span class="hb-row__title">{{ chore.title }}</span>
                   <span class="chore__due">
                     {{ chore.isActive ? describeDue(chore.dueInDays) : 'Archived' }}
                   </span>
@@ -80,32 +80,37 @@
                   <mat-icon>more_vert</mat-icon>
                 </button>
               </div>
-              <div class="chore__meta">
-                <span class="chip">
+              <div class="hb-row__meta">
+                <span class="hb-chip">
                   <mat-icon aria-hidden="true">repeat</mat-icon>{{ describeFrequency(chore) }}
                 </span>
                 @if (chore.assignee) {
-                  <span class="chip">
+                  <span class="hb-chip">
                     <mat-icon aria-hidden="true">person</mat-icon>{{ chore.assignee.displayName }}
                   </span>
                 } @else {
-                  <span class="chip chip--muted">Unassigned</span>
+                  <span class="hb-chip hb-chip--outline">Unassigned</span>
                 }
                 @if (chore.estimatedMinutes) {
-                  <span class="chip">
+                  <span class="hb-chip">
                     <mat-icon aria-hidden="true">schedule</mat-icon>{{ chore.estimatedMinutes }} min
                   </span>
                 }
-                <span class="chip chip--{{ chore.priority.toLowerCase() }}">
+                <span
+                  class="hb-chip"
+                  [class.hb-chip--error]="chore.priority === 'HIGH'"
+                  [class.hb-chip--warning]="chore.priority === 'MEDIUM'"
+                  [class.hb-chip--success]="chore.priority === 'LOW'"
+                >
                   {{ priorityLabels[chore.priority] }}
                 </span>
               </div>
               @if (chore.description) {
-                <p class="chore__description">{{ chore.description }}</p>
+                <p class="hb-prose chore__description">{{ chore.description }}</p>
               }
-            </mat-card-content>
+            </div>
             @if (chore.isActive) {
-              <mat-card-actions align="end">
+              <div class="hb-card__actions">
                 <button
                   mat-button
                   type="button"
@@ -116,7 +121,6 @@
                 </button>
                 <button
                   mat-flat-button
-                  color="primary"
                   type="button"
                   (click)="complete(chore)"
                   [disabled]="busy() === chore.id"
@@ -124,9 +128,9 @@
                   <mat-icon>check</mat-icon>
                   Done
                 </button>
-              </mat-card-actions>
+              </div>
             }
-          </mat-card>
+          </article>
         }
       </div>
     }
