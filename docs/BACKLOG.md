@@ -108,15 +108,21 @@ Engineering work surfaced while building v1.0.
 
 | Status | Priority | Request                                                                                                                                         |
 | ------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Idea   | next     | **Browser end-to-end tests for the critical flows** — Playwright: register, household, invite/accept, shopping, expense split, bill paid        |
+| In progress | now  | **Browser end-to-end tests for the critical flows** — Playwright: register, household, invite/accept, shopping, expense split, bill paid. 2026-11-03: `@playwright/mcp` wired up in `.mcp.json` and the `testing-the-app` skill written, so flows can be driven interactively. The six flows are not yet walked, and no automated spec file exists — that is the remaining work |
 | Idea   | next     | **Email delivery for invitations and reminders** — adapter on top of `NotificationsService`; invitations currently need the link shared by hand |
 | Idea   | later    | **Real-time updates for shopping lists (WebSockets)** — replace the 60 s notification polling at the same time                                  |
 | Idea   | later    | **Household ownership transfer** — owners cannot leave today                                                                                    |
 | Idea   | later    | **Receipt uploads for expenses** — object storage + `Expense.receiptUrl`; shares infrastructure with invoice attachments                        |
 | Idea   | later    | **PWA install and offline shell** — manifest, service worker for the shell, home-screen install                                                 |
+| Done   | now      | **Codebase knowledge graph (graphify)** _(research)_ — adopted 2026-11-03 for structural queries; `affected` gives real blast radius before changing shared API code. Deliberately **no** PreToolUse hook and **no** git hooks: the graph is refreshed on demand. See the `codebase-map` skill |
+| Idea   | later    | **Cross-tier edges in the codebase graph** _(research)_ — the AST-only graph is three disconnected islands (SQL / API / web); `prisma.x.findMany()` and `http.get('/api/...')` links are runtime strings it cannot see. Semantic extraction (`--mode deep`, needs an LLM backend) would infer them as INFERRED edges. Not worth it yet |
+| Parked | later    | **Template and SCSS coverage in the codebase graph** _(constraint)_ — graphify has no HTML/CSS tree-sitter grammar and no extra provides one, so component wiring in templates and the whole Untitled UI token layer are invisible to it. Parked, not solvable with this tool; browser testing covers the gap |
+| Idea   | later    | **Support playbooks written as we develop** — per-feature runbooks for diagnosing and fixing issues in production. Considered 2026-11-03 and explicitly deferred; revisit once the app has real users |
 
 ## How we work
 
 | Status      | Priority | Request                                                                                                                                                                                           |
 | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | In progress | now      | **Maintain this backlog as the project's long-term product roadmap** _(principle)_ — never silently remove; mark status when implementing; add follow-ups; keep this file and the tracker in sync |
+| In progress | now      | **Verify user-facing work by driving the real app** _(principle)_ — a change to the UI or to an endpoint the UI calls is not done because unit tests pass; it is driven in a browser and the returned data checked. See the `testing-the-app` skill |
+| In progress | now      | **Working rules live in `CLAUDE.md`, task procedures live in `.claude/skills/`** _(principle)_ — rules that must always hold go in `CLAUDE.md` so they are always loaded; step-by-step procedures go in skills so they load when relevant. Skills stay thin and point into `docs/`, which remains the single source of truth |
