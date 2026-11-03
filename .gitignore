@@ -35,3 +35,9 @@ apps/api/prisma/*.db-journal
 # Test artifacts
 apps/api/test-results/
 apps/web/test-results/
+
+# Graphify (generated knowledge graph)
+graphify-out/
+
+# Playwright MCP output (screenshots, traces)
+.playwright-mcp/
